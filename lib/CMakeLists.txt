@@ -3,6 +3,7 @@ set(LIBRARY_OUTPUT_NAME cli)
 # Create main library combining all modules
 add_library(${LIBRARY_OUTPUT_NAME}
     clibase.cpp
+    utils.cpp
 )
 
 # Add subdirectories for modules

@@ -1,5 +1,5 @@
 target_sources(${LIBRARY_OUTPUT_NAME}
-    PRIVATE
+    PUBLIC
         command.h
         command.cpp
 )
