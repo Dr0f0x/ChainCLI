@@ -1,4 +1,4 @@
-#include "cli.h"
+#include "clibase.h"
 
 int main() {
     cli::print("Hello from demo!");

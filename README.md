@@ -38,7 +38,7 @@ Command sshould contain a descirption and automatically generated information fr
 
 **``OptionalArgument``** Optional Argument that could be passed with an additional flag (e.g ``main.exe run --context options.txt``). Should have a long and short form (--context and -c)
 
-**``FlagArgument``** Optional flag that can be passed with a command (e.g ``main.exe run --fast``), basically corresponds to a bool value. Should have a long and short form (--context and -c)
+**``FlagArgument``** Optional flag that can be passed with a command (e.g ``main.exe run --fast``), basically corresponds to a bool value or the slection of an value from an enum (loglevel for example). Should have a long and short form (--context and -c)
 
 These arguments should somehow contain help text/ a description for the CLI to automatically display when the --help or -h flag is used. Except for the StandardArgument which must always come first the order of these should be irrelevant.
 

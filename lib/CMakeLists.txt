@@ -1,15 +1,16 @@
-# Build library (STATIC or SHARED depending on BUILD_SHARED_LIBS)
-add_library(cli
-    cli.cpp
+set(LIBRARY_OUTPUT_NAME cli)
+
+# Create main library combining all modules
+add_library(${LIBRARY_OUTPUT_NAME}
+    clibase.cpp
 )
 
-# Public include path
+# Add subdirectories for modules
+add_subdirectory(parsing)
+add_subdirectory(commands)
+add_subdirectory(logging)
+
+# Include path for consumers
 target_include_directories(cli
-    PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}
+    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
 )
-
-# Optionally, export symbols if building shared on Windows
-if (BUILD_SHARED_LIBS AND WIN32)
-    target_compile_definitions(cli PRIVATE CLI_EXPORTS)
-endif()
