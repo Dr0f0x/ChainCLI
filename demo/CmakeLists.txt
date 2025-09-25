@@ -1,0 +1,9 @@
+# Create an executable
+add_executable(cli_demo
+    main.cpp
+)
+
+# Link against the library
+target_link_libraries(cli_demo
+    PRIVATE cli
+)
