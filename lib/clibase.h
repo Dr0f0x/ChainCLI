@@ -15,7 +15,7 @@ namespace cli {
 
         void addCommand(std::unique_ptr<commands::Command> cmd);
         commands::Command* getCommand(std::string_view id) const;
-        void run(int argc, char* argv[]) const;
+        int run(int argc, char* argv[]) const;
 
     private:
         std::unordered_map<std::string_view, std::unique_ptr<commands::Command>> commandsMap;

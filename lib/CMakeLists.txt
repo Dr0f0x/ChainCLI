@@ -1,5 +1,3 @@
-set(LIBRARY_OUTPUT_NAME cli)
-
 # Create main library combining all modules
 add_library(${LIBRARY_OUTPUT_NAME}
     clibase.cpp
@@ -12,6 +10,6 @@ add_subdirectory(commands)
 add_subdirectory(logging)
 
 # Include path for consumers
-target_include_directories(cli
+target_include_directories(${LIBRARY_OUTPUT_NAME}
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
 )

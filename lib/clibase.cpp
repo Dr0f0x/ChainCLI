@@ -24,13 +24,19 @@ namespace cli {
         return (it != commandsMap.end()) ? it->second.get() : nullptr;
     }
 
-    void CliBase::run(int argc, char *argv[]) const
+    int CliBase::run(int argc, char *argv[]) const
     {
         auto args = turnArgsToVector(argc, argv);
 
         //TODO turn into logging
         for (const auto& arg : args)
             std::cout << arg << "\n";
+
+        //no flags passed
+        if (args.size() == 0){
+            std::cout << "no command given " << "\n";
+            return 0;
+        }
 
         auto cmd = getCommand(args[0]);
         if (cmd) {
@@ -39,5 +45,6 @@ namespace cli {
         } else {
             std::cout << "Unknown command: " << args[0] << "\n";
         }
+        return 1;
     }
 }

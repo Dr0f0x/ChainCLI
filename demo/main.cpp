@@ -19,7 +19,5 @@ int main(int argc, char* argv[]) {
         std::cout << *cmd << std::endl;
     }
 
-    cli.run(argc, argv);
-
-    return 0;
+    return cli.run(argc, argv);
 }
