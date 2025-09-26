@@ -8,14 +8,19 @@ namespace cli::logging
         std::cout << "Output from logging module" << std::endl;
     }
 
-    void Logger::log(LogLevel lvl, const std::string &msg)
+    void Logger::addHandler(std::unique_ptr<Handler> handler)
+    {
+        handlers.push_back(std::move(handler));
+    }
+
+    void Logger::log(LogLevel lvl, const std::string &msg) const
     {
         if (lvl < minLevel)
             return; // ignore messages below minimum level
 
         LogRecord record{lvl, msg};
 
-        for (auto &handler : handlers)
+        for (auto const &handler : handlers)
         {
             handler->emit(record);
         }

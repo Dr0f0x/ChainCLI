@@ -1,8 +1,8 @@
 #include "clibase.h"
 #include "utils.h"
-#include "logging\logger.h"
-#include "commands\command.h"
-#include "parsing\parser.h"
+#include "logging/logger.h"
+#include "commands/command.h"
+#include "parsing/parser.h"
 #include <iostream>
 
 namespace cli {
@@ -13,10 +13,9 @@ namespace cli {
         parsing::test();
     }
 
-
     void CliBase::addCommand(std::unique_ptr<commands::Command> cmd) {
         const auto id = cmd->getIdentifier();
-        commandsMap.emplace(id, std::move(cmd));
+        commandsMap.try_emplace(id, std::move(cmd));
     }
 
     commands::Command* CliBase::getCommand(std::string_view id) const {
@@ -33,7 +32,7 @@ namespace cli {
             std::cout << arg << "\n";
 
         //no flags passed
-        if (args.size() == 0){
+        if (args.empty()){
             std::cout << "no command given " << "\n";
             return 0;
         }

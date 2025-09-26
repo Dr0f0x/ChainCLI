@@ -34,7 +34,7 @@ namespace cli::logging
         styleMap = styles;
     }
 
-    FileHandler::FileHandler(const std::string &filename, std::unique_ptr<Formatter> f, LogLevel minLevel, std::shared_ptr<const LogStyleMap> styles)
+    FileHandler::FileHandler(const std::string &filename, std::unique_ptr<IFormatter> f, LogLevel minLevel, std::shared_ptr<const LogStyleMap> styles)
         : Handler(file, file, std::move(f), minLevel, std::move(styles)), file(filename, std::ios::app)
     {
         if (!file.is_open())
