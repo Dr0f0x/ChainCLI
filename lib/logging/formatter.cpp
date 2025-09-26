@@ -1,25 +1,24 @@
 #include "formatter.h"
 #include <sstream>
 #include <iomanip>
-#include <ctime>
+#include <chrono>
 
 namespace cli::logging
 {
 
     std::string BasicFormatter::format(const LogRecord &record) const
     {
-        std::time_t t = std::chrono::system_clock::to_time_t(record.timestamp);
-        std::tm tm = *std::localtime(&t);
+        auto const time = timezone->to_local(record.timestamp);
 
         std::ostringstream oss;
-        oss << "[" << std::put_time(&tm, "%F %T") << "] "
-            << toString(record.level) << ": " << record.message;
+        oss << "[" << std::format("{:%Y-%m-%d %X}", time) << "] "
+            << toString(record.level) << ": " << record.message << "\n";
         return oss.str();
     }
 
     std::string MessageOnlyFormatter::format(const LogRecord &record) const
     {
-        return record.message;
+        return record.message + "\n";
     }
 
 } // namespace cli::logging

@@ -8,8 +8,6 @@
 namespace cli {
     void print(const std::string& msg) {
         std::cout << "[cli] " << msg << std::endl;
-        logging::test();
-        commands::test();
         parsing::test();
     }
 
@@ -27,19 +25,11 @@ namespace cli {
     {
         auto args = turnArgsToVector(argc, argv);
 
-        //TODO turn into logging
         for (const auto& arg : args)
             std::cout << arg << "\n";
 
-        //no flags passed
-        if (args.empty()){
-            std::cout << "no command given " << "\n";
-            return 0;
-        }
-
-        auto cmd = getCommand(args[0]);
-        if (cmd) {
-            std::cout << "Executing command: " << *cmd << "\n";
+        if (auto cmd = getCommand(args[0])) {
+            logger->trace("Executing command: {0}", *cmd);
             cmd->execute();
         } else {
             std::cout << "Unknown command: " << args[0] << "\n";

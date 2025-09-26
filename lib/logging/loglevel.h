@@ -6,12 +6,13 @@ namespace cli::logging
 
     enum class LogLevel
     {
-        TRACE = 0,
-        DEBUG,
-        DETAIL,
-        INFO,
-        WARNING,
-        ERROR,
+        TRACE = 0, //most detailed, prints internal logs of the library as well
+        VERBOSE,   //very detailed information for inspection/development
+        DEBUG,     //general debug information
+        DETAIL,    // more detailed than info, less than debug
+        INFO,      //general information
+        WARNING,   //something unwanted happened, but the program can handle it
+        ERROR,     //a serious error occurred/ something failed
     };
 
     inline std::string_view toString(LogLevel level)
@@ -21,6 +22,8 @@ namespace cli::logging
         using enum cli::logging::LogLevel;
         case TRACE:
             return "TRACE";
+        case VERBOSE:
+            return "VERBOSE";
         case DEBUG:
             return "DEBUG";
         case DETAIL:

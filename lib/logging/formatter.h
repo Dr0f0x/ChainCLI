@@ -1,6 +1,7 @@
 #pragma once
 #include "logrecord.h"
 #include <string>
+#include <chrono>
 
 namespace cli::logging
 {
@@ -17,6 +18,8 @@ namespace cli::logging
     {
     public:
         std::string format(const LogRecord &record) const override;
+        private:
+        const std::chrono::time_zone* timezone = std::chrono::current_zone();
     };
 
     // A formatter that displays only the message

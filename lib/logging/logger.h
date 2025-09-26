@@ -5,34 +5,7 @@
 
 namespace cli::logging
 {
-    void test();
-
-    // Logger interface
-    class ILogger
-    {
-    public:
-        virtual ~ILogger() = default;
-
-        // Set the minimum logging level
-        virtual void setLevel(LogLevel lvl) = 0;
-
-        // Add a handler
-        virtual void addHandler(std::unique_ptr<Handler> handler) = 0;
-        virtual void removeAllHandlers() = 0;
-
-        // Core logging function
-        virtual void log(LogLevel lvl, const std::string &msg) const = 0;
-
-        // Convenience helpers
-        virtual void trace(const std::string &msg) const = 0;
-        virtual void debug(const std::string &msg) const = 0;
-        virtual void detail(const std::string &msg) const = 0;
-        virtual void info(const std::string &msg) const = 0;
-        virtual void warning(const std::string &msg) const = 0;
-        virtual void error(const std::string &msg) const = 0;
-    };
-
-    class Logger : public ILogger
+    class Logger
     {
     public:
         // Non-copyable
@@ -44,22 +17,38 @@ namespace cli::logging
 
         explicit Logger(LogLevel lvl = LogLevel::TRACE) : minLevel(lvl) {}
 
-        void setLevel(LogLevel lvl) override { minLevel = lvl; }
+        void setLevel(LogLevel lvl) { minLevel = lvl; }
 
-        void addHandler(std::unique_ptr<Handler> handler) override;
-        void removeAllHandlers() override { handlers.clear(); }
+        void addHandler(std::unique_ptr<Handler> handler);
+        void removeAllHandlers() { handlers.clear(); }
 
-        void log(LogLevel lvl, const std::string &msg) const override;
+        template <typename... Args>
+        void log(LogLevel lvl, const std::string &fmt, Args &&...args) const
+        {
+            if (lvl < minLevel)
+                return;
+            std::string formatted = std::vformat(fmt, std::make_format_args(std::forward<Args>(args)...));
+            logInternal(lvl, formatted);
+        }
 
         // Convenience helpers
-        void trace(const std::string &msg) const override { log(LogLevel::TRACE, msg); }
-        void debug(const std::string &msg) const override { log(LogLevel::DEBUG, msg); }
-        void detail(const std::string &msg) const override { log(LogLevel::DETAIL, msg); }
-        void info(const std::string &msg) const override { log(LogLevel::INFO, msg); }
-        void warning(const std::string &msg) const override { log(LogLevel::WARNING, msg); }
-        void error(const std::string &msg) const override { log(LogLevel::ERROR, msg); }
+        template <typename... Args>
+        void trace(const std::string &fmt, Args &&...args) const { log(LogLevel::TRACE, fmt, std::forward<Args>(args)...); }
+        template <typename... Args>
+        void verbose(const std::string &fmt, Args &&...args) const { log(LogLevel::VERBOSE, fmt, std::forward<Args>(args)...); }
+        template <typename... Args>
+        void debug(const std::string &fmt, Args &&...args) const { log(LogLevel::DEBUG, fmt, std::forward<Args>(args)...); }
+        template <typename... Args>
+        void detail(const std::string &fmt, Args &&...args) const { log(LogLevel::DETAIL, fmt, std::forward<Args>(args)...); }
+        template <typename... Args>
+        void info(const std::string &fmt, Args &&...args) const { log(LogLevel::INFO, fmt, std::forward<Args>(args)...); }
+        template <typename... Args>
+        void warning(const std::string &fmt, Args &&...args) const { log(LogLevel::WARNING, fmt, std::forward<Args>(args)...); }
+        template <typename... Args>
+        void error(const std::string &fmt, Args &&...args) const { log(LogLevel::ERROR, fmt, std::forward<Args>(args)...); }
 
     private:
+        void logInternal(LogLevel lvl, const std::string &fmt) const;
         LogLevel minLevel;
         std::vector<std::unique_ptr<Handler>> handlers;
     };

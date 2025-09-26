@@ -27,12 +27,12 @@ namespace cli
         commands::Command *getCommand(std::string_view id) const;
         int run(int argc, char *argv[]) const;
 
-        logging::ILogger *getLogger() { return logger.get(); }
-        void setLogger(std::unique_ptr<logging::ILogger> newLogger) { logger = std::move(newLogger); }
+        logging::Logger *getLogger() { return logger.get(); }
+        void setLogger(std::unique_ptr<logging::Logger> newLogger) { logger = std::move(newLogger); }
 
     private:
         std::unordered_map<std::string_view, std::unique_ptr<commands::Command>> commandsMap;
-        std::unique_ptr<logging::ILogger> logger = std::make_unique<logging::Logger>(logging::LogLevel::DEBUG);
+        std::unique_ptr<logging::Logger> logger = std::make_unique<logging::Logger>(logging::LogLevel::DEBUG);
     };
 
     inline std::unique_ptr<CliBase> const GlobalCli = std::make_unique<CliBase>();

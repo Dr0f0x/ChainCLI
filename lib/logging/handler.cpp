@@ -21,11 +21,11 @@ namespace cli::logging
 
         if (record.level >= LogLevel::ERROR)
         {
-            err << formatted << '\n';
+            err << formatted;
         }
         else
         {
-            out << formatted << '\n';
+            out << formatted;
         }
     }
 
@@ -39,7 +39,7 @@ namespace cli::logging
     {
         if (!file.is_open())
         {
-            throw std::runtime_error("Failed to open log file: " + filename);
+            throw std::ios_base::failure("Failed to open log file: " + filename);
         }
     }
 } // namespace cli::logging

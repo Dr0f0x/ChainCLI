@@ -16,6 +16,7 @@ namespace cli::logging
         using enum cli::logging::LogLevel;
         return {
             {TRACE,     "\o{33}[90m"},  // gray
+            {VERBOSE,   "\o{33}[90m"},  // gray
             // Debug uses plain grey text (no color) 
             {DETAIL,    "\o{33}[36m"},  // cyan
             {INFO,      "\o{33}[32m"},  // green

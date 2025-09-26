@@ -8,12 +8,15 @@ namespace cli::logging
 
     struct LogRecord
     {
-        LogLevel level;
-        std::string message;
-        std::chrono::system_clock::time_point timestamp{std::chrono::system_clock::now()};
+        const LogLevel level;
+        const std::string message;
+        const std::chrono::system_clock::time_point timestamp{std::chrono::system_clock::now()};
 
+        // Constructor initializes all fields; fields are immutable
         LogRecord(LogLevel lvl, std::string msg)
-            : level(lvl), message(std::move(msg)) {}
+            : level(lvl),
+              message(std::move(msg))
+        {}
     };
 
 } // namespace cli::logging
