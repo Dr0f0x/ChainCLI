@@ -1,5 +1,11 @@
 target_sources(${LIBRARY_OUTPUT_NAME}
     PRIVATE
+        formatter.h
+        formatter.cpp
+        handler.h
+        handler.cpp
         logger.h
         logger.cpp
+        loglevel.h
+        logrecord.h
 )
