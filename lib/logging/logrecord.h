@@ -10,11 +10,10 @@ namespace cli::logging
     {
         LogLevel level;
         std::string message;
-        std::chrono::system_clock::time_point timestamp;
+        std::chrono::system_clock::time_point timestamp{std::chrono::system_clock::now()};
 
         LogRecord(LogLevel lvl, std::string msg)
-            : level(lvl), message(std::move(msg)),
-              timestamp(std::chrono::system_clock::now()) {}
+            : level(lvl), message(std::move(msg)) {}
     };
 
 } // namespace cli::logging

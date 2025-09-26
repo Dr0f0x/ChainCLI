@@ -24,6 +24,7 @@ namespace cli::logging
         // Convenience helpers
         void trace(const std::string &msg) { log(LogLevel::TRACE, msg); }
         void debug(const std::string &msg) { log(LogLevel::DEBUG, msg); }
+        void detail(const std::string &msg) { log(LogLevel::DETAIL, msg); }
         void info(const std::string &msg) { log(LogLevel::INFO, msg); }
         void warning(const std::string &msg) { log(LogLevel::WARNING, msg); }
         void error(const std::string &msg) { log(LogLevel::ERROR, msg); }

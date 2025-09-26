@@ -10,18 +10,32 @@ namespace cli::logging
 
         auto formatted = formatter->format(record);
 
-        if (record.level >= LogLevel::ERROR) {
+        if (stylingEnabled && styleMap)
+        {
+            auto it = styleMap->find(record.level);
+            if (it != styleMap->end())
+            {
+                formatted = it->second + formatted + "\o{33}[0m"; // reset style
+            }
+        }
+
+        if (record.level >= LogLevel::ERROR)
+        {
             err << formatted << '\n';
-        } else {
+        }
+        else
+        {
             out << formatted << '\n';
         }
     }
 
-    FileHandler::FileHandler(const std::string &filename,
-                             std::unique_ptr<Formatter> f,
-                             LogLevel minLevel)
-        : Handler(file, file, std::move(f), minLevel),
-          file(filename, std::ios::app)
+    void Handler::setStyleMap(std::shared_ptr<const LogStyleMap> styles)
+    {
+        styleMap = styles;
+    }
+
+    FileHandler::FileHandler(const std::string &filename, std::unique_ptr<Formatter> f, LogLevel minLevel, std::shared_ptr<const LogStyleMap> styles)
+        : Handler(file, file, std::move(f), minLevel, std::move(styles)), file(filename, std::ios::app)
     {
         if (!file.is_open())
         {

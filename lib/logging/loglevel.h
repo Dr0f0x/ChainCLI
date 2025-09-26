@@ -8,6 +8,7 @@ namespace cli::logging
     {
         TRACE = 0,
         DEBUG,
+        DETAIL,
         INFO,
         WARNING,
         ERROR,
@@ -17,15 +18,18 @@ namespace cli::logging
     {
         switch (level)
         {
-        case LogLevel::TRACE:
+        using enum cli::logging::LogLevel;
+        case TRACE:
             return "TRACE";
-        case LogLevel::DEBUG:
+        case DEBUG:
             return "DEBUG";
-        case LogLevel::INFO:
+        case DETAIL:
+            return "DETAIL";
+        case INFO:
             return "INFO";
-        case LogLevel::WARNING:
+        case WARNING:
             return "WARNING";
-        case LogLevel::ERROR:
+        case ERROR:
             return "ERROR";
         }
         return "UNKNOWN";
