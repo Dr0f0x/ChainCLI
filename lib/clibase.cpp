@@ -52,6 +52,11 @@ namespace cli {
         return allCommands;
     }
 
+    void CliBase::init() const
+    {
+        //TODO built all doc strings for commands or make it a setting to use prebuilt or not
+    }
+
     int CliBase::run(int argc, char *argv[]) const
     {
         auto args = turnArgsToVector(argc, argv);

@@ -1,5 +1,6 @@
 #include "argument.h"
 #include <string_view>
+#include "docwriting/docwriting.h"
 
 namespace cli::commands
 {
@@ -10,14 +11,32 @@ namespace cli::commands
         return out;
     }
 
-    std::string_view Argument::getOptionsDocString() const
+    std::string Argument::getOptionsDocString() const
     {
-        return std::string_view();
+        return docwriting::generateOptionsDocString(*this);
     }
 
-    std::string_view Argument::getArgDocString() const
+    std::string Argument::getArgDocString() const
     {
-        return std::string_view();
+        return docwriting::generateArgDocString(*this);
+    }
+
+    Argument &Argument::withShortName(std::string_view short_name)
+    {
+        shortName = short_name;
+        return *this;
+    }
+
+    Argument &Argument::withUsageComment(std::string_view usage_comment)
+    {
+        usageComment = usage_comment;
+        return *this;
+    }
+
+    Argument &Argument::withRequired(bool req)
+    {
+        required = req;
+        return *this;
     }
 
 } // namespace cli::commands

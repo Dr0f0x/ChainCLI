@@ -5,3 +5,5 @@ target_sources(${LIBRARY_OUTPUT_NAME}
         argument.h
         argument.cpp
 )
+
+add_subdirectory(docwriting)

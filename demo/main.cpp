@@ -33,15 +33,29 @@ void initCommands()
         .withShortDescription("run2 short")
         .withLongDescription("run2 long");
 
+    auto arg2 = std::make_unique<cli::commands::Argument>("arg2");
+    auto& arg = *arg2;
+    arg.withShortName("-a2")
+        .withUsageComment("second argument")
+        .withRequired(false);
+
     cli::CLI().newCommand("other2")
-        .withShortDescription("run2 short")
-        .withLongDescription("run2 long")
-        .withExecutionFunc(std::make_unique<std::function<void()>>(other_func));
-        
+        .withShortDescription("other2 short")
+        .withLongDescription("other2 long")
+        .withExecutionFunc(std::make_unique<std::function<void()>>(other_func))
+        .withArgument(std::make_unique<cli::commands::Argument>("arg1","-a1", "first argument", true))
+        .withArgument(std::move(arg2));
+
     std::cout << "Available commands:\n";
     for (const auto& cmdPtr : cli::CLI().getAllCommands()) {
         if (cmdPtr) {
+            cmdPtr->buildDocStrings(); // ensure doc strings are built
+
             std::cout << "  " << *cmdPtr << "\n"; // relies on Command::operator<<
+            std::cout << "---------\n";
+            std::cout << cmdPtr->getDocStringLong() << "\n";
+            std::cout << "---------\n";
+            std::cout << cmdPtr->getDocStringShort() << "\n\n";
         }
     }
 }

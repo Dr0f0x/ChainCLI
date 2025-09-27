@@ -15,19 +15,25 @@ namespace cli::commands
             : name(name), shortName(""), usageComment("") {}
 
         [[nodiscard]] constexpr std::string_view getName() const noexcept { return name; }
+        [[nodiscard]] constexpr std::string_view getShortName() const noexcept { return shortName; }
         [[nodiscard]] constexpr std::string_view getUsageComment() const noexcept { return usageComment; }
+        [[nodiscard]] constexpr bool isRequired() const noexcept { return required; }
 
         virtual ~Argument() = default;
 
         bool hasShortName() const { return !shortName.empty(); }
 
         //documentation to be used under Options for command
-        [[nodiscard]] std::string_view getOptionsDocString() const;
+        [[nodiscard]] std::string getOptionsDocString() const;
 
         //documentation to be used in the command display (example command display: run <--help> [args] etc)
-        [[nodiscard]] std::string_view getArgDocString() const;
+        [[nodiscard]] std::string getArgDocString() const;
+
+        Argument &withShortName(std::string_view short_name);
+        Argument &withUsageComment(std::string_view usage_comment);
+        Argument &withRequired(bool req);
     private:
-        std::string name;
+        const std::string name;
         std::string shortName;
         std::string usageComment;
         bool required{true};

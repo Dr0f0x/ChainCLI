@@ -30,8 +30,8 @@ namespace cli::commands
         [[nodiscard]] constexpr std::string_view getLongDescription() const noexcept { return longDescription; }
         [[nodiscard]] const std::vector<std::unique_ptr<Argument>> &getArguments() const noexcept { return arguments; }
 
-        [[nodiscard]] constexpr std::string_view getDocStringShort() const;
-        [[nodiscard]] constexpr std::string_view getDocStringLong() const;
+        [[nodiscard]] std::string_view getDocStringShort() const;
+        [[nodiscard]] std::string_view getDocStringLong() const;
 
         // Virtual destructor for base class
         virtual ~Command() = default;
@@ -42,17 +42,9 @@ namespace cli::commands
         // Generate documentation strings for the command and its arguments to avoid having to rebuilt them each time
         void buildDocStrings();
 
-        Command &withShortDescription(std::string_view desc)
-        {
-            shortDescription = desc;
-            return *this;
-        }
-        Command &withLongDescription(std::string_view desc)
-        {
-            longDescription = desc;
-            return *this;
-        }
-        Command &withArgument(std::unique_ptr<Argument> &arg);
+        Command &withShortDescription(std::string_view desc);
+        Command &withLongDescription(std::string_view desc);
+        Command &withArgument(std::unique_ptr<Argument> &&arg);
         Command &withExecutionFunc(std::unique_ptr<std::function<void()>> actionPtr);
 
     private:

@@ -56,7 +56,7 @@ Required arguments are wrapped in <    >, same with optional paramters to these 
 
 if an argument or parameter can be repeated it is suffixed with ... (like the params notation in many programming languages), e.g <--arg>... or [param]... or for sargs with params [--arg [param]]...
 
-if there are multiple ways to call an arg like -h and --help they are seperated by commata, e.g [-h , --help]
+if there are multiple ways to call an arg like -h and --help they are seperated by commata, e.g [-h,--help]
 
 args or params can have default values that are displayed in the Options section
 

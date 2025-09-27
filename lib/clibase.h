@@ -30,6 +30,8 @@ namespace cli
 
         commands::Command *getCommand(std::string_view id) const;
         std::vector<commands::Command*> getAllCommands() const;
+
+        void init() const;
         int run(int argc, char *argv[]) const;
 
         logging::Logger &Logger() { return *logger; }
