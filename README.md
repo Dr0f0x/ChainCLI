@@ -48,3 +48,18 @@ The values being passed with an argument should be abstracted using Parameter cl
 
 Parameters specify a type they expect (e.g number or string) and are generally order dependent as without that verifying correct types would be quite impossible. Additionally a parameter should be able to be repeated (infinitely) to pass a list of sorts, however in that case he must be the last param of the argument for similar reason as above (one couldnt differentiate the end from a wrong type).
 
+**Style For Documentation**
+
+Optional arguments are wrapped in [    ], same with optional paramters to these arguments or to the command itself (if a parameter for an arguemnt is optional u get the nested structure [--arg [param]])
+
+Required arguments are wrapped in <    >, same with optional paramters to these arguments or to the command itself (if a parameter for an arguemnt is optional u get the nested structure <--arg <param>>)
+
+if an argument or parameter can be repeated it is suffixed with ... (like the params notation in many programming languages), e.g <--arg>... or [param]... or for sargs with params [--arg [param]]...
+
+args or params can have default values that are displayed in the Options section
+
+command should have short descirption and long description (to be used with general help and command specific help)
+for each arg a usage comment that is to be used in Options section, like 
+
+Options:
+    -h --help Usage comment here

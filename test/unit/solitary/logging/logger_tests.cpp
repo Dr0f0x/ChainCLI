@@ -13,22 +13,31 @@ using ::testing::Exactly;
 using ::testing::Field;
 using ::testing::Return;
 
-TEST(LoggerTestSolitary, LoggerCallsHandlerWhichCallsFormatter)
+class LoggerTestSolitary : public ::testing::Test {
+public:
+    std::unique_ptr<MockFormatter> mockFormatterPtr;
+    MockFormatter* mockFormatterRawPtr = nullptr;
+    std::unique_ptr<MockHandler> mockHandlerPtr;
+    MockHandler* mockHandlerRawPtr = nullptr;
+
+    void SetUp() override {
+        mockFormatterPtr = std::make_unique<MockFormatter>();
+        mockFormatterRawPtr = mockFormatterPtr.get();
+        mockHandlerPtr = std::make_unique<MockHandler>(std::move(mockFormatterPtr));
+        mockHandlerRawPtr = mockHandlerPtr.get();
+    }
+};
+
+TEST_F(LoggerTestSolitary, LoggerCallsHandlerWhichCallsFormatter)
 {
-    auto mockFormatter = std::make_unique<MockFormatter>();
-    MockFormatter const *rawFormatter = mockFormatter.get();
-
-    auto mockHandler = std::make_unique<MockHandler>(std::move(mockFormatter));
-    MockHandler const *rawHandler = mockHandler.get();
-
     Logger logger(LogLevel::TRACE);
-    logger.addHandler(std::move(mockHandler));
+    logger.addHandler(std::move(mockHandlerPtr));
 
-    ON_CALL(*rawHandler, emit(testing::_))
-        .WillByDefault([rawFormatter](const LogRecord &r)
-                       { rawFormatter->format(r); });
+    ON_CALL(*mockHandlerRawPtr, emit(testing::_))
+        .WillByDefault([this](const LogRecord &r)
+                       { this->mockFormatterRawPtr->format(r); });
 
-    EXPECT_CALL(*rawHandler, emit(AllOf(
+    EXPECT_CALL(*mockHandlerRawPtr, emit(AllOf(
                                  Field(&LogRecord::level, Eq(LogLevel::INFO)),
                                  Field(&LogRecord::message, Eq("original message")))))
         .Times(1);
@@ -36,35 +45,24 @@ TEST(LoggerTestSolitary, LoggerCallsHandlerWhichCallsFormatter)
     logger.info("original message");
 }
 
-TEST(LoggerTestSolitary, DoesNotCallHandlerBelowMinLevel)
+TEST_F(LoggerTestSolitary, DoesNotCallHandlerBelowMinLevel)
 {
-    auto mockFormatter = std::make_unique<MockFormatter>();
-    MockFormatter const *rawFormatter = mockFormatter.get();
-
-    auto mockHandler = std::make_unique<MockHandler>(std::move(mockFormatter));
-    MockHandler const *rawHandler = mockHandler.get();
-
     Logger logger(LogLevel::ERROR);
-    logger.addHandler(std::move(mockHandler));
+    logger.addHandler(std::move(mockHandlerPtr));
 
     // Formatter and handler should NOT be called
-    EXPECT_CALL(*rawFormatter, format(_)).Times(0);
-    EXPECT_CALL(*rawHandler, emit(_)).Times(0);
+    EXPECT_CALL(*mockFormatterRawPtr, format(_)).Times(0);
+    EXPECT_CALL(*mockHandlerRawPtr, emit(_)).Times(0);
 
     logger.info("ignored message");
 }
 
-TEST(LoggerTestSolitary, LoggerFormatsArgumentsBeforeEmit)
+TEST_F(LoggerTestSolitary, LoggerFormatsArgumentsBeforeEmit)
 {
-    auto mockFormatter = std::make_unique<MockFormatter>();
-
-    auto mockHandler = std::make_unique<MockHandler>(std::move(mockFormatter));
-    MockHandler const *rawHandler = mockHandler.get();
-
     Logger logger(LogLevel::TRACE);
-    logger.addHandler(std::move(mockHandler));
+    logger.addHandler(std::move(mockHandlerPtr));
 
-    EXPECT_CALL(*rawHandler, emit(AllOf(
+    EXPECT_CALL(*mockHandlerRawPtr, emit(AllOf(
                                  Field(&LogRecord::level, Eq(LogLevel::INFO)),
                                  Field(&LogRecord::message, Eq("Value=42")))))
         .Times(1);
@@ -73,55 +71,42 @@ TEST(LoggerTestSolitary, LoggerFormatsArgumentsBeforeEmit)
     logger.info("Value={}", val);
 }
 
-TEST(LoggerTestSolitary, ConvenienceMethodsUsesCorrectLevel)
+TEST_F(LoggerTestSolitary, ConvenienceMethodsUsesCorrectLevel)
 {
-    auto mockFormatter = std::make_unique<MockFormatter>();
-    MockFormatter const *rawFormatter = mockFormatter.get();
-
-    auto mockHandler = std::make_unique<MockHandler>(std::move(mockFormatter));
-    MockHandler const *rawHandler = mockHandler.get();
-
     Logger logger(LogLevel::TRACE);
-    logger.addHandler(std::move(mockHandler));
+    logger.addHandler(std::move(mockHandlerPtr));
 
-    ON_CALL(*rawHandler, emit(testing::_))
-        .WillByDefault([rawFormatter](const LogRecord &r)
-                       { rawFormatter->format(r); });
+    ON_CALL(*mockHandlerRawPtr, emit(testing::_))
+        .WillByDefault([this](const LogRecord &r)
+                       { this->mockFormatterRawPtr->format(r); });
 
-    EXPECT_CALL(*rawFormatter, format(_))
+    EXPECT_CALL(*mockFormatterRawPtr, format(_))
         .Times(Exactly(1));
 
-    EXPECT_CALL(*rawHandler, emit(testing::Truly([](const LogRecord& r) {
+    EXPECT_CALL(*mockHandlerRawPtr, emit(testing::Truly([](const LogRecord& r) {
         return r.level == LogLevel::WARNING && r.message == "warning message";
     }))).Times(1);
 
     logger.warning("warning message");
 }
 
-TEST(LoggerTestSolitary, CorrectLevelsPassedToHandler)
+TEST_F(LoggerTestSolitary, CorrectLevelsPassedToHandler)
 {
-    auto mockFormatter = std::make_unique<MockFormatter>();
-    auto mockHandler = std::make_unique<MockHandler>(std::move(mockFormatter));
-    MockHandler const *rawHandler = mockHandler.get();
-
     Logger logger(LogLevel::TRACE);
-    logger.addHandler(std::move(mockHandler));
+    logger.addHandler(std::move(mockHandlerPtr));
 
     // Expect correct level for trace
-    EXPECT_CALL(*rawHandler, emit(testing::Truly([](const LogRecord& r) {
+    EXPECT_CALL(*mockHandlerRawPtr, emit(testing::Truly([](const LogRecord& r) {
         return r.level == LogLevel::TRACE && r.message == "trace msg";
     })));
     logger.trace("trace msg");
 }
 
 
-TEST(LoggerTestSolitary, RemoveAllHandlersPreventsEmits)
+TEST_F(LoggerTestSolitary, RemoveAllHandlersPreventsEmits)
 {
-    auto mockFormatter = std::make_unique<MockFormatter>();
-    auto mockHandler = std::make_unique<MockHandler>(std::move(mockFormatter));
-
     Logger logger(LogLevel::TRACE);
-    logger.addHandler(std::move(mockHandler));
+    logger.addHandler(std::move(mockHandlerPtr));
 
     logger.removeAllHandlers();
 
@@ -138,24 +123,24 @@ struct LoggerMethodCase {
 class LoggerConvenienceParamTest : public ::testing::TestWithParam<LoggerMethodCase> {};
 
 TEST_P(LoggerConvenienceParamTest, ConvenienceMethodCallsHandlerWithCorrectLevel) {
-    auto mockFormatter = std::make_unique<MockFormatter>();
-    MockFormatter const* rawFormatter = mockFormatter.get();
+    auto mockFormatterPtr = std::make_unique<MockFormatter>();
+    MockFormatter const* mockFormatterRawPtr = mockFormatterPtr.get();
 
-    auto mockHandler = std::make_unique<MockHandler>(std::move(mockFormatter));
-    MockHandler const* rawHandler = mockHandler.get();
+    auto mockHandlerPtr = std::make_unique<MockHandler>(std::move(mockFormatterPtr));
+    MockHandler const* mockHandlerRawPtr = mockHandlerPtr.get();
 
     Logger logger(LogLevel::TRACE);
-    logger.addHandler(std::move(mockHandler));
+    logger.addHandler(std::move(mockHandlerPtr));
 
     // Forward call from handler to formatter
-    ON_CALL(*rawHandler, emit(testing::_))
-        .WillByDefault([rawFormatter](const LogRecord& r) {
-            rawFormatter->format(r);
+    ON_CALL(*mockHandlerRawPtr, emit(testing::_))
+        .WillByDefault([mockFormatterRawPtr](const LogRecord& r) {
+            mockFormatterRawPtr->format(r);
         });
 
-    EXPECT_CALL(*rawFormatter, format(_)).Times(1);
+    EXPECT_CALL(*mockFormatterRawPtr, format(_)).Times(1);
 
-    EXPECT_CALL(*rawHandler, emit(testing::Truly([](const LogRecord& r) {
+    EXPECT_CALL(*mockHandlerRawPtr, emit(testing::Truly([](const LogRecord& r) {
         return r.level == GetParam().level && r.message == GetParam().msg;
     }))).Times(1);
 
@@ -184,14 +169,14 @@ class LoggerLevelParamTest : public ::testing::TestWithParam<LoggerLevelCase> {}
 
 TEST_P(LoggerLevelParamTest, CorrectLevelIsPassedToHandler)
 {
-    auto mockFormatter = std::make_unique<MockFormatter>();
-    auto mockHandler = std::make_unique<MockHandler>(std::move(mockFormatter));
-    MockHandler const *rawHandler = mockHandler.get();
+    auto mockFormatterPtr = std::make_unique<MockFormatter>();
+    auto mockHandlerPtr = std::make_unique<MockHandler>(std::move(mockFormatterPtr));
+    MockHandler const *mockHandlerRawPtr = mockHandlerPtr.get();
 
     Logger logger(LogLevel::TRACE);
-    logger.addHandler(std::move(mockHandler));
+    logger.addHandler(std::move(mockHandlerPtr));
 
-    EXPECT_CALL(*rawHandler, emit(testing::Truly([](const LogRecord& r) {
+    EXPECT_CALL(*mockHandlerRawPtr, emit(testing::Truly([](const LogRecord& r) {
         return r.level == GetParam().level && r.message == GetParam().msg;
     }))).Times(1);
 

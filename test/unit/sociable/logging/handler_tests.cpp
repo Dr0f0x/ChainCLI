@@ -7,11 +7,15 @@
 
 using namespace cli::logging;
 
-// Test Handler with BasicFormatter writes to correct streams
-TEST(HandlerTestSociable, WithBasicFormatterEmitsCorrectly) {
+class HandlerTestSociable : public ::testing::Test
+{
+public:
     std::ostringstream out;
     std::ostringstream err;
+};
 
+// Test Handler with BasicFormatter writes to correct streams
+TEST_F(HandlerTestSociable, WithBasicFormatterEmitsCorrectly) {
     auto formatter = std::make_unique<BasicFormatter>();
     Handler handler(out, err, std::move(formatter));
 
@@ -28,10 +32,7 @@ TEST(HandlerTestSociable, WithBasicFormatterEmitsCorrectly) {
 }
 
 // Test Handler with MessageOnlyFormatter
-TEST(HandlerTestSociable, WithMessageOnlyFormatterEmitsCorrectly) {
-    std::ostringstream out;
-    std::ostringstream err;
-
+TEST_F(HandlerTestSociable, WithMessageOnlyFormatterEmitsCorrectly) {
     auto formatter = std::make_unique<MessageOnlyFormatter>();
     Handler handler(out, err, std::move(formatter));
 
@@ -50,10 +51,7 @@ TEST(HandlerTestSociable, WithMessageOnlyFormatterEmitsCorrectly) {
 }
 
 // Test styling applied with BasicFormatter
-TEST(HandlerTestSociable, StylingAppliedWithBasicFormatter) {
-    std::ostringstream out;
-    std::ostringstream err;
-
+TEST_F(HandlerTestSociable, StylingAppliedWithBasicFormatter) {
     auto formatter = std::make_unique<BasicFormatter>();
     Handler handler(out, err, std::move(formatter));
 
@@ -72,10 +70,7 @@ TEST(HandlerTestSociable, StylingAppliedWithBasicFormatter) {
 }
 
 // Test Handler ignores messages below min level
-TEST(HandlerTestSociable, IgnoresMessagesBelowMinLevel) {
-    std::ostringstream out;
-    std::ostringstream err;
-
+TEST_F(HandlerTestSociable, IgnoresMessagesBelowMinLevel) {
     auto formatter = std::make_unique<BasicFormatter>();
     Handler handler(out, err, std::move(formatter), LogLevel::ERROR);
 

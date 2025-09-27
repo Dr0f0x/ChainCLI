@@ -39,6 +39,6 @@ namespace cli {
         } else {
             std::cout << "Unknown command: " << args[0] << "\n";
         }
-        return 1;
+        return 0;
     }
 }

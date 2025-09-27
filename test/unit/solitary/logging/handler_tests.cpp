@@ -19,40 +19,44 @@ public:
         : Handler(outStream, errStream, std::move(f), minLevel) {}
 };
 
-TEST(HandlerTestSolitary, EmitCallsFormatter)
-{
+class HandlerTestSolitary : public ::testing::Test {
+public:
     std::ostringstream out;
     std::ostringstream err;
+    std::unique_ptr<MockFormatter> mockFormatterPtr;
+    MockFormatter* mockFormatterRawPtr = nullptr;
 
-    auto mockFormatterPtr = std::make_unique<MockFormatter>();
-    MockFormatter const *mockFormatterRaw = mockFormatterPtr.get();
+    void SetUp() override {
+        // Create formatter, keep raw pointer for mocks
+        mockFormatterPtr = std::make_unique<MockFormatter>();
+        mockFormatterRawPtr = mockFormatterPtr.get();
+    }
+};
+
+TEST_F(HandlerTestSolitary, EmitCallsFormatter)
+{
     Handler handler(out, err, std::move(mockFormatterPtr));
 
     LogRecord debugRecord(LogLevel::DEBUG, "debug-msg");
     LogRecord errorRecord(LogLevel::ERROR, "error-msg");
 
-    EXPECT_CALL(*mockFormatterRaw, format(Ref(debugRecord)))
+    EXPECT_CALL(*mockFormatterRawPtr, format(Ref(debugRecord)))
         .WillOnce(Return("MOCK_DEBUG"));
-    EXPECT_CALL(*mockFormatterRaw, format(Ref(errorRecord)))
+    EXPECT_CALL(*mockFormatterRawPtr, format(Ref(errorRecord)))
         .WillOnce(Return("MOCK_ERROR"));
 
     handler.emit(debugRecord);
     handler.emit(errorRecord);
 }
 
-TEST(HandlerTestSolitary, EmitWritesToCorrectStream)
+TEST_F(HandlerTestSolitary, EmitWritesToCorrectStream)
 {
-    std::ostringstream out;
-    std::ostringstream err;
-
-    auto mockFormatterPtr = std::make_unique<MockFormatter>();
-    MockFormatter const *mockFormatterRaw = mockFormatterPtr.get();
     Handler handler(out, err, std::move(mockFormatterPtr));
 
     LogRecord debugRecord(LogLevel::DEBUG, "debug-msg");
     LogRecord errorRecord(LogLevel::ERROR, "error-msg");
 
-    ON_CALL(*mockFormatterRaw, format(testing::_))
+    ON_CALL(*mockFormatterRawPtr, format(testing::_))
         .WillByDefault([](const LogRecord &r)
                        { return "MOCK_" + r.message; });
 
@@ -63,22 +67,14 @@ TEST(HandlerTestSolitary, EmitWritesToCorrectStream)
     EXPECT_NE(err.str().find("MOCK_error-msg"), std::string::npos);
 }
 
-TEST(HandlerTestSolitary, EmitIgnoresBelowMinLevel)
+TEST_F(HandlerTestSolitary, EmitIgnoresBelowMinLevel)
 {
-    std::ostringstream out;
-    std::ostringstream err;
-
-    // Create heap mock
-    auto mockFormatterPtr = std::make_unique<MockFormatter>();
-    MockFormatter const *mockFormatterRaw = mockFormatterPtr.get();
-
-    // Pass ownership to Handler
     Handler handler(out, err, std::move(mockFormatterPtr), LogLevel::ERROR);
 
     LogRecord warningRecord(LogLevel::WARNING, "ignored-msg");
 
     // Formatter should never be called
-    EXPECT_CALL(*mockFormatterRaw, format(testing::_)).Times(0);
+    EXPECT_CALL(*mockFormatterRawPtr, format(testing::_)).Times(0);
 
     handler.emit(warningRecord); // no crash
 
@@ -86,14 +82,8 @@ TEST(HandlerTestSolitary, EmitIgnoresBelowMinLevel)
     EXPECT_EQ(err.str(), "");
 }
 
-TEST(HandlerTestSolitary, ConsoleHandlerEmitsCorrectly)
+TEST_F(HandlerTestSolitary, ConsoleHandlerEmitsCorrectly)
 {
-    std::ostringstream out;
-    std::ostringstream err;
-
-    auto mockFormatterPtr = std::make_unique<MockFormatter>();
-    MockFormatter const *mockFormatterRaw = mockFormatterPtr.get();
-
     // Redirect std::cout and std::cerr
     std::streambuf *oldCout = std::cout.rdbuf(out.rdbuf());
     std::streambuf *oldCerr = std::cerr.rdbuf(err.rdbuf());
@@ -103,8 +93,8 @@ TEST(HandlerTestSolitary, ConsoleHandlerEmitsCorrectly)
     LogRecord infoRecord(LogLevel::INFO, "info-msg");
     LogRecord errorRecord(LogLevel::ERROR, "error-msg");
 
-    EXPECT_CALL(*mockFormatterRaw, format(Ref(infoRecord))).WillOnce(Return("MOCK_INFO"));
-    EXPECT_CALL(*mockFormatterRaw, format(Ref(errorRecord))).WillOnce(Return("MOCK_ERROR"));
+    EXPECT_CALL(*mockFormatterRawPtr, format(Ref(infoRecord))).WillOnce(Return("MOCK_INFO"));
+    EXPECT_CALL(*mockFormatterRawPtr, format(Ref(errorRecord))).WillOnce(Return("MOCK_ERROR"));
 
     handler.emit(infoRecord);
     handler.emit(errorRecord);
@@ -117,13 +107,9 @@ TEST(HandlerTestSolitary, ConsoleHandlerEmitsCorrectly)
     EXPECT_NE(err.str().find("MOCK_ERROR"), std::string::npos);
 }
 
-TEST(HandlerTestSolitary, StylingAppliedToFormattedMessage) {
-    std::ostringstream out;
-    std::ostringstream err;
+TEST_F(HandlerTestSolitary, StylingAppliedToFormattedMessage)
+{
     auto styles = defaultStyles();
-
-    auto mockFormatterPtr = std::make_unique<MockFormatter>();
-    MockFormatter const* mockFormatterRaw = mockFormatterPtr.get();
     Handler handler(out, err, std::move(mockFormatterPtr));
 
     handler.setStylingEnabled(true);
@@ -131,7 +117,7 @@ TEST(HandlerTestSolitary, StylingAppliedToFormattedMessage) {
 
     LogRecord infoRecord(LogLevel::INFO, "info-msg");
 
-    EXPECT_CALL(*mockFormatterRaw, format(Ref(infoRecord)))
+    EXPECT_CALL(*mockFormatterRawPtr, format(Ref(infoRecord)))
         .WillOnce(Return("FORMATTED"));
 
     handler.emit(infoRecord);
@@ -140,12 +126,8 @@ TEST(HandlerTestSolitary, StylingAppliedToFormattedMessage) {
     EXPECT_EQ(out.str(), expected);
 }
 
-TEST(HandlerTestSolitary, StylingDisabledDoesNotModifyMessage) {
-    std::ostringstream out;
-    std::ostringstream err;
-
-    auto mockFormatterPtr = std::make_unique<MockFormatter>();
-    MockFormatter const* mockFormatterRaw = mockFormatterPtr.get();
+TEST_F(HandlerTestSolitary, StylingDisabledDoesNotModifyMessage)
+{
     Handler handler(out, err, std::move(mockFormatterPtr));
 
     handler.setStylingEnabled(false);
@@ -153,7 +135,7 @@ TEST(HandlerTestSolitary, StylingDisabledDoesNotModifyMessage) {
 
     LogRecord infoRecord(LogLevel::INFO, "info-msg");
 
-    EXPECT_CALL(*mockFormatterRaw, format(Ref(infoRecord)))
+    EXPECT_CALL(*mockFormatterRawPtr, format(Ref(infoRecord)))
         .WillOnce(Return("FORMATTED"));
 
     handler.emit(infoRecord);
@@ -162,12 +144,8 @@ TEST(HandlerTestSolitary, StylingDisabledDoesNotModifyMessage) {
     EXPECT_EQ(result, "FORMATTED"); // no styling applied
 }
 
-TEST(HandlerTestSolitary, StylingAppliedOnlyIfLevelMatches) {
-    std::ostringstream out;
-    std::ostringstream err;
-
-    auto mockFormatterPtr = std::make_unique<MockFormatter>();
-    MockFormatter const* mockFormatterRaw = mockFormatterPtr.get();
+TEST_F(HandlerTestSolitary, StylingAppliedOnlyIfLevelMatches)
+{
     Handler handler(out, err, std::move(mockFormatterPtr));
 
     handler.setStylingEnabled(true);
@@ -179,14 +157,14 @@ TEST(HandlerTestSolitary, StylingAppliedOnlyIfLevelMatches) {
     LogRecord infoRecord(LogLevel::INFO, "info-msg");
     LogRecord errorRecord(LogLevel::ERROR, "error-msg");
 
-    EXPECT_CALL(*mockFormatterRaw, format(Ref(infoRecord)))
+    EXPECT_CALL(*mockFormatterRawPtr, format(Ref(infoRecord)))
         .WillOnce(Return("INFOFORMATTED"));
-    EXPECT_CALL(*mockFormatterRaw, format(Ref(errorRecord)))
+    EXPECT_CALL(*mockFormatterRawPtr, format(Ref(errorRecord)))
         .WillOnce(Return("ERRORFORMATTED"));
 
-    handler.emit(infoRecord);   // INFO not in styleMap
-    handler.emit(errorRecord);  // ERROR has style
+    handler.emit(infoRecord);  // INFO not in styleMap
+    handler.emit(errorRecord); // ERROR has style
 
-    EXPECT_EQ(out.str(), "INFOFORMATTED"); // INFO unstyled
+    EXPECT_EQ(out.str(), "INFOFORMATTED");                                             // INFO unstyled
     EXPECT_NE(err.str().find("\o{33}[31mERRORFORMATTED\o{33}[0m"), std::string::npos); // ERROR styled
 }

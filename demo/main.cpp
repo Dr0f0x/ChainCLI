@@ -6,13 +6,25 @@
 
 using namespace cli::logging;
 
-int command_func(){
+void command_func()
+{
     std::cout << "command called" << std::endl;
-    return 0;
     cli::CLI()->getLogger()->info("run command executed");
 }
 
-int main(int argc, char* argv[]) {
+void initCommands()
+{
+    auto helpCmd = std::make_unique<cli::commands::Command>("run", "Run something", "Run something long", std::make_unique<std::function<void()>>(command_func));
+    cli::CLI()->addCommand(std::move(helpCmd));
+
+    if (auto cmd = cli::CLI()->getCommand("run"))
+    {
+        std::cout << *cmd << std::endl;
+    }
+}
+
+int main(int argc, char *argv[])
+{
     cli::print("Hello from demo!");
     using namespace cli::logging;
 
@@ -35,11 +47,7 @@ int main(int argc, char* argv[]) {
     logger->warning("Low disk space warning");
     logger->error("Failed to open file");
 
-    auto helpCmd = std::make_unique<cli::commands::Command>("run", "Run something", command_func);
-    cli::CLI()->addCommand(std::move(helpCmd));
+    initCommands();
 
-    if (auto cmd = cli::CLI()->getCommand("run")) {
-        std::cout << *cmd << std::endl;
-    }
     return cli::CLI()->run(argc, argv);
 }

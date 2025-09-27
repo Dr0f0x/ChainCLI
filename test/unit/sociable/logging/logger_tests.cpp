@@ -15,9 +15,6 @@ public:
 
 TEST_F(LoggerTestSociable, LoggerCallsHandlerWhichCallsFormatter)
 {
-    auto formatter = std::make_unique<BasicFormatter>();
-    Handler handler(out, err, std::move(formatter));
-
     Logger logger(LogLevel::TRACE);
     logger.addHandler(std::make_unique<Handler>(out, err, std::make_unique<BasicFormatter>()));
 
@@ -90,9 +87,7 @@ struct LoggerMethodCase
     const char *msg;
 };
 
-class LoggerConvenienceParamTest : public ::testing::TestWithParam<LoggerMethodCase>
-{
-};
+class LoggerConvenienceParamTest : public ::testing::TestWithParam<LoggerMethodCase> {};
 
 TEST_P(LoggerConvenienceParamTest, ConvenienceMethodCallsHandlerWithCorrectLevel)
 {
