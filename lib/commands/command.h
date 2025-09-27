@@ -38,7 +38,7 @@ struct std::formatter<cli::commands::Command> : std::formatter<std::string>
     auto format(const cli::commands::Command& cmd, format_context &ctx) const
     {
         return formatter<string>::format(
-            std::format("Command: {}\nDescription: {}",
+            std::format("Command - {} ( Description: {} )",
                         cmd.getIdentifier(),
                         cmd.getDescription()),
             ctx);

@@ -19,7 +19,7 @@ namespace cli::logging
 
         void setLevel(LogLevel lvl) { minLevel = lvl; }
 
-        void addHandler(std::unique_ptr<Handler> handler);
+        void addHandler(std::unique_ptr<IHandler> handler);
         void removeAllHandlers() { handlers.clear(); }
 
         template <typename... Args>
@@ -50,6 +50,6 @@ namespace cli::logging
     private:
         void logInternal(LogLevel lvl, const std::string &fmt) const;
         LogLevel minLevel;
-        std::vector<std::unique_ptr<Handler>> handlers;
+        std::vector<std::unique_ptr<IHandler>> handlers;
     };
 }

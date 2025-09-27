@@ -13,8 +13,8 @@ namespace cli::commands {
 
     std::ostream &operator<<(std::ostream &out, const Command &cmd)
     {
-        out << "Command: " << cmd.getIdentifier()
-            << "\nDescription: " << cmd.getDescription();
+        out << "Command - " << cmd.getIdentifier()
+            << " ( Description: " << cmd.getDescription() << " )";
         return out;
     }
 

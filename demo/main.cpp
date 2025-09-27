@@ -41,6 +41,5 @@ int main(int argc, char* argv[]) {
     if (auto cmd = cli::CLI()->getCommand("run")) {
         std::cout << *cmd << std::endl;
     }
-
     return cli::CLI()->run(argc, argv);
 }

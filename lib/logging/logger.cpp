@@ -2,7 +2,7 @@
 
 namespace cli::logging
 {
-    void Logger::addHandler(std::unique_ptr<Handler> handler)
+    void Logger::addHandler(std::unique_ptr<IHandler> handler)
     {
         handlers.push_back(std::move(handler));
     }

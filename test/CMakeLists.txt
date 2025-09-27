@@ -8,15 +8,10 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-add_executable(
-  unit_tests
-  test.cpp
-)
-target_link_libraries(
-  unit_tests
-  PRIVATE ${LIBRARY_OUTPUT_NAME}
-  GTest::gtest_main
-)
+# project vars for testings
+set(UNIT_TEST_SOLITARY_EXE_NAME unit_tests_solitary)
+set(UNIT_TEST_SOCIABLE_EXE_NAME unit_tests_sociable)
+set(INTEGRATION_TEST_EXE_NAME integration_tests)
 
-include(GoogleTest)
-gtest_discover_tests(unit_tests)
+add_subdirectory(unit)
+add_subdirectory(integration)

@@ -7,7 +7,14 @@
 
 namespace cli::logging
 {
-    class Handler
+    class IHandler
+    {
+    public:
+        virtual ~IHandler() = default;
+        virtual void emit(const LogRecord &record) const = 0;
+    };
+
+    class Handler : public IHandler
     {
     public:
         Handler(std::ostream &outStream,
@@ -16,10 +23,10 @@ namespace cli::logging
                 LogLevel minLevel = LogLevel::DEBUG,
                 std::shared_ptr<const LogStyleMap> styles = nullptr)
             : out(outStream), err(errStream), formatter(std::move(f)), styleMap(std::move(styles)), minLevel(minLevel) {}
+        
+        ~Handler() override;
 
-        virtual ~Handler() = default;
-
-        void emit(const LogRecord &record);
+        void emit(const LogRecord &record) const override;
         void setStylingEnabled(bool enabled) { stylingEnabled = enabled; }
 
         // Attach a style map (for ANSI colors)
@@ -39,8 +46,8 @@ namespace cli::logging
     {
     public:
         explicit ConsoleHandler(std::unique_ptr<IFormatter> f,
-                LogLevel minLevel = LogLevel::DEBUG,
-                std::shared_ptr<const LogStyleMap> styles = std::make_shared<LogStyleMap>(defaultStyles()))
+                                LogLevel minLevel = LogLevel::DEBUG,
+                                std::shared_ptr<const LogStyleMap> styles = std::make_shared<LogStyleMap>(defaultStyles()))
             : Handler(std::cout, std::cerr, std::move(f), minLevel, std::move(styles)) {}
     };
 
@@ -48,11 +55,11 @@ namespace cli::logging
     {
     public:
         explicit FileHandler(const std::string &filename,
-            std::unique_ptr<IFormatter> f,
-            LogLevel minLevel = LogLevel::DEBUG,
-            std::shared_ptr<const LogStyleMap> styles = nullptr);
+                             std::unique_ptr<IFormatter> f,
+                             LogLevel minLevel = LogLevel::DEBUG,
+                             std::shared_ptr<const LogStyleMap> styles = nullptr);
         ;
-        ~FileHandler() override = default;
+        ~FileHandler() override;
 
     private:
         std::ofstream file;

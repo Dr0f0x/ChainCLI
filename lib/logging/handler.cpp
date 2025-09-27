@@ -2,8 +2,13 @@
 
 namespace cli::logging
 {
+    Handler::~Handler()
+    {
+        err.flush();
+        out.flush();
+    }
 
-    void Handler::emit(const LogRecord &record)
+    void Handler::emit(const LogRecord &record) const
     {
         if (record.level < minLevel)
             return; // ignore messages below minimum level
@@ -40,6 +45,14 @@ namespace cli::logging
         if (!file.is_open())
         {
             throw std::ios_base::failure("Failed to open log file: " + filename);
+        }
+    }
+
+    FileHandler::~FileHandler()
+    {
+        if (file.is_open())
+        {
+            file.close(); // ensure the file is closed
         }
     }
 } // namespace cli::logging

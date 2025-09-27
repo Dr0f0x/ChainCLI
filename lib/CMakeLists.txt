@@ -1,7 +1,9 @@
 # Create main library combining all modules
 add_library(${LIBRARY_OUTPUT_NAME}
     clibase.cpp
+    clibase.h
     utils.cpp
+    utils.h
 )
 
 # Add subdirectories for modules

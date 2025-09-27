@@ -28,6 +28,11 @@ namespace cli {
         for (const auto& arg : args)
             std::cout << arg << "\n";
 
+        if (args.empty()){
+            logger->trace("no command given");
+            return 0;
+        }
+
         if (auto cmd = getCommand(args[0])) {
             logger->trace("Executing command: {0}", *cmd);
             cmd->execute();

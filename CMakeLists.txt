@@ -9,7 +9,10 @@ project(
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(LIBRARY_OUTPUT_NAME cli)
+
+# prohect specific vars
+set(LIBRARY_OUTPUT_NAME cli_lib)
+set(DEMO_OUTPUT_NAME cli_demo)
 
 enable_testing()
 
