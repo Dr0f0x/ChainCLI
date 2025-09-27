@@ -27,8 +27,9 @@ namespace cli
         commands::Command *getCommand(std::string_view id) const;
         int run(int argc, char *argv[]) const;
 
-        logging::Logger *getLogger() { return logger.get(); }
-        void setLogger(std::unique_ptr<logging::Logger> newLogger) { logger = std::move(newLogger); }
+        logging::Logger &getLogger() { return *logger; }
+        void setLogger(std::unique_ptr<logging::Logger> &newLogger) { logger = std::move(newLogger); }
+        void setLogger(std::unique_ptr<logging::Logger>&& newLogger) { logger = std::move(newLogger); }
 
     private:
         std::unordered_map<std::string_view, std::unique_ptr<commands::Command>> commandsMap;
@@ -36,5 +37,8 @@ namespace cli
     };
 
     inline std::unique_ptr<CliBase> const GlobalCli = std::make_unique<CliBase>();
-    inline CliBase *CLI() { return GlobalCli.get(); }
+    inline CliBase &CLI()
+    {
+        return *GlobalCli;
+    }
 } // namespace cli

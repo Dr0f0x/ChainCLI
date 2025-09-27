@@ -19,10 +19,10 @@ namespace cli::logging
     public:
         Handler(std::ostream &outStream,
                 std::ostream &errStream,
-                std::unique_ptr<IFormatter> f,
+                std::shared_ptr<IFormatter> f,
                 LogLevel minLevel = LogLevel::DEBUG,
                 std::shared_ptr<const LogStyleMap> styles = nullptr)
-            : out(outStream), err(errStream), formatter(std::move(f)), styleMap(std::move(styles)), minLevel(minLevel) {}
+            : out(outStream), err(errStream), formatterPtr(std::move(f)), styleMapPtr(std::move(styles)), minLevel(minLevel) {}
         
         ~Handler() override;
 
@@ -37,25 +37,25 @@ namespace cli::logging
         std::ostream &err; // error stream
     private:
         bool stylingEnabled{true};
-        std::unique_ptr<IFormatter> formatter;
-        std::shared_ptr<const LogStyleMap> styleMap;
+        std::shared_ptr<IFormatter> formatterPtr;
+        std::shared_ptr<const LogStyleMap> styleMapPtr;
         LogLevel minLevel;
     };
 
     class ConsoleHandler : public Handler
     {
     public:
-        explicit ConsoleHandler(std::unique_ptr<IFormatter> f,
+        explicit ConsoleHandler(std::shared_ptr<IFormatter> f,
                                 LogLevel minLevel = LogLevel::DEBUG,
                                 std::shared_ptr<const LogStyleMap> styles = std::make_shared<LogStyleMap>(defaultStyles()))
-            : Handler(std::cout, std::cerr, std::move(f), minLevel, std::move(styles)) {}
+            : Handler(std::cout, std::cerr, f, minLevel, std::move(styles)) {}
     };
 
     class FileHandler : public Handler
     {
     public:
         explicit FileHandler(const std::string &filename,
-                             std::unique_ptr<IFormatter> f,
+                             std::shared_ptr<IFormatter> f,
                              LogLevel minLevel = LogLevel::DEBUG,
                              std::shared_ptr<const LogStyleMap> styles = nullptr);
         ;

@@ -2,9 +2,9 @@
 
 namespace cli::logging
 {
-    void Logger::addHandler(std::unique_ptr<IHandler> handler)
+    void Logger::addHandler(std::unique_ptr<IHandler> handlerPtr)
     {
-        handlers.push_back(std::move(handler));
+        handlers.push_back(std::move(handlerPtr));
     }
 
     void Logger::logInternal(LogLevel lvl, const std::string &msg) const
