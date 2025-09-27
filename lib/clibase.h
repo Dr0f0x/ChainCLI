@@ -24,12 +24,17 @@ namespace cli
         ~CliBase() = default;
 
         void addCommand(std::unique_ptr<commands::Command> cmd);
+        commands::Command &newCommand(std::string_view id, std::string_view short_desc, std::string_view long_desc, std::unique_ptr<std::function<void()>> actionPtr);
+        commands::Command &newCommand(std::string_view id, std::unique_ptr<std::function<void()>> actionPtr);
+        commands::Command &newCommand(std::string_view id);
+
         commands::Command *getCommand(std::string_view id) const;
+        std::vector<commands::Command*> getAllCommands() const;
         int run(int argc, char *argv[]) const;
 
-        logging::Logger &getLogger() { return *logger; }
+        logging::Logger &Logger() { return *logger; }
         void setLogger(std::unique_ptr<logging::Logger> &newLogger) { logger = std::move(newLogger); }
-        void setLogger(std::unique_ptr<logging::Logger>&& newLogger) { logger = std::move(newLogger); }
+        void setLogger(std::unique_ptr<logging::Logger> &&newLogger) { logger = std::move(newLogger); }
 
     private:
         std::unordered_map<std::string_view, std::unique_ptr<commands::Command>> commandsMap;

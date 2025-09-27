@@ -10,4 +10,14 @@ namespace cli::commands
         return out;
     }
 
+    std::string_view Argument::getOptionsDocString() const
+    {
+        return std::string_view();
+    }
+
+    std::string_view Argument::getArgDocString() const
+    {
+        return std::string_view();
+    }
+
 } // namespace cli::commands

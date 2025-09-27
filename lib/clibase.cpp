@@ -16,9 +16,40 @@ namespace cli {
         commandsMap.try_emplace(id, std::move(cmd));
     }
 
+    commands::Command &CliBase::newCommand(std::string_view id, std::string_view short_desc, std::string_view long_desc, std::unique_ptr<std::function<void()>> actionPtr)
+    {
+        auto cmd = std::make_unique<commands::Command>(id, short_desc, long_desc, std::move(actionPtr)); // default-constructed
+        commands::Command& ref = *cmd;
+        commandsMap.try_emplace(id, std::move(cmd));
+        return ref;
+    }
+
+    commands::Command &CliBase::newCommand(std::string_view id, std::unique_ptr<std::function<void()>> actionPtr)
+    {
+        return this->newCommand(id, "", "", std::move(actionPtr));
+    }
+
+    commands::Command &CliBase::newCommand(std::string_view id)
+    {
+        return this->newCommand(id, "", "", nullptr);
+    }
+
     commands::Command* CliBase::getCommand(std::string_view id) const {
         auto it = commandsMap.find(id);
         return (it != commandsMap.end()) ? it->second.get() : nullptr;
+    }
+
+    //TODO only for debug purposes remove later
+    std::vector<commands::Command *> CliBase::getAllCommands() const
+    {
+        std::vector<commands::Command*> allCommands;
+        allCommands.reserve(commandsMap.size());
+        for (const auto& [id, cmdPtr] : commandsMap)
+        {
+            if (cmdPtr)
+                allCommands.push_back(cmdPtr.get());
+        }
+        return allCommands;
     }
 
     int CliBase::run(int argc, char *argv[]) const

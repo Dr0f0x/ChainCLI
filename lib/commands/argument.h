@@ -9,17 +9,28 @@ namespace cli::commands
         friend std::ostream &operator<<(std::ostream &out, const Argument &arg);
 
     public:
-        constexpr Argument(const std::string &name, const std::string &usage_comment)
-            : name(name), usageComment(usage_comment) {}
+        constexpr Argument(std::string_view name, std::string_view short_name, const std::string_view &usage_comment, bool required)
+            : name(name), shortName(short_name), usageComment(usage_comment), required(required) {}
+        explicit constexpr Argument(std::string_view name)
+            : name(name), shortName(""), usageComment("") {}
 
         [[nodiscard]] constexpr std::string_view getName() const noexcept { return name; }
         [[nodiscard]] constexpr std::string_view getUsageComment() const noexcept { return usageComment; }
 
         virtual ~Argument() = default;
 
+        bool hasShortName() const { return !shortName.empty(); }
+
+        //documentation to be used under Options for command
+        [[nodiscard]] std::string_view getOptionsDocString() const;
+
+        //documentation to be used in the command display (example command display: run <--help> [args] etc)
+        [[nodiscard]] std::string_view getArgDocString() const;
     private:
-        const std::string name;
-        const std::string usageComment;
+        std::string name;
+        std::string shortName;
+        std::string usageComment;
+        bool required{true};
     };
 } // namespace cli::commands
 

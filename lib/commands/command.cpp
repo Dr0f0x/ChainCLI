@@ -1,8 +1,24 @@
 #include "command.h"
 #include <iostream>
+#include "clibase.h"
 
 namespace cli::commands
 {
+    constexpr std::string_view Command::getDocStringShort() const
+    {
+        if (docStringShort.empty()) {
+            throw DocsNotBuildException("Short documentation string not built.");
+        }
+        return docStringShort;
+    }
+
+    constexpr std::string_view Command::getDocStringLong() const
+    {
+        if (docStringLong.empty()) {
+            throw DocsNotBuildException("Long documentation string not built.");
+        }
+        return docStringLong;
+    }
 
     void Command::execute() const
     {
@@ -12,13 +28,26 @@ namespace cli::commands
         }
         else
         {
-            std::cout << "no execute function passed" << std::endl;
+            cli::CLI().Logger().error("Command {} currently has no execute function", identifier);
         }
+    }
+
+    void Command::buildDocStrings()
+    {
+        docStringShort = std::format("{} - {}", identifier, shortDescription);
+        docStringLong = std::format("{} - {}", identifier, longDescription);
+        //TODO: implement
     }
 
     Command &Command::withArgument(std::unique_ptr<Argument>& arg)
     {
         arguments.push_back(std::move(arg));
+        return *this;
+    }
+
+    Command &Command::withExecutionFunc(std::unique_ptr<std::function<void()>> actionPtr)
+    {
+        executePtr = std::move(actionPtr);
         return *this;
     }
 
