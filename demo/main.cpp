@@ -3,6 +3,7 @@
 #include "commands/command.h"
 #include <memory>
 #include <iostream>
+#include <commands/command_tree.h>
 
 using namespace cli::logging;
 
@@ -68,6 +69,19 @@ void logTest(Logger& logger)
     logger.error("Failed to open file");
 }
 
+void CommandTreeTest()
+{
+    // Create a command tree
+    auto cmdTree = cli::commands::CommandTree();
+
+    // Insert commands into the tree
+    cmdTree.insert(std::make_unique<cli::commands::Command>("child1", "Child 1", "First child command", nullptr));
+    cmdTree.insert(std::make_unique<cli::commands::Command>("child2", "Child 2", "Second child command", nullptr));
+    cmdTree.insert(std::make_unique<cli::commands::Command>("subchild1", "Subchild 1", "First subchild command", nullptr), "child1");
+
+    cmdTree.print(std::cout);
+}
+
 int main(int argc, char *argv[])
 {
     using namespace cli::logging;
@@ -89,6 +103,7 @@ int main(int argc, char *argv[])
     cli::CLI().init();
 
     //printCommands();
+    CommandTreeTest();
 
     return cli::CLI().run(argc, argv);
 }
