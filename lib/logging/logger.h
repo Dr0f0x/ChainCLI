@@ -44,7 +44,7 @@ namespace cli::logging
         {
             if (lvl < minLevel)
                 return;
-            std::string formatted = std::vformat(fmt, std::make_format_args(std::forward<Args>(args)...));
+            std::string formatted = std::vformat(fmt, std::make_format_args(args...));
             logInternal(lvl, formatted);
         }
 

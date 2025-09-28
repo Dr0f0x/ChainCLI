@@ -1,5 +1,5 @@
 #pragma once
-#include "commands/Command.h"
+#include "commands/command_tree.h"
 #include "logging/logger.h"
 #include <unordered_map>
 #include <memory>
@@ -23,24 +23,24 @@ namespace cli
         CliBase() = default;
         ~CliBase() = default;
 
-        void addCommand(std::unique_ptr<commands::Command> cmd);
         commands::Command &newCommand(std::string_view id, std::string_view short_desc, std::string_view long_desc, std::unique_ptr<std::function<void()>> actionPtr);
         commands::Command &newCommand(std::string_view id, std::unique_ptr<std::function<void()>> actionPtr);
         commands::Command &newCommand(std::string_view id);
 
-        commands::Command *getCommand(std::string_view id) const;
-        std::vector<commands::Command*> getAllCommands() const;
+        [[nodiscard]] const commands::CommandTree &getCommandTree() const { return commandsTree; };
 
         void init();
         int run(int argc, char *argv[]) const;
 
-        logging::Logger &Logger() { return *logger; }
+        [[nodiscard]] logging::Logger &Logger() { return *logger; }
         void setLogger(std::unique_ptr<logging::Logger> &newLogger) { logger = std::move(newLogger); }
         void setLogger(std::unique_ptr<logging::Logger> &&newLogger) { logger = std::move(newLogger); }
 
     private:
+        int internalRun(int argc, char *argv[]) const;
+        commands::Command *locateCommand(std::vector<std::string> const& args) const;
         void globalHelp() const;
-        std::unordered_map<std::string_view, std::unique_ptr<commands::Command>> commandsMap;
+        commands::CommandTree commandsTree;
         std::unique_ptr<logging::Logger> logger = std::make_unique<logging::Logger>(logging::LogLevel::DEBUG);
     };
 

@@ -19,45 +19,64 @@ void other_func()
     cli::CLI().Logger().info("other command executed");
 }
 
+void exception_func()
+{
+    std::cout << "exception command called" << std::endl;
+    throw std::runtime_error("error");
+}
+
 void initCommands()
 {
-    // create own command
-    std::string text = "Run something";
-    auto helpCmd = std::make_unique<cli::commands::Command>("run", text, "Run something long", std::make_unique<std::function<void()>>(command_func));
-    cli::CLI().addCommand(std::move(helpCmd));
-
     // use newCommand helper
     cli::CLI().newCommand("other", "other short", "other long", std::make_unique<std::function<void()>>(other_func));
 
     // use step by step new commands
-    cli::CLI().newCommand("run2", std::make_unique<std::function<void()>>(other_func)).withShortDescription("run2 short").withLongDescription("run2 long");
+    cli::CLI().newCommand("run2", std::make_unique<std::function<void()>>(other_func))
+        .withShortDescription("run2 short")
+        .withLongDescription("run2 long");
 
-    auto arg2 = std::make_unique<cli::commands::Argument>("arg2");
-    auto &arg = *arg2;
-    arg.withShortName("-a2")
+    auto arg2 = cli::commands::Argument("arg2");
+    arg2.withShortName("-a2")
         .withUsageComment("second argument")
         .withRequired(false);
 
-    cli::CLI().newCommand("other2").withShortDescription("other2 short").withLongDescription("other2 long").withExecutionFunc(std::make_unique<std::function<void()>>(other_func)).withArgument(std::make_unique<cli::commands::Argument>("arg1", "-a1", "first argument", true)).withArgument(std::move(arg2));
+    auto testcmdSub = cli::commands::Command("subchild1");
+    testcmdSub.withShortDescription("Subchild 1")
+    .withLongDescription("First subchild command")
+    .withExecutionFunc(std::function<void()>(exception_func));
+
+    auto& otherCmd = cli::CLI().newCommand("other2")
+        .withShortDescription("other2 short")
+        .withLongDescription("other2 long")
+        .withExecutionFunc(std::function<void()>(exception_func))
+        .withArgument(cli::commands::Argument("arg1", "-a1", "first argument", true))
+        .withArgument(arg2);
+
+    otherCmd.withSubCommand(testcmdSub);
+
+    auto testcmd = cli::commands::Command("testchild1", "testSubchild 2", "First subchild command", nullptr);
+    //testcmd.withSubCommand(testcmdSub);
 }
 
 void printCommands()
 {
     std::cout << "Available commands:\n";
-    for (const auto &cmdPtr : cli::CLI().getAllCommands())
-    {
-        if (cmdPtr)
+
+    auto &commandsTree = cli::CLI().getCommandTree();
+
+    commandsTree.forEachCommand(
+        [](cli::commands::Command const &cmd)
         {
-            std::cout << "  " << *cmdPtr << "\n"; // relies on Command::operator<<
+            std::cout << "  " << cmd << "\n"; // relies on Command::operator<<
             std::cout << "---------\n";
-            std::cout << cmdPtr->getDocStringLong() << "\n";
+            std::cout << cmd.getDocStringLong() << "\n";
             std::cout << "---------\n";
-            std::cout << cmdPtr->getDocStringShort() << "\n\n";
-        }
-    }
+            std::cout << cmd.getDocStringShort() << "\n\n";
+        });
+    commandsTree.print(std::cout);
 }
 
-void logTest(Logger& logger)
+void logTest(Logger &logger)
 {
     // Log messages at different levels
     logger.trace("most detailed contains internal logs of the library");
@@ -102,8 +121,7 @@ int main(int argc, char *argv[])
 
     cli::CLI().init();
 
-    //printCommands();
-    CommandTreeTest();
+    printCommands();
 
     return cli::CLI().run(argc, argv);
 }

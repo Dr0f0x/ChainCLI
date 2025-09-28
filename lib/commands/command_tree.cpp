@@ -9,7 +9,17 @@ namespace cli::commands
     void CommandTree::Node::insertChild(std::unique_ptr<Command> cmd)
     {
         auto id = std::string(cmd->getIdentifier());
-        children.try_emplace(id, std::make_unique<Node>(std::move(cmd)));
+        auto nodePtr = std::make_unique<Node>(std::move(cmd));
+        auto rawNodePtr = nodePtr.get();
+
+        // used by commands in the tree to register subcommands
+        nodePtr->command->setSubCommandCallback(std::make_unique<std::function<void(std::unique_ptr<Command>)>>(
+            [rawNodePtr](std::unique_ptr<Command> subCommandPtr)
+            {
+                rawNodePtr->insertChild(std::move(subCommandPtr));
+            }));
+
+        children.try_emplace(id, std::move(nodePtr));
     }
 
     CommandTree::Node *CommandTree::Node::getChild(std::string_view id)
@@ -27,9 +37,15 @@ namespace cli::commands
     CommandTree::CommandTree()
     {
         root = std::make_unique<Node>(std::make_unique<Command>("root", "Root command", "The root command", nullptr));
+        // used by commands in the tree to register subcommands
+        root->command->setSubCommandCallback(std::make_unique<std::function<void(std::unique_ptr<Command>)>>(
+            [this](std::unique_ptr<Command> subCommandPtr)
+            {
+                this->root->insertChild(std::move(subCommandPtr));
+            }));
     };
 
-    Command* CommandTree::findRecursive(const Node* node)
+    Command *CommandTree::findRecursive(const Node *node)
     {
         return node->command.get();
     }
@@ -39,16 +55,16 @@ namespace cli::commands
         return node;
     }
 
-    void CommandTree::print(std::ostream& os, int indent) const
+    void CommandTree::print(std::ostream &os, int indent) const
     {
-        for (auto const& [id, node] : root->getChildren())
+        for (auto const &[id, node] : root->getChildren())
             printRecursive(os, node.get(), indent);
     }
 
     void CommandTree::printRecursive(std::ostream &os, const Node *node, int indent)
     {
         os << std::string(indent, ' ') << "- " << node->command->getIdentifier() << "\n";
-        for (auto& [_, child] : node->children)
+        for (auto &[_, child] : node->children)
             printRecursive(os, child.get(), indent + 2);
     }
 

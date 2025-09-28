@@ -56,7 +56,7 @@ namespace cli::commands
         return *this;
     }
 
-    Command &Command::withArgument(std::unique_ptr<Argument> &&arg)
+    Command &Command::withArgument(std::unique_ptr<Argument> arg)
     {
         arguments.push_back(std::move(arg));
         return *this;
@@ -65,6 +65,17 @@ namespace cli::commands
     Command &Command::withExecutionFunc(std::unique_ptr<std::function<void()>> actionPtr)
     {
         executePtr = std::move(actionPtr);
+        return *this;
+    }
+
+    Command &Command::withSubCommand(std::unique_ptr<Command> subCommandPtr)
+    {
+        if( subCommandCallBack){
+            (*subCommandCallBack)(std::move(subCommandPtr));
+        }
+        else{
+            throw MalformedCommandException(*this, " sub command callback is not set (the command was not added to a commandTree yet which is needed to add subCommands)");
+        }
         return *this;
     }
 
@@ -85,6 +96,15 @@ namespace cli::commands
 
         out << "])";
         return out;
+    }
+
+    std::string MalformedCommandException::buildMessage(const Command &cmd, const std::string &msg)
+    {
+        std::ostringstream oss;
+        oss << "Malformed Command: " << cmd.getIdentifier();
+        if (!msg.empty())
+            oss << " - " << msg;
+        return oss.str();
     }
 
 } // namespace cli::commands

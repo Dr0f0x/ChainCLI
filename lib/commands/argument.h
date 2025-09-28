@@ -14,6 +14,10 @@ namespace cli::commands
         explicit constexpr Argument(std::string_view name)
             : name(name), shortName(""), usageComment("") {}
 
+        // Movable
+        Argument(Argument &&) noexcept = default;
+        Argument &operator=(Argument &&) noexcept = default;
+
         [[nodiscard]] constexpr std::string_view getName() const noexcept { return name; }
         [[nodiscard]] constexpr std::string_view getShortName() const noexcept { return shortName; }
         [[nodiscard]] constexpr std::string_view getUsageComment() const noexcept { return usageComment; }

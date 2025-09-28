@@ -68,3 +68,20 @@ Options:
 
 
 USE TREE for commands
+
+TODO properly define dll api with
+#pragma once
+
+#if defined(_WIN32) || defined(_WIN64)
+  #ifdef BUILD_MY_DLL      // Defined when building the DLL
+    #define MY_DLL_API __declspec(dllexport)
+  #else                    // Defined when consuming the DLL
+    #define MY_DLL_API __declspec(dllimport)
+  #endif
+#else
+  #if defined(BUILD_MY_DLL)
+    #define MY_DLL_API __attribute__((visibility("default")))
+  #else
+    #define MY_DLL_API
+  #endif
+#endif

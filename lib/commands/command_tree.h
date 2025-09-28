@@ -62,12 +62,12 @@ namespace cli::commands
             }
 
             auto id = std::string(cmd->getIdentifier());
-            parent->children.try_emplace(id, std::make_unique<Node>(std::move(cmd)));
+            parent->insertChild(std::move(cmd));
         }
         void insert(std::unique_ptr<Command> cmd) // insert at root
         {
             auto id = std::string(cmd->getIdentifier());
-            root->children.try_emplace(id, std::make_unique<Node>(std::move(cmd)));
+            root->insertChild(std::move(cmd));
         }
 
         // Lookup via identifier chain
@@ -84,10 +84,20 @@ namespace cli::commands
             return findNodeRecursive(root.get(), std::forward<Ids>(ids)...);
         }
 
+        // Iterate over all commands in the tree (DFS)
+        void forEachCommand(const std::function<void(Command &)> &func) const
+        {
+            if (root)
+            {
+                forEachCommandRecursive(root.get(), func);
+            }
+        }
+
         // Print tree
         void print(std::ostream &os, int indent = 0) const;
-        Node* getRoot() { return root.get(); }
-        Command* getRootCommand() { return root->command.get(); }
+        Node *getRoot() { return root.get(); }
+        const Node *getRoot() const { return root.get(); }
+        Command *getRootCommand() { return root->command.get(); }
 
     private:
         std::unique_ptr<Node> root;
@@ -132,6 +142,19 @@ namespace cli::commands
             return findNodeRecursive(child, std::forward<Ids>(rest)...);
         }
         static Node *findNodeRecursive(Node *node);
+
+        // Recursive DFS helper
+        static void forEachCommandRecursive(const Node *node, const std::function<void(Command &)> &func)
+        {
+            if (node->command)
+            {
+                func(*node->command); // call user-provided function
+            }
+            for (const auto &[key, child] : node->children)
+            {
+                forEachCommandRecursive(child.get(), func);
+            }
+        }
 
         // Pretty-print helper
         static void printRecursive(std::ostream &os, const Node *node, int indent);
