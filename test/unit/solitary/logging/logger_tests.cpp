@@ -116,7 +116,7 @@ TEST_F(LoggerTestSolitary, RemoveAllHandlersPreventsEmits)
 
 struct LoggerMethodCase {
     LogLevel level;
-    std::function<void(const Logger&, const std::string&)> method;
+    std::function<void(Logger&, const std::string&)> method;
     const char* msg;
 };
 

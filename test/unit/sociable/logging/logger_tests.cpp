@@ -62,7 +62,7 @@ TEST_F(LoggerTestSociable, ConvenienceMethodsUsesCorrectLevel)
 TEST_F(LoggerTestSociable, CorrectLevelsPassedToHandler)
 {
     Logger logger(LogLevel::TRACE);
-    logger.addHandler(std::make_unique<Handler>(out, err, std::make_unique<BasicFormatter>(),LogLevel::TRACE));
+    logger.addHandler(std::make_unique<Handler>(out, err, std::make_unique<BasicFormatter>(), LogLevel::TRACE));
 
     logger.trace("trace msg");
     std::string result = out.str() + err.str();
@@ -83,11 +83,13 @@ TEST_F(LoggerTestSociable, RemoveAllHandlersPreventsEmits)
 struct LoggerMethodCase
 {
     LogLevel level;
-    std::function<void(const Logger &, const std::string &)> method;
+    std::function<void(Logger &, const std::string &)> method;
     const char *msg;
 };
 
-class LoggerConvenienceParamTest : public ::testing::TestWithParam<LoggerMethodCase> {};
+class LoggerConvenienceParamTest : public ::testing::TestWithParam<LoggerMethodCase>
+{
+};
 
 TEST_P(LoggerConvenienceParamTest, ConvenienceMethodCallsHandlerWithCorrectLevel)
 {
@@ -106,15 +108,15 @@ INSTANTIATE_TEST_SUITE_P(
     DataTestsSociable,
     LoggerConvenienceParamTest,
     ::testing::Values(
-        LoggerMethodCase{LogLevel::TRACE, [](const Logger &l, const std::string &m)
+        LoggerMethodCase{LogLevel::TRACE, [](auto &l, const std::string &m)
                          { l.trace(m); }, "trace message"},
-        LoggerMethodCase{LogLevel::DEBUG, [](const Logger &l, const std::string &m)
+        LoggerMethodCase{LogLevel::DEBUG, [](auto &l, const std::string &m)
                          { l.debug(m); }, "debug message"},
-        LoggerMethodCase{LogLevel::INFO, [](const Logger &l, const std::string &m)
+        LoggerMethodCase{LogLevel::INFO, [](auto &l, const std::string &m)
                          { l.info(m); }, "info message"},
-        LoggerMethodCase{LogLevel::WARNING, [](const Logger &l, const std::string &m)
+        LoggerMethodCase{LogLevel::WARNING, [](auto &l, const std::string &m)
                          { l.warning(m); }, "warning message"},
-        LoggerMethodCase{LogLevel::ERROR, [](const Logger &l, const std::string &m)
+        LoggerMethodCase{LogLevel::ERROR, [](auto &l, const std::string &m)
                          { l.error(m); }, "error message"}));
 
 struct LoggerLevelCase

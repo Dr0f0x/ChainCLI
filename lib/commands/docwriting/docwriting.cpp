@@ -47,7 +47,7 @@ namespace cli::commands::docwriting
                 builder << argPtr->getArgDocString() << " ";
             }
         }
-        builder << "\n\n" << command.getShortDescription();
+        builder << "\n" << command.getShortDescription();
         return builder.str();
     }
 

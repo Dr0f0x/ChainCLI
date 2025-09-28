@@ -31,7 +31,7 @@ namespace cli
         commands::Command *getCommand(std::string_view id) const;
         std::vector<commands::Command*> getAllCommands() const;
 
-        void init() const;
+        void init();
         int run(int argc, char *argv[]) const;
 
         logging::Logger &Logger() { return *logger; }
@@ -39,6 +39,7 @@ namespace cli
         void setLogger(std::unique_ptr<logging::Logger> &&newLogger) { logger = std::move(newLogger); }
 
     private:
+        void globalHelp() const;
         std::unordered_map<std::string_view, std::unique_ptr<commands::Command>> commandsMap;
         std::unique_ptr<logging::Logger> logger = std::make_unique<logging::Logger>(logging::LogLevel::DEBUG);
     };

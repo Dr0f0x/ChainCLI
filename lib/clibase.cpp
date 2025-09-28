@@ -52,9 +52,14 @@ namespace cli {
         return allCommands;
     }
 
-    void CliBase::init() const
+    void CliBase::init()
     {
-        //TODO built all doc strings for commands or make it a setting to use prebuilt or not
+        newCommand("--help", "Show help", "Show help for all commands or a specific command", std::make_unique<std::function<void()>>([this]() { this->globalHelp(); }));
+        for (const auto& [id, cmdPtr] : commandsMap)
+        {
+            if (cmdPtr)
+                cmdPtr->buildDocStrings();
+        }
     }
 
     int CliBase::run(int argc, char *argv[]) const
@@ -74,7 +79,21 @@ namespace cli {
             cmd->execute();
         } else {
             std::cout << "Unknown command: " << args[0] << "\n";
+            globalHelp();
         }
         return 0;
+    }
+
+    void CliBase::globalHelp() const
+    {
+        logger->info() << "USAGE:\n\n";
+        for (const auto& [id, cmdPtr] : commandsMap)
+        {
+            if (cmdPtr)
+            {
+                logger->info() << cmdPtr->getDocStringShort() << "\n\n";
+            }
+        }
+        logger->info() << "Use --help <command> to get more information about a specific command" << std::endl;
     }
 }

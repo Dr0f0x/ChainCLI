@@ -1,22 +1,27 @@
 #include "command.h"
 #include "docwriting/docwriting.h"
 #include <iostream>
+#include <format>
 #include "clibase.h"
 
 namespace cli::commands
 {
     std::string_view Command::getDocStringShort() const
     {
-        if (docStringShort.empty()) {
-            throw DocsNotBuildException("Short documentation string not built.");
+        if (docStringShort.empty())
+        {
+            throw DocsNotBuildException(
+                std::format("Short documentation string not built for command '{}'.", identifier));
         }
         return docStringShort;
     }
 
     std::string_view Command::getDocStringLong() const
     {
-        if (docStringLong.empty()) {
-            throw DocsNotBuildException("Long documentation string not built.");
+        if (docStringLong.empty())
+        {
+            throw DocsNotBuildException(
+                std::format("Long documentation string not built for command '{}'.", identifier));
         }
         return docStringLong;
     }
@@ -51,7 +56,7 @@ namespace cli::commands
         return *this;
     }
 
-    Command &Command::withArgument(std::unique_ptr<Argument>&& arg)
+    Command &Command::withArgument(std::unique_ptr<Argument> &&arg)
     {
         arguments.push_back(std::move(arg));
         return *this;

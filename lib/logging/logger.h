@@ -1,10 +1,27 @@
 #pragma once
 #include "handler.h"
 #include <vector>
+#include <unordered_map>
+#include <functional>
 #include <memory>
 
 namespace cli::logging
 {
+    class LogStreamBuf : public std::stringbuf
+    {
+    public:
+        LogStreamBuf(std::shared_ptr<std::function<void(LogLevel, const std::string &)>> logFuncPtr, LogLevel lvl, LogLevel lvlMin)
+            : logFuncPtr(logFuncPtr), lvl(lvl), minLevel(lvlMin) {}
+        int sync() override;
+        
+        void setMinLevel(LogLevel lvlMin) { minLevel = lvlMin; }
+
+    private:
+        std::shared_ptr<std::function<void(LogLevel, const std::string &)>> logFuncPtr;
+        LogLevel lvl;
+        LogLevel minLevel;
+    };
+
     class Logger
     {
     public:
@@ -15,9 +32,9 @@ namespace cli::logging
         Logger(Logger &&) = default;
         Logger &operator=(Logger &&) = default;
 
-        explicit Logger(LogLevel lvl = LogLevel::TRACE) : minLevel(lvl) {}
+        explicit Logger(LogLevel lvl = LogLevel::TRACE);
 
-        void setLevel(LogLevel lvl) { minLevel = lvl; }
+        void setLevel(LogLevel lvl);
 
         void addHandler(std::unique_ptr<IHandler> handlerPtr);
         void removeAllHandlers() { handlers.clear(); }
@@ -33,23 +50,40 @@ namespace cli::logging
 
         // Convenience helpers
         template <typename... Args>
-        void trace(const std::string &fmt, Args &&...args) const { log(LogLevel::TRACE, fmt, std::forward<Args>(args)...); }
+        void trace(const std::string &fmt, Args &&...args) { log(LogLevel::TRACE, fmt, std::forward<Args>(args)...); }
         template <typename... Args>
-        void verbose(const std::string &fmt, Args &&...args) const { log(LogLevel::VERBOSE, fmt, std::forward<Args>(args)...); }
+        void verbose(const std::string &fmt, Args &&...args) { log(LogLevel::VERBOSE, fmt, std::forward<Args>(args)...); }
         template <typename... Args>
-        void debug(const std::string &fmt, Args &&...args) const { log(LogLevel::DEBUG, fmt, std::forward<Args>(args)...); }
+        void debug(const std::string &fmt, Args &&...args) { log(LogLevel::DEBUG, fmt, std::forward<Args>(args)...); }
         template <typename... Args>
-        void detail(const std::string &fmt, Args &&...args) const { log(LogLevel::DETAIL, fmt, std::forward<Args>(args)...); }
+        void detail(const std::string &fmt, Args &&...args) { log(LogLevel::DETAIL, fmt, std::forward<Args>(args)...); }
         template <typename... Args>
-        void info(const std::string &fmt, Args &&...args) const { log(LogLevel::INFO, fmt, std::forward<Args>(args)...); }
+        void info(const std::string &fmt, Args &&...args) { log(LogLevel::INFO, fmt, std::forward<Args>(args)...); }
         template <typename... Args>
-        void warning(const std::string &fmt, Args &&...args) const { log(LogLevel::WARNING, fmt, std::forward<Args>(args)...); }
+        void warning(const std::string &fmt, Args &&...args) { log(LogLevel::WARNING, fmt, std::forward<Args>(args)...); }
         template <typename... Args>
-        void error(const std::string &fmt, Args &&...args) const { log(LogLevel::ERROR, fmt, std::forward<Args>(args)...); }
+        void error(const std::string &fmt, Args &&...args) { log(LogLevel::ERROR, fmt, std::forward<Args>(args)...); }
+
+        std::ostream &getStream(LogLevel lvl)
+        {
+            return *streams[lvl];
+        }
+
+        std::ostream &trace() { return *streams[LogLevel::TRACE]; }
+        std::ostream &verbose() { return *streams[LogLevel::VERBOSE]; }
+        std::ostream &debug() { return *streams[LogLevel::DEBUG]; }
+        std::ostream &detail() { return *streams[LogLevel::DETAIL]; }
+        std::ostream &info() { return *streams[LogLevel::INFO]; }
+        std::ostream &warning() { return *streams[LogLevel::WARNING]; }
+        std::ostream &error() { return *streams[LogLevel::ERROR]; }
 
     private:
         void logInternal(LogLevel lvl, const std::string &fmt) const;
         LogLevel minLevel;
         std::vector<std::unique_ptr<IHandler>> handlers;
+
+        // Per-level stream buffers & streams
+        std::unordered_map<LogLevel, std::unique_ptr<LogStreamBuf>> buffers;
+        std::unordered_map<LogLevel, std::unique_ptr<std::ostream>> streams;
     };
 }

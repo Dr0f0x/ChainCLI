@@ -5,6 +5,6 @@
 
 namespace cli{
 
-    std::vector<std::string> turnArgsToVector(int argc, char* argv[]) ;
+    std::vector<std::string> turnArgsToVector(int argc, char* argv[]);
 
 } // namespace cli
