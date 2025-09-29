@@ -157,6 +157,6 @@ namespace cli::commands
         }
 
         // Pretty-print helper
-        static void printRecursive(std::ostream &os, const Node *node, int indent);
+        static void printRecursive(std::ostream &os, const Node *node, bool last, int indent);
     };
 } // namespace cli::commands

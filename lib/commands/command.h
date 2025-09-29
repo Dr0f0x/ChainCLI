@@ -7,12 +7,6 @@
 
 namespace cli::commands
 {
-    class DocsNotBuildException : public std::runtime_error
-    {
-    public:
-        using runtime_error::runtime_error;
-    };
-
     class Command
     {
         friend std::ostream &operator<<(std::ostream &out, const Command &cmd);

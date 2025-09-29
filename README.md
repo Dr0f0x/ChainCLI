@@ -66,9 +66,6 @@ for each arg a usage comment that is to be used in Options section, like
 Options:
     -h --help Usage comment here
 
-
-USE TREE for commands
-
 TODO properly define dll api with
 #pragma once
 

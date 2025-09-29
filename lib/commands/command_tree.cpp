@@ -36,7 +36,7 @@ namespace cli::commands
 
     CommandTree::CommandTree()
     {
-        root = std::make_unique<Node>(std::make_unique<Command>("root", "Root command", "The root command", nullptr));
+        root = std::make_unique<Node>(std::make_unique<Command>("root"));
         // used by commands in the tree to register subcommands
         root->command->setSubCommandCallback(std::make_unique<std::function<void(std::unique_ptr<Command>)>>(
             [this](std::unique_ptr<Command> subCommandPtr)
@@ -57,15 +57,28 @@ namespace cli::commands
 
     void CommandTree::print(std::ostream &os, int indent) const
     {
-        for (auto const &[id, node] : root->getChildren())
-            printRecursive(os, node.get(), indent);
+        printRecursive(os, root.get(), false, indent);
     }
 
-    void CommandTree::printRecursive(std::ostream &os, const Node *node, int indent)
+    void CommandTree::printRecursive(std::ostream &os, const Node *node, bool last, int indentStep)
     {
-        os << std::string(indent, ' ') << "- " << node->command->getIdentifier() << "\n";
-        for (auto &[_, child] : node->children)
-            printRecursive(os, child.get(), indent + 2);
+        // Print indentation with vertical guides
+        for (size_t i = 0; i < indentStep; ++i)
+        {
+            if (i + 1 == indentStep)
+                os << (last? "`-- " : "|-- ");
+            else
+                os << "|   ";
+        }
+
+        os << node->command->getIdentifier() << "\n";
+
+        // Iterate over children
+        for (auto it = node->children.begin(); it != node->children.end(); ++it)
+        {
+            bool isLast = std::next(it) == node->children.end();
+            printRecursive(os, it->second.get(), isLast, indentStep + 1);
+        }
     }
 
     std::string CommandNotFoundException::buildMessage(const std::string &id, const std::vector<std::string> &chain)

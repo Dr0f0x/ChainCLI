@@ -1,4 +1,4 @@
-#include "clibase.h"
+#include "cli_base.h"
 #include "utils.h"
 #include "logging/logger.h"
 #include "commands/command.h"
@@ -11,6 +11,11 @@ namespace cli
     {
         std::cout << "[cli] " << msg << std::endl;
         parsing::test();
+    }
+
+    CliBase::CliBase()
+    {
+        configuration = CliConfig();
     }
 
     commands::Command &CliBase::newCommand(std::string_view id, std::string_view short_desc, std::string_view long_desc, std::unique_ptr<std::function<void()>> actionPtr)
@@ -35,6 +40,10 @@ namespace cli
     {
         // TODO should be done over a flag for the root command
         // newCommand("--help", "Show help", "Show help for all commands or a specific command", std::make_unique<std::function<void()>>([this](){ this->globalHelp(); }));
+        //configure root command
+        auto root = commandsTree.getRoot();
+        root->command = std::make_unique<cli::commands::Command>(configuration.executableName);
+
         commandsTree.forEachCommand(
             [](commands::Command &cmd)
             {
@@ -51,8 +60,8 @@ namespace cli
         catch (const std::exception &e)
         {
             logger->error() << "terminate called after throwing an instance of '"
-                      << typeid(e).name() << "'\n"
-                      << "  what(): " << e.what() << std::endl;
+                            << typeid(e).name() << "'\n"
+                            << "  what(): " << e.what() << std::endl;
             std::abort(); // simulate abnormal termination
         }
     }
@@ -60,9 +69,6 @@ namespace cli
     int CliBase::internalRun(int argc, char *argv[]) const
     {
         auto args = turnArgsToVector(argc, argv);
-
-        for (const auto &arg : args)
-            std::cout << arg << "\n";
 
         if (args.empty())
         {
@@ -73,6 +79,9 @@ namespace cli
         if (const auto *cmd = locateCommand(args))
         {
             logger->info("Executing command: {}", cmd->getIdentifier());
+            logger->detail("Arguments passed to command");
+            printVector(args, logger->detail());
+            logger->detail() << std::flush;
             cmd->execute();
         }
         else
@@ -83,11 +92,13 @@ namespace cli
         return 0;
     }
 
-    commands::Command *CliBase::locateCommand(std::vector<std::string> const &args) const
+    //returns the found command and modifies args to only contain the values that werent consumed in the tree traversal
+    commands::Command *CliBase::locateCommand(std::vector<std::string> &args) const
     {
         const commands::CommandTree::Node *node = commandsTree.getRoot();
 
         commands::Command *cmd = nullptr;
+        size_t consumed = 0;
 
         for (const auto &arg : args)
         {
@@ -95,12 +106,14 @@ namespace cli
             const auto *child = node->getChild(arg);
             if (!child)
             {
-                return nullptr;
+                break;
             }
 
             node = child;
             cmd = node->command.get();
+            ++consumed;
         }
+        args.erase(args.begin(), args.begin() + consumed);
         return cmd;
     }
 
@@ -112,6 +125,8 @@ namespace cli
         {
             logger->info() << cmd.getDocStringShort() << "\n\n";
         };
+
+        commandsTree.forEachCommand(printCmd);
 
         logger->info() << "Use --help <command> to get more information about a specific command" << std::endl;
     }

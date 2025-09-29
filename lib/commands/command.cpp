@@ -2,7 +2,7 @@
 #include "docwriting/docwriting.h"
 #include <iostream>
 #include <format>
-#include "clibase.h"
+#include "cli_base.h"
 
 namespace cli::commands
 {
@@ -10,7 +10,7 @@ namespace cli::commands
     {
         if (docStringShort.empty())
         {
-            throw DocsNotBuildException(
+            throw docwriting::DocsNotBuildException(
                 std::format("Short documentation string not built for command '{}'.", identifier));
         }
         return docStringShort;
@@ -20,7 +20,7 @@ namespace cli::commands
     {
         if (docStringLong.empty())
         {
-            throw DocsNotBuildException(
+            throw docwriting::DocsNotBuildException(
                 std::format("Long documentation string not built for command '{}'.", identifier));
         }
         return docStringLong;

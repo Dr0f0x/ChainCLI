@@ -115,14 +115,14 @@ TEST_F(HandlerTestSolitary, StylingAppliedToFormattedMessage)
     handler.setStylingEnabled(true);
     handler.setStyleMap(std::make_shared<LogStyleMap>(styles));
 
-    LogRecord infoRecord(LogLevel::INFO, "info-msg");
+    LogRecord detailRecord(LogLevel::DETAIL, "detail-msg");
 
-    EXPECT_CALL(*mockFormatterRawPtr, format(Ref(infoRecord)))
+    EXPECT_CALL(*mockFormatterRawPtr, format(Ref(detailRecord)))
         .WillOnce(Return("FORMATTED"));
 
-    handler.emit(infoRecord);
+    handler.emit(detailRecord);
 
-    std::string expected = styles[LogLevel::INFO] + "FORMATTED" + "\o{33}[0m";
+    std::string expected = styles[LogLevel::DETAIL] + "FORMATTED" + "\o{33}[0m";
     EXPECT_EQ(out.str(), expected);
 }
 

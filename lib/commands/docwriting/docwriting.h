@@ -4,6 +4,12 @@
 
 namespace cli::commands::docwriting
 {
+    class DocsNotBuildException : public std::runtime_error
+    {
+    public:
+        using runtime_error::runtime_error;
+    };
+    
     std::string generateOptionsDocString(const Argument &argument);
 
     std::string generateArgDocString(const Argument &argument);

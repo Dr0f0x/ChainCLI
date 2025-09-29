@@ -1,4 +1,4 @@
-#include "clibase.h"
+#include "cli_base.h"
 #include "logging/logger.h"
 #include "commands/command.h"
 #include <memory>
@@ -54,8 +54,14 @@ void initCommands()
 
     otherCmd.withSubCommand(testcmdSub);
 
-    auto testcmd = cli::commands::Command("testchild1", "testSubchild 2", "First subchild command", nullptr);
+    auto testcmd = cli::commands::Command("testchild2", "testSubchild 2", "Second subchild command", nullptr);
+    otherCmd.withSubCommand(testcmd);
     //testcmd.withSubCommand(testcmdSub);
+}
+
+void configureCLI(){
+    auto& config = cli::CLI().getConfig();
+    config.executableName = "cliLibDemo";
 }
 
 void printCommands()
@@ -74,6 +80,7 @@ void printCommands()
             std::cout << cmd.getDocStringShort() << "\n\n";
         });
     commandsTree.print(std::cout);
+    std::cout << "\n";
 }
 
 void logTest(Logger &logger)
@@ -118,6 +125,7 @@ int main(int argc, char *argv[])
     logTest(logger);
 
     initCommands();
+    configureCLI();
 
     cli::CLI().init();
 
