@@ -18,8 +18,8 @@ namespace cli::logging
             {TRACE,     "\o{33}[90m"},  // gray
             {VERBOSE,   "\o{33}[90m"},  // gray
             {DEBUG,     "\o{33}[36m"},  // cyan
-            {DETAIL,    "\o{33}[32m"},  // green
-            // INFO uses plain grey text (no color) 
+            // Info uses plain grey text (no color) 
+            {SUCCESS,   "\o{33}[32m"},  // green
             {WARNING,   "\o{33}[33m"},  // yellow
             {ERROR,     "\o{33}[31m"},  // red
         };

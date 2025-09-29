@@ -56,7 +56,7 @@ namespace cli::logging
         template <typename... Args>
         void debug(const std::string &fmt, Args &&...args) { log(LogLevel::DEBUG, fmt, std::forward<Args>(args)...); }
         template <typename... Args>
-        void detail(const std::string &fmt, Args &&...args) { log(LogLevel::DETAIL, fmt, std::forward<Args>(args)...); }
+        void success(const std::string &fmt, Args &&...args) { log(LogLevel::SUCCESS, fmt, std::forward<Args>(args)...); }
         template <typename... Args>
         void info(const std::string &fmt, Args &&...args) { log(LogLevel::INFO, fmt, std::forward<Args>(args)...); }
         template <typename... Args>
@@ -72,7 +72,7 @@ namespace cli::logging
         std::ostream &trace() { return *streams[LogLevel::TRACE]; }
         std::ostream &verbose() { return *streams[LogLevel::VERBOSE]; }
         std::ostream &debug() { return *streams[LogLevel::DEBUG]; }
-        std::ostream &detail() { return *streams[LogLevel::DETAIL]; }
+        std::ostream &success() { return *streams[LogLevel::SUCCESS]; }
         std::ostream &info() { return *streams[LogLevel::INFO]; }
         std::ostream &warning() { return *streams[LogLevel::WARNING]; }
         std::ostream &error() { return *streams[LogLevel::ERROR]; }

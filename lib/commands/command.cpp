@@ -56,7 +56,7 @@ namespace cli::commands
         return *this;
     }
 
-    Command &Command::withArgument(std::unique_ptr<Argument> arg)
+    Command &Command::withArgument(std::unique_ptr<PositionalArgument> arg)
     {
         arguments.push_back(std::move(arg));
         return *this;

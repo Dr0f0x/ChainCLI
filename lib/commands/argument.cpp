@@ -4,36 +4,36 @@
 
 namespace cli::commands
 {
-    std::ostream &operator<<(std::ostream &out, const Argument &arg)
+    std::ostream &operator<<(std::ostream &out, const PositionalArgument &arg)
     {
         out << arg.name 
             << " (" << arg.usageComment << ")";
         return out;
     }
 
-    std::string Argument::getOptionsDocString() const
+    std::string PositionalArgument::getOptionsDocString() const
     {
         return docwriting::generateOptionsDocString(*this);
     }
 
-    std::string Argument::getArgDocString() const
+    std::string PositionalArgument::getArgDocString() const
     {
         return docwriting::generateArgDocString(*this);
     }
 
-    Argument &Argument::withShortName(std::string_view short_name)
+    PositionalArgument &PositionalArgument::withShortName(std::string_view short_name)
     {
         shortName = short_name;
         return *this;
     }
 
-    Argument &Argument::withUsageComment(std::string_view usage_comment)
+    PositionalArgument &PositionalArgument::withUsageComment(std::string_view usage_comment)
     {
         usageComment = usage_comment;
         return *this;
     }
 
-    Argument &Argument::withRequired(bool req)
+    PositionalArgument &PositionalArgument::withRequired(bool req)
     {
         required = req;
         return *this;

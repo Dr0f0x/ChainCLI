@@ -35,7 +35,7 @@ void initCommands()
         .withShortDescription("run2 short")
         .withLongDescription("run2 long");
 
-    auto arg2 = cli::commands::Argument("arg2");
+    auto arg2 = cli::commands::PositionalArgument("arg2", typeid(int));
     arg2.withShortName("-a2")
         .withUsageComment("second argument")
         .withRequired(false);
@@ -49,7 +49,7 @@ void initCommands()
         .withShortDescription("other2 short")
         .withLongDescription("other2 long")
         .withExecutionFunc(std::function<void()>(exception_func))
-        .withArgument(cli::commands::Argument("arg1", "-a1", "first argument", true))
+        .withArgument(cli::commands::newArgument<int>("arg1", "-a1", "first argument", true))
         .withArgument(arg2);
 
     otherCmd.withSubCommand(testcmdSub);
@@ -79,7 +79,7 @@ void printCommands()
             std::cout << "---------\n";
             std::cout << cmd.getDocStringShort() << "\n\n";
         });
-    commandsTree.print(std::cout);
+    commandsTree.print(cli::CLI().Logger().info());
     std::cout << "\n";
 }
 
@@ -89,7 +89,7 @@ void logTest(Logger &logger)
     logger.trace("most detailed contains internal logs of the library");
     logger.verbose("very detailed information for inspection/development!");
     logger.debug("This is a debug message");
-    logger.detail("more detailed than info!");
+    logger.success("more detailed than info!");
     logger.info("Application started");
     logger.warning("Low disk space warning");
     logger.error("Failed to open file");

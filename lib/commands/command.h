@@ -30,7 +30,7 @@ namespace cli::commands
         [[nodiscard]] constexpr std::string_view getIdentifier() const noexcept { return identifier; }
         [[nodiscard]] constexpr std::string_view getShortDescription() const noexcept { return shortDescription; }
         [[nodiscard]] constexpr std::string_view getLongDescription() const noexcept { return longDescription; }
-        [[nodiscard]] const std::vector<std::unique_ptr<Argument>> &getArguments() const noexcept { return arguments; }
+        [[nodiscard]] const std::vector<std::unique_ptr<PositionalArgument>> &getArguments() const noexcept { return arguments; }
 
         [[nodiscard]] std::string_view getDocStringShort() const;
         [[nodiscard]] std::string_view getDocStringLong() const;
@@ -49,9 +49,9 @@ namespace cli::commands
         Command &withShortDescription(std::string_view desc);
         Command &withLongDescription(std::string_view desc);
 
-        Command &withArgument(std::unique_ptr<Argument> arg);
-        Command &withArgument(Argument &&arg) { return withArgument(std::make_unique<Argument>(std::move(arg))); }
-        Command &withArgument(Argument &arg) { return withArgument(std::make_unique<Argument>(std::move(arg))); }
+        Command &withArgument(std::unique_ptr<PositionalArgument> arg);
+        Command &withArgument(PositionalArgument &&arg) { return withArgument(std::make_unique<PositionalArgument>(std::move(arg))); }
+        Command &withArgument(PositionalArgument &arg) { return withArgument(std::make_unique<PositionalArgument>(std::move(arg))); }
 
         Command &withExecutionFunc(std::unique_ptr<std::function<void()>> actionPtr);
         Command &withExecutionFunc(std::function<void()> &&actionPtr) { return withExecutionFunc(std::make_unique<std::function<void()>>(std::move(actionPtr))); }
@@ -66,7 +66,7 @@ namespace cli::commands
         std::string shortDescription;
         std::string longDescription;
         std::unique_ptr<std::function<void()>> executePtr;
-        std::vector<std::unique_ptr<Argument>> arguments;
+        std::vector<std::unique_ptr<PositionalArgument>> arguments;
 
         std::string docStringShort; // cached short doc string
         std::string docStringLong;  // cached long doc string
@@ -88,28 +88,3 @@ namespace cli::commands
         static std::string buildMessage(const Command &cmd, const std::string &msg);
     };
 } // namespace cli::commands
-
-template <>
-struct std::formatter<cli::commands::Command> : std::formatter<std::string>
-{
-    auto format(const cli::commands::Command &cmd, format_context &ctx) const
-    {
-        std::string argsStr;
-        auto &args = cmd.getArguments();
-        for (size_t i = 0; i < args.size(); ++i)
-        {
-            if (args[i])
-                argsStr += std::format("{}", *(args[i])); // requires operator<< or std::formatter for Argument
-            if (i + 1 < args.size())
-                argsStr += ", ";
-        }
-
-        return formatter<string>::format(
-            std::format("Command - {} ( short Description: {} ; long Description: {} ; arguments: [{}] )",
-                        cmd.getIdentifier(),
-                        cmd.getShortDescription(),
-                        cmd.getLongDescription(),
-                        argsStr),
-            ctx);
-    }
-};

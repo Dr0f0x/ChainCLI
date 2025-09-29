@@ -9,8 +9,8 @@ namespace cli::logging
         TRACE = 0, //most detailed, prints internal logs of the library as well
         VERBOSE,   //very detailed information for inspection/development
         DEBUG,     //general debug information
-        DETAIL,    // more detailed than info, less than debug
         INFO,      //general information
+        SUCCESS,    //report a success
         WARNING,   //something unwanted happened, but the program can handle it
         ERROR,     //a serious error occurred/ something failed
     };
@@ -26,7 +26,7 @@ namespace cli::logging
             return "VERBOSE";
         case DEBUG:
             return "DEBUG";
-        case DETAIL:
+        case SUCCESS:
             return "DETAIL";
         case INFO:
             return "INFO";

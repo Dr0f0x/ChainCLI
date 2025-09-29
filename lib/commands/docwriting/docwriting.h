@@ -10,9 +10,9 @@ namespace cli::commands::docwriting
         using runtime_error::runtime_error;
     };
     
-    std::string generateOptionsDocString(const Argument &argument);
+    std::string generateOptionsDocString(const PositionalArgument &argument);
 
-    std::string generateArgDocString(const Argument &argument);
+    std::string generateArgDocString(const PositionalArgument &argument);
 
     std::string generateLongDocString(const Command &command);
 

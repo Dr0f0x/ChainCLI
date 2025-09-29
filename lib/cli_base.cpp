@@ -40,7 +40,7 @@ namespace cli
     {
         // TODO should be done over a flag for the root command
         // newCommand("--help", "Show help", "Show help for all commands or a specific command", std::make_unique<std::function<void()>>([this](){ this->globalHelp(); }));
-        //configure root command
+        // configure root command
         auto root = commandsTree.getRoot();
         root->command = std::make_unique<cli::commands::Command>(configuration.executableName);
 
@@ -78,10 +78,19 @@ namespace cli
 
         if (const auto *cmd = locateCommand(args))
         {
-            logger->info("Executing command: {}", cmd->getIdentifier());
-            logger->detail("Arguments passed to command");
-            printVector(args, logger->detail());
-            logger->detail() << std::flush;
+            logger->debug("Executing command: {}", cmd->getIdentifier());
+
+            logger->info("Arguments passed to command");
+            printVector(args, logger->info());
+            logger->info() << std::flush;
+
+            auto parsed = parsing::StringParser::parseArguments(cmd->getArguments(), args);
+
+            for (const auto &elem : parsed)
+            {
+                logger->debug() << std::any_cast<int>(elem) << ", " << elem.type().name() << "\n";
+            }
+            logger->debug() << std::endl;
             cmd->execute();
         }
         else
@@ -92,7 +101,7 @@ namespace cli
         return 0;
     }
 
-    //returns the found command and modifies args to only contain the values that werent consumed in the tree traversal
+    // returns the found command and modifies args to only contain the values that werent consumed in the tree traversal
     commands::Command *CliBase::locateCommand(std::vector<std::string> &args) const
     {
         const commands::CommandTree::Node *node = commandsTree.getRoot();

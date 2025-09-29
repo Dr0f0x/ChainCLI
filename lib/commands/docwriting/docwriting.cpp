@@ -5,7 +5,7 @@
 
 namespace cli::commands::docwriting
 {
-    std::pair<char, char> getArgumentBrackets(const Argument& argument)
+    std::pair<char, char> getArgumentBrackets(const PositionalArgument& argument)
     {
         if (argument.isRequired())
             return {'<', '>'};
@@ -13,7 +13,7 @@ namespace cli::commands::docwriting
             return {'[', ']'};
     }
 
-    std::string generateOptionsDocString(const Argument &argument)
+    std::string generateOptionsDocString(const PositionalArgument &argument)
     {
         std::ostringstream builder;
         auto [inBracket, outBracket] = getArgumentBrackets(argument);
@@ -25,7 +25,7 @@ namespace cli::commands::docwriting
         return builder.str();
     }
 
-    std::string generateArgDocString(const Argument &argument)
+    std::string generateArgDocString(const PositionalArgument &argument)
     {
         std::ostringstream builder;
         auto [inBracket, outBracket] = getArgumentBrackets(argument);
