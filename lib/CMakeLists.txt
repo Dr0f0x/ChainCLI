@@ -4,6 +4,8 @@ add_library(${LIBRARY_OUTPUT_NAME}
     cli_base.h
     cli_config.h
     cli_base.h
+    cli_context.h
+    cli_context.cpp
     utils.cpp
     utils.h
 )

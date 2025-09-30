@@ -1,11 +1,11 @@
 #include <sstream>
 #include <string>
-#include <commands/argument.h>
+#include "commands/argument.h"
 #include "docwriting.h"
 
 namespace cli::commands::docwriting
 {
-    std::pair<char, char> getArgumentBrackets(const PositionalArgument& argument)
+    std::pair<char, char> getArgumentBrackets(const ArgumentBase& argument)
     {
         if (argument.isRequired())
             return {'<', '>'};
@@ -13,26 +13,26 @@ namespace cli::commands::docwriting
             return {'[', ']'};
     }
 
-    std::string generateOptionsDocString(const PositionalArgument &argument)
+    std::string generateOptionsDocString(const ArgumentBase &argument)
     {
         std::ostringstream builder;
         auto [inBracket, outBracket] = getArgumentBrackets(argument);
 
         builder << inBracket << argument.getName();
-        if (argument.hasShortName())
-            builder << "," + std::string(argument.getShortName());
+        //if (argument.hasShortName())
+        //    builder << "," + std::string(argument.getShortName());
         builder << outBracket << '\t' << argument.getUsageComment();
         return builder.str();
     }
 
-    std::string generateArgDocString(const PositionalArgument &argument)
+    std::string generateArgDocString(const ArgumentBase &argument)
     {
         std::ostringstream builder;
         auto [inBracket, outBracket] = getArgumentBrackets(argument);
 
         builder << inBracket << argument.getName();
-        if (argument.hasShortName())
-            builder << "," + std::string(argument.getShortName()) << outBracket;
+        //if (argument.hasShortName())
+        //    builder << "," + std::string(argument.getShortName()) << outBracket;
         return builder.str();
     }
 
@@ -40,6 +40,7 @@ namespace cli::commands::docwriting
     {
         std::ostringstream builder;
         builder << command.getIdentifier() << " ";
+        /*
         for (const auto &argPtr : command.getArguments())
         {
             if (argPtr)
@@ -47,6 +48,7 @@ namespace cli::commands::docwriting
                 builder << argPtr->getArgDocString() << " ";
             }
         }
+            */
         builder << "\n" << command.getShortDescription();
         return builder.str();
     }
@@ -55,6 +57,7 @@ namespace cli::commands::docwriting
     {
         std::ostringstream builder;
         builder << command.getIdentifier() << " ";
+        /*
         for (const auto &argPtr : command.getArguments())
         {
             if (argPtr)
@@ -70,6 +73,7 @@ namespace cli::commands::docwriting
                 builder << argPtr->getOptionsDocString() << "\n";
             }
         }
+        */
         return builder.str();
     }
 }// namespace cli::commands::docwriting

@@ -7,20 +7,23 @@
 
 using namespace cli::logging;
 
-void command_func()
+void command_func(const cli::CliContext &ctx)
 {
     std::cout << "command called" << std::endl;
     cli::CLI().Logger().info("run command executed");
 }
 
-void other_func()
+void other_func(const cli::CliContext &ctx)
 {
     std::cout << "other command called" << std::endl;
     cli::CLI().Logger().info("other command executed");
 }
 
-void exception_func()
+void exception_func(const cli::CliContext &ctx)
 {
+    int arg1 = ctx.getPositionalArgument<int>("arg1");
+    std::string arg2;
+    ctx.getPositionalArgument("arg1", arg2);
     std::cout << "exception command called" << std::endl;
     throw std::runtime_error("error");
 }
@@ -28,39 +31,33 @@ void exception_func()
 void initCommands()
 {
     // use newCommand helper
-    cli::CLI().newCommand("other", "other short", "other long", std::make_unique<std::function<void()>>(other_func));
+    cli::CLI().newCommand("other", "other short", "other long", std::make_unique<std::function<void(const cli::CliContext &)>>(other_func));
 
     // use step by step new commands
-    cli::CLI().newCommand("run2", std::make_unique<std::function<void()>>(other_func))
-        .withShortDescription("run2 short")
-        .withLongDescription("run2 long");
+    cli::CLI().newCommand("run2", std::make_unique<std::function<void(const cli::CliContext &)>>(other_func)).withShortDescription("run2 short").withLongDescription("run2 long");
 
-    auto arg2 = cli::commands::PositionalArgument("arg2", typeid(int));
+    auto arg2 = cli::commands::PositionalArgument<std::string>("arg2");
     arg2.withShortName("-a2")
         .withUsageComment("second argument")
         .withRequired(false);
 
     auto testcmdSub = cli::commands::Command("subchild1");
     testcmdSub.withShortDescription("Subchild 1")
-    .withLongDescription("First subchild command")
-    .withExecutionFunc(std::function<void()>(exception_func));
+        .withLongDescription("First subchild command")
+        .withExecutionFunc(exception_func);
 
-    auto& otherCmd = cli::CLI().newCommand("other2")
-        .withShortDescription("other2 short")
-        .withLongDescription("other2 long")
-        .withExecutionFunc(std::function<void()>(exception_func))
-        .withArgument(cli::commands::newArgument<int>("arg1", "-a1", "first argument", true))
-        .withArgument(arg2);
+    auto &otherCmd = cli::CLI().newCommand("other2").withShortDescription("other2 short").withLongDescription("other2 long").withExecutionFunc(std::function<void(const cli::CliContext &)>(exception_func)).withArgument(cli::commands::PositionalArgument<int>("arg1", "-a1", "first argument", true)).withArgument(arg2);
 
     otherCmd.withSubCommand(testcmdSub);
 
     auto testcmd = cli::commands::Command("testchild2", "testSubchild 2", "Second subchild command", nullptr);
     otherCmd.withSubCommand(testcmd);
-    //testcmd.withSubCommand(testcmdSub);
+    // testcmd.withSubCommand(testcmdSub);
 }
 
-void configureCLI(){
-    auto& config = cli::CLI().getConfig();
+void configureCLI()
+{
+    auto &config = cli::CLI().getConfig();
     config.executableName = "cliLibDemo";
 }
 
@@ -127,9 +124,7 @@ int main(int argc, char *argv[])
     initCommands();
     configureCLI();
 
-    cli::CLI().init();
+    // printCommands();
 
-    printCommands();
-
-    return cli::CLI().run(argc, argv);
+    RUN_WITH_TRY_CATCH(cli::CLI().run(argc, argv));
 }

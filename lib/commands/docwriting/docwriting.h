@@ -1,6 +1,6 @@
 #pragma once
-#include <commands/argument.h>
-#include <commands/command.h>
+#include "commands/argument.h"
+#include "commands/command.h"
 
 namespace cli::commands::docwriting
 {
@@ -10,9 +10,9 @@ namespace cli::commands::docwriting
         using runtime_error::runtime_error;
     };
     
-    std::string generateOptionsDocString(const PositionalArgument &argument);
+    std::string generateOptionsDocString(const ArgumentBase &argument);
 
-    std::string generateArgDocString(const PositionalArgument &argument);
+    std::string generateArgDocString(const ArgumentBase &argument);
 
     std::string generateLongDocString(const Command &command);
 

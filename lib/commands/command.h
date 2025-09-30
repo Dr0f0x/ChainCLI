@@ -4,6 +4,7 @@
 #include <memory>
 #include <string_view>
 #include "argument.h"
+#include "cli_context.h"
 
 namespace cli::commands
 {
@@ -13,7 +14,7 @@ namespace cli::commands
 
     public:
         // Constructor initializes the identifier and description
-        constexpr Command(std::string_view id, std::string_view short_desc, std::string_view long_desc, std::unique_ptr<std::function<void()>> actionPtr)
+        constexpr Command(std::string_view id, std::string_view short_desc, std::string_view long_desc, std::unique_ptr<std::function<void(const CliContext&)>> actionPtr)
             : identifier(id), shortDescription(short_desc), longDescription(long_desc), executePtr(std::move(actionPtr)) {}
         explicit constexpr Command(std::string_view id)
             : identifier(id), shortDescription(""), longDescription(""), executePtr(nullptr) {}
@@ -30,7 +31,7 @@ namespace cli::commands
         [[nodiscard]] constexpr std::string_view getIdentifier() const noexcept { return identifier; }
         [[nodiscard]] constexpr std::string_view getShortDescription() const noexcept { return shortDescription; }
         [[nodiscard]] constexpr std::string_view getLongDescription() const noexcept { return longDescription; }
-        [[nodiscard]] const std::vector<std::unique_ptr<PositionalArgument>> &getArguments() const noexcept { return arguments; }
+        [[nodiscard]] const std::vector<std::unique_ptr<ArgumentBase>> &getArguments() const noexcept { return arguments; }
 
         [[nodiscard]] std::string_view getDocStringShort() const;
         [[nodiscard]] std::string_view getDocStringLong() const;
@@ -41,7 +42,7 @@ namespace cli::commands
         virtual ~Command() = default;
 
         // try to run the passed callable
-        void execute() const;
+        void execute(const CliContext &context) const;
 
         // Generate documentation strings for the command and its arguments to avoid having to rebuilt them each time
         void buildDocStrings();
@@ -49,13 +50,26 @@ namespace cli::commands
         Command &withShortDescription(std::string_view desc);
         Command &withLongDescription(std::string_view desc);
 
-        Command &withArgument(std::unique_ptr<PositionalArgument> arg);
-        Command &withArgument(PositionalArgument &&arg) { return withArgument(std::make_unique<PositionalArgument>(std::move(arg))); }
-        Command &withArgument(PositionalArgument &arg) { return withArgument(std::make_unique<PositionalArgument>(std::move(arg))); }
+        template <typename T>
+        Command &withArgument(std::unique_ptr<PositionalArgument<T>> arg)
+        {
+            arguments.push_back(std::move(arg));
+            return *this;
+        }
+        template <typename T>
+        Command &withArgument(PositionalArgument<T> &&arg) { return withArgument(std::make_unique<PositionalArgument<T>>(std::move(arg))); }
+        template <typename T>
+        Command &withArgument(PositionalArgument<T> &arg) { return withArgument(std::make_unique<PositionalArgument<T>>(std::move(arg))); }
 
-        Command &withExecutionFunc(std::unique_ptr<std::function<void()>> actionPtr);
-        Command &withExecutionFunc(std::function<void()> &&actionPtr) { return withExecutionFunc(std::make_unique<std::function<void()>>(std::move(actionPtr))); }
-        Command &withExecutionFunc(std::function<void()> &actionPtr) { return withExecutionFunc(std::make_unique<std::function<void()>>(std::move(actionPtr))); }
+        Command &withExecutionFunc(std::unique_ptr<std::function<void(const CliContext &)>> actionPtr);
+        Command &withExecutionFunc(std::function<void(const CliContext &)> &&actionPtr)
+        {
+            return withExecutionFunc(std::make_unique<std::function<void(const CliContext &)>>(std::move(actionPtr)));
+        }
+        Command &withExecutionFunc(std::function<void(const CliContext &)> &actionPtr)
+        {
+            return withExecutionFunc(std::make_unique<std::function<void(const CliContext &)>>(std::move(actionPtr)));
+        }
 
         Command &withSubCommand(std::unique_ptr<Command> subCommandPtr);
         Command &withSubCommand(Command &&subCommand) { return withSubCommand(std::make_unique<Command>(std::move(subCommand))); }
@@ -65,8 +79,8 @@ namespace cli::commands
         const std::string identifier;
         std::string shortDescription;
         std::string longDescription;
-        std::unique_ptr<std::function<void()>> executePtr;
-        std::vector<std::unique_ptr<PositionalArgument>> arguments;
+        std::unique_ptr<std::function<void(const CliContext &)>> executePtr;
+        std::vector<std::unique_ptr<ArgumentBase>> arguments;
 
         std::string docStringShort; // cached short doc string
         std::string docStringLong;  // cached long doc string

@@ -26,11 +26,11 @@ namespace cli::commands
         return docStringLong;
     }
 
-    void Command::execute() const
+    void Command::execute(const CliContext& context) const
     {
         if (executePtr && *executePtr)
         {
-            (*executePtr)();
+            (*executePtr)(context);
         }
         else
         {
@@ -56,13 +56,7 @@ namespace cli::commands
         return *this;
     }
 
-    Command &Command::withArgument(std::unique_ptr<PositionalArgument> arg)
-    {
-        arguments.push_back(std::move(arg));
-        return *this;
-    }
-
-    Command &Command::withExecutionFunc(std::unique_ptr<std::function<void()>> actionPtr)
+    Command &Command::withExecutionFunc(std::unique_ptr<std::function<void(const CliContext&)>> actionPtr)
     {
         executePtr = std::move(actionPtr);
         return *this;
@@ -88,8 +82,8 @@ namespace cli::commands
 
         for (size_t i = 0; i < cmd.arguments.size(); ++i)
         {
-            if (cmd.arguments[i])
-                out << *(cmd.arguments[i]); // assumes Argument has operator<<
+            //if (cmd.arguments[i])
+                //out << *(cmd.arguments[i]); // assumes Argument has operator<<
             if (i + 1 < cmd.arguments.size())
                 out << ", ";
         }

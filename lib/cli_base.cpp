@@ -3,6 +3,7 @@
 #include "logging/logger.h"
 #include "commands/command.h"
 #include "parsing/parser.h"
+#include "cli_context.h"
 #include <iostream>
 
 namespace cli
@@ -18,7 +19,7 @@ namespace cli
         configuration = CliConfig();
     }
 
-    commands::Command &CliBase::newCommand(std::string_view id, std::string_view short_desc, std::string_view long_desc, std::unique_ptr<std::function<void()>> actionPtr)
+    commands::Command &CliBase::newCommand(std::string_view id, std::string_view short_desc, std::string_view long_desc, std::unique_ptr<std::function<void(const CliContext &)>> actionPtr)
     {
         auto cmd = std::make_unique<commands::Command>(id, short_desc, long_desc, std::move(actionPtr)); // default-constructed
         commands::Command &ref = *cmd;
@@ -26,7 +27,7 @@ namespace cli
         return ref;
     }
 
-    commands::Command &CliBase::newCommand(std::string_view id, std::unique_ptr<std::function<void()>> actionPtr)
+    commands::Command &CliBase::newCommand(std::string_view id, std::unique_ptr<std::function<void(const CliContext &)>> actionPtr)
     {
         return this->newCommand(id, "", "", std::move(actionPtr));
     }
@@ -38,6 +39,7 @@ namespace cli
 
     void CliBase::init()
     {
+        initialized = true;
         // TODO should be done over a flag for the root command
         // newCommand("--help", "Show help", "Show help for all commands or a specific command", std::make_unique<std::function<void()>>([this](){ this->globalHelp(); }));
         // configure root command
@@ -51,19 +53,13 @@ namespace cli
             });
     }
 
-    int CliBase::run(int argc, char *argv[]) const
+    int CliBase::run(int argc, char *argv[])
     {
-        try
+        if (!initialized)
         {
-            return internalRun(argc, argv);
+            init();
         }
-        catch (const std::exception &e)
-        {
-            logger->error() << "terminate called after throwing an instance of '"
-                            << typeid(e).name() << "'\n"
-                            << "  what(): " << e.what() << std::endl;
-            std::abort(); // simulate abnormal termination
-        }
+        return internalRun(argc, argv);
     }
 
     int CliBase::internalRun(int argc, char *argv[]) const
@@ -78,20 +74,12 @@ namespace cli
 
         if (const auto *cmd = locateCommand(args))
         {
-            logger->debug("Executing command: {}", cmd->getIdentifier());
+            logger->trace("Executing command: {}", cmd->getIdentifier());
 
-            logger->info("Arguments passed to command");
-            printVector(args, logger->info());
-            logger->info() << std::flush;
+            auto contextBuilder = cli::ContextBuilder();
 
-            auto parsed = parsing::StringParser::parseArguments(cmd->getArguments(), args);
-
-            for (const auto &elem : parsed)
-            {
-                logger->debug() << std::any_cast<int>(elem) << ", " << elem.type().name() << "\n";
-            }
-            logger->debug() << std::endl;
-            cmd->execute();
+            auto parsed = parsing::StringParser::parsePositionalArguments(cmd->getArguments(), args, contextBuilder);
+            cmd->execute(*contextBuilder.build());
         }
         else
         {

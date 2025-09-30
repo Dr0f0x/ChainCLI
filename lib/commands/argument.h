@@ -1,59 +1,112 @@
 #pragma once
 #include <ostream>
 #include <string>
+#include <any>
 #include <typeindex>
-#include <typeinfo>
+#include <string_view>
+#include "parsing/parser_utils.h"
 
 namespace cli::commands
 {
-    class PositionalArgument
+    // TODO really this should also be a templated type
+    class ArgumentBase
     {
-        friend std::ostream &operator<<(std::ostream &out, const PositionalArgument &arg);
+    public:
+        virtual ~ArgumentBase() = default;
+
+        // Movable
+        ArgumentBase(ArgumentBase &&) noexcept = default;
+        ArgumentBase &operator=(ArgumentBase &&) noexcept = default;
+
+        [[nodiscard]] constexpr std::string_view getName() const noexcept { return name; }
+        [[nodiscard]] constexpr std::string_view getUsageComment() const noexcept { return usageComment; }
+        [[nodiscard]] constexpr bool isRequired() const noexcept { return required; }
+        [[nodiscard]] std::type_index getType() const { return type; }
+
+        [[nodiscard]] virtual std::string getOptionsDocString() const = 0;
+        [[nodiscard]] virtual std::string getArgDocString() const = 0;
+
+        [[nodiscard]] virtual std::any parseToValue(const std::string &input) const = 0;
+
+    protected:
+        ArgumentBase(std::string_view name,
+                     std::string_view usage_comment,
+                     bool required,
+                     std::type_index t)
+            : name(name), usageComment(usage_comment), required(required), type(t) {}
+
+        const std::string name;
+        std::string usageComment;
+        bool required{true};
+        std::type_index type;
+    };
+
+    template <typename T>
+    class PositionalArgument : public ArgumentBase
+    {
+        friend std::ostream &operator<<(std::ostream &out, const PositionalArgument<T> &arg)
+        {
+            out << arg.name << " (" << arg.usageComment << ")";
+            return out;
+        }
 
     public:
-        constexpr PositionalArgument(std::string_view name, std::type_index t, std::string_view short_name, const std::string_view &usage_comment, bool required)
-            : name(name), shortName(short_name), usageComment(usage_comment), required(required), type(t) {}
-        explicit constexpr PositionalArgument(std::string_view name, std::type_index t)
-            : name(name), shortName(""), usageComment(""), type(t) {}
+        explicit PositionalArgument(std::string_view name,
+                                    std::string_view short_name = "",
+                                    std::string_view usage_comment = "",
+                                    bool required = true)
+            : ArgumentBase(name, usage_comment, required, typeid(T)),
+              shortName(short_name) {}
 
         // Movable
         PositionalArgument(PositionalArgument &&) noexcept = default;
         PositionalArgument &operator=(PositionalArgument &&) noexcept = default;
 
-        [[nodiscard]] constexpr std::string_view getName() const noexcept { return name; }
         [[nodiscard]] constexpr std::string_view getShortName() const noexcept { return shortName; }
-        [[nodiscard]] constexpr std::string_view getUsageComment() const noexcept { return usageComment; }
-        [[nodiscard]] constexpr bool isRequired() const noexcept { return required; }
-        [[nodiscard]] std::type_index getType() const { return type; }
 
-        virtual ~PositionalArgument() = default;
+        [[nodiscard]] std::any parseToValue(const std::string &input) const override;
 
-        bool hasShortName() const { return !shortName.empty(); }
+        std::string getOptionsDocString() const override;
+        std::string getArgDocString() const override;
 
-        // documentation to be used under Options for command
-        [[nodiscard]] std::string getOptionsDocString() const;
+        PositionalArgument<T> &withShortName(std::string_view short_name)
+        {
+            shortName = short_name;
+            return *this;
+        }
 
-        // documentation to be used in the command display (example command display: run <--help> [args] etc)
-        [[nodiscard]] std::string getArgDocString() const;
+        PositionalArgument<T> &withUsageComment(std::string_view usage_comment)
+        {
+            usageComment = usage_comment;
+            return *this;
+        }
 
-        PositionalArgument &withShortName(std::string_view short_name);
-        PositionalArgument &withUsageComment(std::string_view usage_comment);
-        PositionalArgument &withRequired(bool req);
+        PositionalArgument<T> &withRequired(bool req)
+        {
+            required = req;
+            return *this;
+        }
 
     private:
-        const std::string name;
         std::string shortName;
-        std::string usageComment;
-        bool required{true};
-
-        std::type_index type;
     };
 
-    // Factory function
     template <typename T>
-    PositionalArgument newArgument(std::string_view name, std::string_view short_name = "", std::string_view usage_comment = "", bool required = true)
+    inline std::any PositionalArgument<T>::parseToValue(const std::string &input) const
     {
-        PositionalArgument arg(name, typeid(T), short_name, usage_comment, required);
-        return arg;  // RVO/move elision instead of copies?
+        return cli::parsing::ParseHelper::parse<T>(input);
     }
+
+    template <typename T>
+    inline std::string PositionalArgument<T>::getOptionsDocString() const
+    {
+        return "Options doc string for " + std::string(name);
+    }
+
+    template <typename T>
+    inline std::string PositionalArgument<T>::getArgDocString() const
+    {
+        return "Argument doc string for " + std::string(name);
+    }
+
 } // namespace cli::commands
