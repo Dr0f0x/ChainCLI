@@ -31,14 +31,17 @@ void exception_func(const cli::CliContext &ctx)
 void initCommands()
 {
     // use newCommand helper
-    cli::CLI().newCommand("other", "other short", "other long", std::make_unique<std::function<void(const cli::CliContext &)>>(other_func));
+    cli::CLI().createNewCommand("other", std::make_unique<std::function<void(const cli::CliContext &)>>(other_func))
+        .withLongDescription("other long")
+        .withShortDescription("other short");
 
     // use step by step new commands
-    cli::CLI().newCommand("run2", std::make_unique<std::function<void(const cli::CliContext &)>>(other_func)).withShortDescription("run2 short").withLongDescription("run2 long");
+    cli::CLI().createNewCommand("run2", std::make_unique<std::function<void(const cli::CliContext &)>>(other_func))
+        .withShortDescription("run2 short")
+        .withLongDescription("run2 long");
 
     auto arg2 = cli::commands::PositionalArgument<std::string>("arg2");
-    arg2.withShortName("-a2")
-        .withUsageComment("second argument")
+    arg2.withOptionsComment("second argument")
         .withRequired(false);
 
     auto testcmdSub = cli::commands::Command("subchild1");
@@ -46,13 +49,19 @@ void initCommands()
         .withLongDescription("First subchild command")
         .withExecutionFunc(exception_func);
 
-    auto &otherCmd = cli::CLI().newCommand("other2").withShortDescription("other2 short").withLongDescription("other2 long").withExecutionFunc(std::function<void(const cli::CliContext &)>(exception_func)).withArgument(cli::commands::PositionalArgument<int>("arg1", "-a1", "first argument", true)).withArgument(arg2);
+    auto otherCmd = cli::commands::Command("other2");
+    otherCmd.withShortDescription("other2 short")
+        .withLongDescription("other2 long")
+        .withExecutionFunc(std::function<void(const cli::CliContext &)>(exception_func))
+        .withArgument(cli::commands::PositionalArgument<int>("arg1", "first argument", true))
+        .withArgument(std::move(arg2));
 
-    otherCmd.withSubCommand(testcmdSub);
+    otherCmd.withSubCommand(std::move(testcmdSub));
 
     auto testcmd = cli::commands::Command("testchild2", "testSubchild 2", "Second subchild command", nullptr);
-    otherCmd.withSubCommand(testcmd);
-    // testcmd.withSubCommand(testcmdSub);
+    otherCmd.withSubCommand(std::move(testcmd));
+
+    cli::CLI().withCommand(std::move(otherCmd));
 }
 
 void configureCLI()
@@ -124,7 +133,8 @@ int main(int argc, char *argv[])
     initCommands();
     configureCLI();
 
+    cli::CLI().getCommandTree().print(std::cout);
     // printCommands();
 
-    RUN_WITH_TRY_CATCH(cli::CLI().run(argc, argv));
+    RUN_CLI_APP(cli::CLI().run(argc, argv));
 }

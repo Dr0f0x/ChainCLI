@@ -3,6 +3,7 @@
 #include <string>
 #include <any>
 #include <memory>
+#include <stdexcept>
 #include <functional>
 
 namespace cli

@@ -15,6 +15,10 @@ add_subdirectory(parsing)
 add_subdirectory(commands)
 add_subdirectory(logging)
 
+if(MSVC)
+    target_compile_options(${LIBRARY_OUTPUT_NAME} PRIVATE "/utf-8")
+endif()
+
 
 #TODO hide internal api
 # Define BUILD_MY_DLL when building the library

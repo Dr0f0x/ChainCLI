@@ -7,7 +7,7 @@
 #include <string>
 #include "cli_config.h"
 
-#define RUN_WITH_TRY_CATCH(call)                                                          \
+#define RUN_CLI_APP(call)                                                                 \
     try                                                                                   \
     {                                                                                     \
         return call;                                                                      \
@@ -37,9 +37,11 @@ namespace cli
         CliBase();
         ~CliBase() = default;
 
-        commands::Command &newCommand(std::string_view id, std::string_view short_desc, std::string_view long_desc, std::unique_ptr<std::function<void(const CliContext &)>> actionPtr);
-        commands::Command &newCommand(std::string_view id, std::unique_ptr<std::function<void(const CliContext &)>> actionPtr);
-        commands::Command &newCommand(std::string_view id);
+        commands::Command &createNewCommand(std::string_view id, std::unique_ptr<std::function<void(const CliContext &)>> actionPtr);
+        commands::Command &createNewCommand(std::string_view id) { return createNewCommand(id, nullptr); };
+
+        CliBase &withCommand(std::unique_ptr<commands::Command> subCommandPtr);
+        CliBase &withCommand(commands::Command &&subCommand) { return withCommand(std::make_unique<commands::Command>(std::move(subCommand))); }
 
         [[nodiscard]] const commands::CommandTree &getCommandTree() const { return commandsTree; };
         [[nodiscard]] CliConfig &getConfig() { return configuration; };
@@ -53,7 +55,7 @@ namespace cli
     private:
         void init();
         int internalRun(int argc, char *argv[]) const;
-        commands::Command *locateCommand(std::vector<std::string> &args) const;
+        const commands::Command *locateCommand(std::vector<std::string> &args) const;
         void globalHelp() const;
 
         commands::CommandTree commandsTree;

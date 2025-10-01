@@ -3,7 +3,8 @@
 #include <functional>
 #include <memory>
 #include <string_view>
-#include "argument.h"
+#include <map>
+#include "positional_argument.h"
 #include "cli_context.h"
 
 namespace cli::commands
@@ -14,7 +15,7 @@ namespace cli::commands
 
     public:
         // Constructor initializes the identifier and description
-        constexpr Command(std::string_view id, std::string_view short_desc, std::string_view long_desc, std::unique_ptr<std::function<void(const CliContext&)>> actionPtr)
+        constexpr Command(std::string_view id, std::string_view short_desc, std::string_view long_desc, std::unique_ptr<std::function<void(const CliContext &)>> actionPtr)
             : identifier(id), shortDescription(short_desc), longDescription(long_desc), executePtr(std::move(actionPtr)) {}
         explicit constexpr Command(std::string_view id)
             : identifier(id), shortDescription(""), longDescription(""), executePtr(nullptr) {}
@@ -36,8 +37,6 @@ namespace cli::commands
         [[nodiscard]] std::string_view getDocStringShort() const;
         [[nodiscard]] std::string_view getDocStringLong() const;
 
-        void setSubCommandCallback(std::unique_ptr<std::function<void(std::unique_ptr<Command>)>> cb) { subCommandCallBack = std::move(cb); }
-
         // Virtual destructor for base class
         virtual ~Command() = default;
 
@@ -58,22 +57,21 @@ namespace cli::commands
         }
         template <typename T>
         Command &withArgument(PositionalArgument<T> &&arg) { return withArgument(std::make_unique<PositionalArgument<T>>(std::move(arg))); }
-        template <typename T>
-        Command &withArgument(PositionalArgument<T> &arg) { return withArgument(std::make_unique<PositionalArgument<T>>(std::move(arg))); }
 
         Command &withExecutionFunc(std::unique_ptr<std::function<void(const CliContext &)>> actionPtr);
-        Command &withExecutionFunc(std::function<void(const CliContext &)> &&actionPtr)
+        Command &withExecutionFunc(std::function<void(const CliContext &)> &&action)
         {
-            return withExecutionFunc(std::make_unique<std::function<void(const CliContext &)>>(std::move(actionPtr)));
-        }
-        Command &withExecutionFunc(std::function<void(const CliContext &)> &actionPtr)
-        {
-            return withExecutionFunc(std::make_unique<std::function<void(const CliContext &)>>(std::move(actionPtr)));
+            return withExecutionFunc(std::make_unique<std::function<void(const CliContext &)>>(std::move(action)));
         }
 
         Command &withSubCommand(std::unique_ptr<Command> subCommandPtr);
         Command &withSubCommand(Command &&subCommand) { return withSubCommand(std::make_unique<Command>(std::move(subCommand))); }
-        Command &withSubCommand(Command &subCommand) { return withSubCommand(std::make_unique<Command>(std::move(subCommand))); }
+
+        Command *getSubCommand(std::string_view id);
+        const Command *getSubCommand(std::string_view id) const;
+
+        auto &getSubCommands() { return subCommands; }
+        auto const &getSubCommands() const { return subCommands; }
 
     private:
         const std::string identifier;
@@ -85,7 +83,7 @@ namespace cli::commands
         std::string docStringShort; // cached short doc string
         std::string docStringLong;  // cached long doc string
 
-        std::unique_ptr<std::function<void(std::unique_ptr<Command>)>> subCommandCallBack; // used to insert subcommands into the same tree
+        std::map<std::string, std::unique_ptr<Command>, std::less<>> subCommands;
     };
 
     class MalformedCommandException : public std::runtime_error

@@ -3,7 +3,8 @@ target_sources(${LIBRARY_OUTPUT_NAME}
         command.h
         command.cpp
         argument.h
-        argument.cpp
+        positional_argument.h
+        option_argument.h
         command_tree.h
         command_tree.cpp
 )

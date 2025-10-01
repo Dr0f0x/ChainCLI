@@ -19,22 +19,18 @@ namespace cli
         configuration = CliConfig();
     }
 
-    commands::Command &CliBase::newCommand(std::string_view id, std::string_view short_desc, std::string_view long_desc, std::unique_ptr<std::function<void(const CliContext &)>> actionPtr)
+    commands::Command &CliBase::createNewCommand(std::string_view id, std::unique_ptr<std::function<void(const CliContext &)>> actionPtr)
     {
-        auto cmd = std::make_unique<commands::Command>(id, short_desc, long_desc, std::move(actionPtr)); // default-constructed
+        auto cmd = std::make_unique<commands::Command>(id, "", "", std::move(actionPtr)); // default-constructed
         commands::Command &ref = *cmd;
         commandsTree.insert(std::move(cmd));
         return ref;
     }
 
-    commands::Command &CliBase::newCommand(std::string_view id, std::unique_ptr<std::function<void(const CliContext &)>> actionPtr)
+    CliBase &CliBase::withCommand(std::unique_ptr<commands::Command> subCommandPtr)
     {
-        return this->newCommand(id, "", "", std::move(actionPtr));
-    }
-
-    commands::Command &CliBase::newCommand(std::string_view id)
-    {
-        return this->newCommand(id, "", "", nullptr);
+        commandsTree.insert(std::move(subCommandPtr));
+        return *this;
     }
 
     void CliBase::init()
@@ -43,8 +39,6 @@ namespace cli
         // TODO should be done over a flag for the root command
         // newCommand("--help", "Show help", "Show help for all commands or a specific command", std::make_unique<std::function<void()>>([this](){ this->globalHelp(); }));
         // configure root command
-        auto root = commandsTree.getRoot();
-        root->command = std::make_unique<cli::commands::Command>(configuration.executableName);
 
         commandsTree.forEachCommand(
             [](commands::Command &cmd)
@@ -90,28 +84,26 @@ namespace cli
     }
 
     // returns the found command and modifies args to only contain the values that werent consumed in the tree traversal
-    commands::Command *CliBase::locateCommand(std::vector<std::string> &args) const
+    const commands::Command *CliBase::locateCommand(std::vector<std::string> &args) const
     {
-        const commands::CommandTree::Node *node = commandsTree.getRoot();
+        const commands::Command *commandPtr = commandsTree.getRootCommand();
 
-        commands::Command *cmd = nullptr;
         size_t consumed = 0;
 
         for (const auto &arg : args)
         {
             // Move one level down if child exists
-            const auto *child = node->getChild(arg);
-            if (!child)
+            const auto *subCommandPtr = commandPtr->getSubCommand(arg);
+            if (!subCommandPtr)
             {
                 break;
             }
 
-            node = child;
-            cmd = node->command.get();
+            commandPtr = subCommandPtr;
             ++consumed;
         }
         args.erase(args.begin(), args.begin() + consumed);
-        return cmd;
+        return commandPtr;
     }
 
     void CliBase::globalHelp() const

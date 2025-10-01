@@ -64,13 +64,20 @@ namespace cli::commands
 
     Command &Command::withSubCommand(std::unique_ptr<Command> subCommandPtr)
     {
-        if( subCommandCallBack){
-            (*subCommandCallBack)(std::move(subCommandPtr));
-        }
-        else{
-            throw MalformedCommandException(*this, " sub command callback is not set (the command was not added to a commandTree yet which is needed to add subCommands)");
-        }
+        subCommands.try_emplace(subCommandPtr->identifier, std::move(subCommandPtr));
         return *this;
+    }
+
+    Command *Command::getSubCommand(std::string_view id)
+    {
+        auto it = subCommands.find(id);
+        return (it != subCommands.end()) ? it->second.get() : nullptr;
+    }
+
+    const Command *Command::getSubCommand(std::string_view id) const
+    {
+        auto it = subCommands.find(id);
+        return (it != subCommands.end()) ? it->second.get() : nullptr;
     }
 
     std::ostream &operator<<(std::ostream &out, const Command &cmd)
