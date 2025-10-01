@@ -5,6 +5,7 @@
 #include <string_view>
 #include <map>
 #include "positional_argument.h"
+#include "option_argument.h"
 #include "cli_context.h"
 
 namespace cli::commands
@@ -32,7 +33,8 @@ namespace cli::commands
         [[nodiscard]] constexpr std::string_view getIdentifier() const noexcept { return identifier; }
         [[nodiscard]] constexpr std::string_view getShortDescription() const noexcept { return shortDescription; }
         [[nodiscard]] constexpr std::string_view getLongDescription() const noexcept { return longDescription; }
-        [[nodiscard]] const std::vector<std::unique_ptr<ArgumentBase>> &getArguments() const noexcept { return arguments; }
+        [[nodiscard]] const std::vector<std::unique_ptr<PositionalArgumentBase>> &getPositionalArguments() const noexcept { return positionalArguments; }
+        [[nodiscard]] const std::vector<std::unique_ptr<OptionArgument>> &getOptionArguments() const noexcept { return optionArguments; }
 
         [[nodiscard]] std::string_view getDocStringShort() const;
         [[nodiscard]] std::string_view getDocStringLong() const;
@@ -50,13 +52,16 @@ namespace cli::commands
         Command &withLongDescription(std::string_view desc);
 
         template <typename T>
-        Command &withArgument(std::unique_ptr<PositionalArgument<T>> arg)
+        Command &withPositionalArgument(std::unique_ptr<PositionalArgument<T>> arg)
         {
-            arguments.push_back(std::move(arg));
+            positionalArguments.push_back(std::move(arg));
             return *this;
         }
         template <typename T>
-        Command &withArgument(PositionalArgument<T> &&arg) { return withArgument(std::make_unique<PositionalArgument<T>>(std::move(arg))); }
+        Command &withPositionalArgument(PositionalArgument<T> &&arg) { return withPositionalArgument(std::make_unique<PositionalArgument<T>>(std::move(arg))); }
+
+        Command &withOptionArgument(std::unique_ptr<OptionArgument> arg);
+        Command &withOptionArgument(OptionArgument &&arg) { return withOptionArgument(std::make_unique<OptionArgument>(std::move(arg))); }
 
         Command &withExecutionFunc(std::unique_ptr<std::function<void(const CliContext &)>> actionPtr);
         Command &withExecutionFunc(std::function<void(const CliContext &)> &&action)
@@ -78,7 +83,10 @@ namespace cli::commands
         std::string shortDescription;
         std::string longDescription;
         std::unique_ptr<std::function<void(const CliContext &)>> executePtr;
-        std::vector<std::unique_ptr<ArgumentBase>> arguments;
+
+        // arguments
+        std::vector<std::unique_ptr<PositionalArgumentBase>> positionalArguments;
+        std::vector<std::unique_ptr<OptionArgument>> optionArguments;
 
         std::string docStringShort; // cached short doc string
         std::string docStringLong;  // cached long doc string

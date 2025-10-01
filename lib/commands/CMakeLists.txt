@@ -5,6 +5,7 @@ target_sources(${LIBRARY_OUTPUT_NAME}
         argument.h
         positional_argument.h
         option_argument.h
+        option_argument.cpp
         command_tree.h
         command_tree.cpp
 )

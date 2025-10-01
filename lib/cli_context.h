@@ -5,6 +5,7 @@
 #include <memory>
 #include <stdexcept>
 #include <functional>
+#include <unordered_set>
 
 namespace cli
 {
@@ -37,12 +38,15 @@ namespace cli
     class CliContext
     {
     public:
-        explicit CliContext(std::unique_ptr<std::map<std::string, std::any, std::less<>>> posArgs)
-            : positionalArgs(std::move(posArgs)) {}
+        explicit CliContext(std::unique_ptr<std::map<std::string, std::any, std::less<>>> posArgs,
+        std::unique_ptr<std::unordered_set<std::string>> optArgsPresence)
+            : positionalArgs(std::move(posArgs)), optArgsPresence(std::move(optArgsPresence)) {}
 
         // Non-copyable
         CliContext(const CliContext &) = delete;
         CliContext &operator=(const CliContext &) = delete;
+
+        bool isOptionArgPresent(const std::string &argName) const;
 
         template <typename T>
         T getPositionalArgument(const std::string &argName) const
@@ -58,6 +62,7 @@ namespace cli
 
     private:
         std::unique_ptr<std::map<std::string, std::any, std::less<>>> positionalArgs;
+        std::unique_ptr<std::unordered_set<std::string>> optArgsPresence;
 
         template <typename T>
         T getAnyCast(const std::string &name) const
@@ -85,10 +90,13 @@ namespace cli
 
         ContextBuilder &addPositionalArgument(const std::string &argName, std::any &val);
         ContextBuilder &addPositionalArgument(std::string_view argName, std::any &val);
+        ContextBuilder &addOptionArgumentPresence(const std::string &argName);
+        ContextBuilder &addOptionArgumentPresence(std::string_view argName);
 
         std::unique_ptr<CliContext> build();
 
     private:
         std::unique_ptr<std::map<std::string, std::any, std::less<>>> positionalArgs;
+        std::unique_ptr<std::unordered_set<std::string>> optArgsPresence;
     };
 }

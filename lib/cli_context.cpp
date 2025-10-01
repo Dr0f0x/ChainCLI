@@ -3,9 +3,16 @@
 
 namespace cli
 {
+
+    bool CliContext::isOptionArgPresent(const std::string &argName) const
+    {
+        return optArgsPresence->contains(argName);
+    }
+
     ContextBuilder::ContextBuilder()
     {
         positionalArgs = std::make_unique<std::map<std::string, std::any, std::less<>>>();
+        optArgsPresence = std::make_unique<std::unordered_set<std::string>>();
     }
 
     ContextBuilder &ContextBuilder::addPositionalArgument(const std::string &argName, std::any &val)
@@ -20,9 +27,21 @@ namespace cli
         return *this;
     }
 
+    ContextBuilder &ContextBuilder::addOptionArgumentPresence(const std::string &argName)
+    {
+        optArgsPresence->insert(argName);
+        return *this;
+    }
+
+    ContextBuilder &ContextBuilder::addOptionArgumentPresence(std::string_view argName)
+    {
+        optArgsPresence->insert(std::string(argName));
+        return *this;
+    }
+
     std::unique_ptr<CliContext> ContextBuilder::build()
     {
-        return std::make_unique<CliContext>(std::move(positionalArgs));
+        return std::make_unique<CliContext>(std::move(positionalArgs), std::move(optArgsPresence));
     }
 
     std::string MissingArgumentException::makeMessage(const std::string &name, const std::map<std::string, std::any, std::less<>> &args)

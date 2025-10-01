@@ -1,37 +1,41 @@
 #include "parser.h"
 #include <iostream>
-#include "commands/command.h"
 #include "parser_utils.h"
 #include "cli_base.h"
 
-void cli::parsing::test()
+namespace cli::parsing
 {
-    std::cout << "Output from parsing module" << std::endl;
-}
 
-std::vector<std::any> cli::parsing::StringParser::parsePositionalArguments(
-    const std::vector<std::unique_ptr<cli::commands::ArgumentBase>> &arguments,
-    const std::vector<std::string> &inputs,
-    ContextBuilder &ContextBuilder)
-{
-    if (inputs.size() < arguments.size())
+    void cli::parsing::StringParser::parseArguments(const std::vector<std::unique_ptr<cli::commands::PositionalArgumentBase>> &posArguments, const std::vector<std::unique_ptr<cli::commands::OptionArgument>> &optArguments, const std::vector<std::string> &inputs, ContextBuilder &contextBuilder)
     {
-        throw ParseException("Not enough arguments provided");
+        int posArgsIndex = 0;
+        for (size_t i = 0; i < inputs.size(); ++i)
+        {
+            const auto &input = inputs[i];
+
+            const cli::commands::OptionArgument *matchedOpt = nullptr;
+            for (const auto &opt : optArguments)
+            {
+                if (input == opt->getShortName() || input == opt->getName())
+                {
+                    matchedOpt = opt.get();
+                    break;
+                }
+            }
+
+            if (matchedOpt)
+            {
+                contextBuilder.addOptionArgumentPresence(matchedOpt->getName());
+                contextBuilder.addOptionArgumentPresence(matchedOpt->getShortName());
+
+                continue;
+            }
+
+            const auto &posArg = *posArguments[posArgsIndex];
+
+            auto val = posArg.parseToValue(input);
+            contextBuilder.addPositionalArgument(posArg.getName(), val);
+            ++posArgsIndex;
+        }
     }
-
-    std::vector<std::any> parsed;
-    parsed.reserve(arguments.size());
-
-    for (size_t i = 0; i < arguments.size(); ++i)
-    {
-        const auto &arg = *arguments[i];
-        const auto &input = inputs[i];
-
-        auto val = arg.parseToValue(input);
-        ContextBuilder.addPositionalArgument(arg.getName(), val);
-
-        parsed.push_back(val);
-    }
-
-    return parsed;
 }

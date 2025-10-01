@@ -56,7 +56,13 @@ namespace cli::commands
         return *this;
     }
 
-    Command &Command::withExecutionFunc(std::unique_ptr<std::function<void(const CliContext&)>> actionPtr)
+    Command &Command::withOptionArgument(std::unique_ptr<OptionArgument> arg)
+    {
+        optionArguments.push_back(std::move(arg));
+        return *this;
+    }
+
+    Command &Command::withExecutionFunc(std::unique_ptr<std::function<void(const CliContext &)>> actionPtr)
     {
         executePtr = std::move(actionPtr);
         return *this;
@@ -87,11 +93,11 @@ namespace cli::commands
             << "; long Description: " << cmd.longDescription
             << "; arguments: [";
 
-        for (size_t i = 0; i < cmd.arguments.size(); ++i)
+        for (size_t i = 0; i < cmd.positionalArguments.size(); ++i)
         {
             //if (cmd.arguments[i])
                 //out << *(cmd.arguments[i]); // assumes Argument has operator<<
-            if (i + 1 < cmd.arguments.size())
+            if (i + 1 < cmd.positionalArguments.size())
                 out << ", ";
         }
 

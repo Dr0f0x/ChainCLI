@@ -8,11 +8,9 @@
 
 namespace cli::commands
 {
-
-    template <typename T>
     class OptionArgument : public ArgumentBase
     {
-        friend std::ostream &operator<<(std::ostream &out, const OptionArgument<T> &arg)
+        friend std::ostream &operator<<(std::ostream &out, const OptionArgument &arg)
         {
             out << arg.name << " (" << arg.usageComment << ")";
             return out;
@@ -20,10 +18,10 @@ namespace cli::commands
 
     public:
         explicit OptionArgument(std::string_view name,
-                                    std::string_view short_name = "",
-                                    std::string_view usage_comment = "",
-                                    bool required = true)
-            : ArgumentBase(name, usage_comment, required, typeid(T)),
+                                std::string_view short_name = "",
+                                std::string_view usage_comment = "",
+                                bool required = false)
+            : ArgumentBase(name, usage_comment, required),
               shortName(short_name) {}
 
         // Movable
@@ -32,24 +30,22 @@ namespace cli::commands
 
         [[nodiscard]] constexpr std::string_view getShortName() const noexcept { return shortName; }
 
-        [[nodiscard]] std::any parseToValue(const std::string &input) const override;
-
         std::string getOptionsDocString() const override;
         std::string getArgDocString() const override;
 
-        PositionalArgument<T> &withShortName(std::string_view short_name)
+        OptionArgument &withShortName(std::string_view short_name)
         {
             shortName = short_name;
             return *this;
         }
 
-        OptionArgument<T> &withUsageComment(std::string_view usage_comment)
+        OptionArgument &withUsageComment(std::string_view usage_comment)
         {
             usageComment = usage_comment;
             return *this;
         }
 
-        OptionArgument<T> &withRequired(bool req)
+        OptionArgument &withRequired(bool req)
         {
             required = req;
             return *this;
@@ -58,22 +54,4 @@ namespace cli::commands
     private:
         std::string shortName;
     };
-
-    template <typename T>
-    inline std::any OptionArgument<T>::parseToValue(const std::string &input) const
-    {
-        return cli::parsing::ParseHelper::parse<T>(input);
-    }
-
-    template <typename T>
-    inline std::string OptionArgument<T>::getOptionsDocString() const
-    {
-        return "Options doc string for " + std::string(name);
-    }
-
-    template <typename T>
-    inline std::string OptionArgument<T>::getArgDocString() const
-    {
-        return "Argument doc string for " + std::string(name);
-    }
 }

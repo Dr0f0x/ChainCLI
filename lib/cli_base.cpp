@@ -11,7 +11,6 @@ namespace cli
     void print(const std::string &msg)
     {
         std::cout << "[cli] " << msg << std::endl;
-        parsing::test();
     }
 
     CliBase::CliBase()
@@ -72,7 +71,7 @@ namespace cli
 
             auto contextBuilder = cli::ContextBuilder();
 
-            auto parsed = parsing::StringParser::parsePositionalArguments(cmd->getArguments(), args, contextBuilder);
+            parsing::StringParser::parseArguments(cmd->getPositionalArguments(), cmd->getOptionArguments(), args, contextBuilder);
             cmd->execute(*contextBuilder.build());
         }
         else

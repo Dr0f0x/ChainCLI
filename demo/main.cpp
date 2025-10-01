@@ -23,7 +23,9 @@ void exception_func(const cli::CliContext &ctx)
 {
     int arg1 = ctx.getPositionalArgument<int>("arg1");
     std::string arg2;
-    ctx.getPositionalArgument("arg1", arg2);
+    ctx.getPositionalArgument("arg2", arg2);
+
+    auto pres = ctx.isOptionArgPresent("--type");
     std::cout << "exception command called" << std::endl;
     throw std::runtime_error("error");
 }
@@ -53,8 +55,9 @@ void initCommands()
     otherCmd.withShortDescription("other2 short")
         .withLongDescription("other2 long")
         .withExecutionFunc(std::function<void(const cli::CliContext &)>(exception_func))
-        .withArgument(cli::commands::PositionalArgument<int>("arg1", "first argument", true))
-        .withArgument(std::move(arg2));
+        .withPositionalArgument(cli::commands::PositionalArgument<int>("arg1", "first argument", true))
+        .withPositionalArgument(std::move(arg2))
+        .withOptionArgument(cli::commands::OptionArgument("--type"));
 
     otherCmd.withSubCommand(std::move(testcmdSub));
 
