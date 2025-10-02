@@ -6,13 +6,24 @@ namespace cli
 
     bool CliContext::isOptionArgPresent(const std::string &argName) const
     {
-        return optArgsPresence->contains(argName);
+        return optionArgs->contains(argName);
+    }
+
+    bool CliContext::isPositionalArgPresent(const std::string &argName) const
+    {
+        return positionalArgs->contains(argName);
+    }
+
+    bool CliContext::isFlagPresent(const std::string &argName) const
+    {
+        return flagArgs->contains(argName);
     }
 
     ContextBuilder::ContextBuilder()
     {
-        positionalArgs = std::make_unique<std::map<std::string, std::any, std::less<>>>();
-        optArgsPresence = std::make_unique<std::unordered_set<std::string>>();
+        positionalArgs = std::make_unique<std::unordered_map<std::string, std::any>>();
+        optionalArgs = std::make_unique<std::unordered_map<std::string, std::any>>();
+        flagArgs = std::make_unique<std::unordered_set<std::string>>();
     }
 
     ContextBuilder &ContextBuilder::addPositionalArgument(const std::string &argName, std::any &val)
@@ -27,24 +38,36 @@ namespace cli
         return *this;
     }
 
-    ContextBuilder &ContextBuilder::addOptionArgumentPresence(const std::string &argName)
+    ContextBuilder &ContextBuilder::addOptionArgument(const std::string &argName, std::any &val)
     {
-        optArgsPresence->insert(argName);
+        optionalArgs->try_emplace(argName, val);
         return *this;
     }
 
-    ContextBuilder &ContextBuilder::addOptionArgumentPresence(std::string_view argName)
+    ContextBuilder &ContextBuilder::addOptionArgument(std::string_view argName, std::any &val)
     {
-        optArgsPresence->insert(std::string(argName));
+        optionalArgs->try_emplace(std::string(argName), val);
+        return *this;
+    }
+
+    ContextBuilder &ContextBuilder::addFlagArgument(const std::string &argName)
+    {
+        flagArgs->insert(argName);
+        return *this;
+    }
+
+    ContextBuilder &ContextBuilder::addFlagArgument(std::string_view argName)
+    {
+        flagArgs->insert(std::string(argName));
         return *this;
     }
 
     std::unique_ptr<CliContext> ContextBuilder::build()
     {
-        return std::make_unique<CliContext>(std::move(positionalArgs), std::move(optArgsPresence));
+        return std::make_unique<CliContext>(std::move(positionalArgs), std::move(optionalArgs), std::move(flagArgs));
     }
 
-    std::string MissingArgumentException::makeMessage(const std::string &name, const std::map<std::string, std::any, std::less<>> &args)
+    std::string MissingArgumentException::makeMessage(const std::string &name, const std::unordered_map<std::string, std::any> &args)
     {
         std::ostringstream oss;
         oss << "Missing argument: \"" << name << "\" was not passed in this context.\n";

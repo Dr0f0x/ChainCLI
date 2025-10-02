@@ -57,7 +57,8 @@ void initCommands()
         .withExecutionFunc(std::function<void(const cli::CliContext &)>(exception_func))
         .withPositionalArgument(cli::commands::PositionalArgument<int>("arg1", "first argument", true))
         .withPositionalArgument(std::move(arg2))
-        .withOptionArgument(cli::commands::OptionArgument("--type"));
+        .withOptionArgument(cli::commands::OptionArgument<int>("--type", "-t", "nut"))
+        .withFlagArgument(cli::commands::FlagArgument("--help", "-h"));
 
     otherCmd.withSubCommand(std::move(testcmdSub));
 

@@ -56,12 +56,6 @@ namespace cli::commands
         return *this;
     }
 
-    Command &Command::withOptionArgument(std::unique_ptr<OptionArgument> arg)
-    {
-        optionArguments.push_back(std::move(arg));
-        return *this;
-    }
-
     Command &Command::withExecutionFunc(std::unique_ptr<std::function<void(const CliContext &)>> actionPtr)
     {
         executePtr = std::move(actionPtr);

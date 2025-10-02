@@ -9,24 +9,11 @@
 
 namespace cli::commands
 {
-    class PositionalArgumentBase : public ArgumentBase
+    // untemplated base class for storing in same STL
+    class PositionalArgumentBase : public TypedArgumentBase
     {
     public:
-        // Movable
-        PositionalArgumentBase(PositionalArgumentBase &&) noexcept = default;
-        PositionalArgumentBase &operator=(PositionalArgumentBase &&) noexcept = default;
-
-        [[nodiscard]] std::type_index getType() const { return type; }
-        [[nodiscard]] virtual std::any parseToValue(const std::string &input) const = 0;
-
-    protected:
-        PositionalArgumentBase(std::string_view name,
-                               std::string_view usage_comment,
-                               bool required,
-                               std::type_index t)
-            : ArgumentBase(name, usage_comment, required), type(t) {}
-
-        std::type_index type;
+        using TypedArgumentBase::TypedArgumentBase;
     };
 
     template <typename T>
