@@ -8,11 +8,6 @@
 
 namespace cli
 {
-    void print(const std::string &msg)
-    {
-        std::cout << "[cli] " << msg << std::endl;
-    }
-
     CliBase::CliBase()
     {
         configuration = CliConfig();
@@ -72,7 +67,7 @@ namespace cli
             auto contextBuilder = cli::ContextBuilder();
 
             parsing::StringParser::parseArguments(cmd->getPositionalArguments(), cmd->getOptionArguments(), cmd->getFlagArguments(), args, contextBuilder);
-            cmd->execute(*contextBuilder.build());
+            cmd->execute(*contextBuilder.build(*logger));
         }
         else
         {

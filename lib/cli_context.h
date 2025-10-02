@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include <functional>
 #include <unordered_set>
+#include "logging/logger.h"
 
 namespace cli
 {
@@ -41,8 +42,9 @@ namespace cli
         explicit CliContext(
             std::unique_ptr<std::unordered_map<std::string, std::any>> posArgs,
             std::unique_ptr<std::unordered_map<std::string, std::any>> optArgs,
-            std::unique_ptr<std::unordered_set<std::string>> flagArgs)
-            : positionalArgs(std::move(posArgs)), optionArgs(std::move(optArgs)), flagArgs(std::move(flagArgs)) {}
+            std::unique_ptr<std::unordered_set<std::string>> flagArgs,
+            cli::logging::Logger& logger)
+            : positionalArgs(std::move(posArgs)), optionArgs(std::move(optArgs)), flagArgs(std::move(flagArgs)), Logger(logger) {}
 
         // Non-copyable
         CliContext(const CliContext &) = delete;
@@ -75,6 +77,8 @@ namespace cli
         {
             out = getAnyCast<T>(argName, *optionArgs);
         }
+
+        cli::logging::Logger& Logger;
 
     private:
         std::unique_ptr<std::unordered_map<std::string, std::any>> positionalArgs;
@@ -112,7 +116,7 @@ namespace cli
         ContextBuilder &addFlagArgument(const std::string &argName);
         ContextBuilder &addFlagArgument(std::string_view argName);
 
-        std::unique_ptr<CliContext> build();
+        std::unique_ptr<CliContext> build(cli::logging::Logger& logger);
 
     private:
         std::unique_ptr<std::unordered_map<std::string, std::any>> positionalArgs;

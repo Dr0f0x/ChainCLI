@@ -10,13 +10,13 @@ using namespace cli::logging;
 void command_func(const cli::CliContext &ctx)
 {
     std::cout << "command called" << std::endl;
-    cli::CLI().Logger().info("run command executed");
+    ctx.Logger.info("run command executed");
 }
 
 void other_func(const cli::CliContext &ctx)
 {
     std::cout << "other command called" << std::endl;
-    cli::CLI().Logger().info("other command executed");
+    ctx.Logger.info("other command executed");
 }
 
 void exception_func(const cli::CliContext &ctx)
@@ -30,15 +30,15 @@ void exception_func(const cli::CliContext &ctx)
     throw std::runtime_error("error");
 }
 
-void initCommands()
+void initCommands(cli::CliBase& cliApp)
 {
     // use newCommand helper
-    cli::CLI().createNewCommand("other", std::make_unique<std::function<void(const cli::CliContext &)>>(other_func))
+    cliApp.createNewCommand("other", std::make_unique<std::function<void(const cli::CliContext &)>>(other_func))
         .withLongDescription("other long")
         .withShortDescription("other short");
 
     // use step by step new commands
-    cli::CLI().createNewCommand("run2", std::make_unique<std::function<void(const cli::CliContext &)>>(other_func))
+    cliApp.createNewCommand("run2", std::make_unique<std::function<void(const cli::CliContext &)>>(other_func))
         .withShortDescription("run2 short")
         .withLongDescription("run2 long");
 
@@ -65,20 +65,20 @@ void initCommands()
     auto testcmd = cli::commands::Command("testchild2", "testSubchild 2", "Second subchild command", nullptr);
     otherCmd.withSubCommand(std::move(testcmd));
 
-    cli::CLI().withCommand(std::move(otherCmd));
+    cliApp.withCommand(std::move(otherCmd));
 }
 
-void configureCLI()
+void configureCLI(cli::CliBase& cliApp)
 {
-    auto &config = cli::CLI().getConfig();
+    auto &config = cliApp.getConfig();
     config.executableName = "cliLibDemo";
 }
 
-void printCommands()
+void printCommands(cli::CliBase& cliApp)
 {
     std::cout << "Available commands:\n";
 
-    auto &commandsTree = cli::CLI().getCommandTree();
+    auto &commandsTree = cliApp.getCommandTree();
 
     commandsTree.forEachCommand(
         [](cli::commands::Command const &cmd)
@@ -89,7 +89,7 @@ void printCommands()
             std::cout << "---------\n";
             std::cout << cmd.getDocStringShort() << "\n\n";
         });
-    commandsTree.print(cli::CLI().Logger().info());
+    commandsTree.print(cliApp.Logger().info());
     std::cout << "\n";
 }
 
@@ -123,7 +123,8 @@ int main(int argc, char *argv[])
     using namespace cli::logging;
 
     // setup logger
-    auto &logger = cli::CLI().Logger();
+    auto cliApp = cli::CliBase();
+    auto &logger = cliApp.Logger();
     logger.setLevel(LogLevel::TRACE);
 
     auto consoleHandlerPtr = std::make_unique<ConsoleHandler>(std::make_shared<MessageOnlyFormatter>(), LogLevel::TRACE);
@@ -134,11 +135,11 @@ int main(int argc, char *argv[])
 
     logTest(logger);
 
-    initCommands();
-    configureCLI();
+    initCommands(cliApp);
+    configureCLI(cliApp);
 
-    cli::CLI().getCommandTree().print(std::cout);
+    cliApp.getCommandTree().print(std::cout);
     // printCommands();
 
-    RUN_CLI_APP(cli::CLI().run(argc, argv));
+    RUN_CLI_APP(cliApp, argc, argv);
 }

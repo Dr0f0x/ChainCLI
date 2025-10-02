@@ -7,23 +7,21 @@
 #include <string>
 #include "cli_config.h"
 
-#define RUN_CLI_APP(call)                                                                 \
-    try                                                                                   \
-    {                                                                                     \
-        return call;                                                                      \
-    }                                                                                     \
-    catch (const std::exception &e)                                                       \
-    {                                                                                     \
-        cli::CLI().Logger().error() << "terminate called after throwing an instance of '" \
-                                    << typeid(e).name() << "'\n"                          \
-                                    << "  what(): " << e.what() << std::endl;             \
-        std::abort();                                                                     \
+#define RUN_CLI_APP(cliInstance, argc_, argv_)                                             \
+    try                                                                                    \
+    {                                                                                      \
+        return cliInstance.run(argc_, argv_);                                              \
+    }                                                                                      \
+    catch (const std::exception &e)                                                        \
+    {                                                                                      \
+        cliInstance.Logger().error() << "terminate called after throwing an instance of '" \
+                                     << typeid(e).name() << "'\n"                          \
+                                     << "  what(): " << e.what() << std::endl;             \
+        std::abort();                                                                      \
     }
 
 namespace cli
 {
-    void print(const std::string &msg);
-
     class CliBase
     {
     public:
@@ -64,10 +62,4 @@ namespace cli
         std::unique_ptr<logging::Logger> logger = std::make_unique<logging::Logger>(logging::LogLevel::DEBUG);
         CliConfig configuration;
     };
-
-    inline std::unique_ptr<CliBase> const GlobalCli = std::make_unique<CliBase>();
-    inline CliBase &CLI()
-    {
-        return *GlobalCli;
-    }
 } // namespace cli

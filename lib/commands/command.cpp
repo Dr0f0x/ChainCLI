@@ -34,7 +34,7 @@ namespace cli::commands
         }
         else
         {
-            cli::CLI().Logger().error("Command {} currently has no execute function", identifier);
+            //cli::CLI().Logger().error("Command {} currently has no execute function", identifier);
         }
     }
 

@@ -62,9 +62,9 @@ namespace cli
         return *this;
     }
 
-    std::unique_ptr<CliContext> ContextBuilder::build()
+    std::unique_ptr<CliContext> ContextBuilder::build(cli::logging::Logger& logger)
     {
-        return std::make_unique<CliContext>(std::move(positionalArgs), std::move(optionalArgs), std::move(flagArgs));
+        return std::make_unique<CliContext>(std::move(positionalArgs), std::move(optionalArgs), std::move(flagArgs), logger);
     }
 
     std::string MissingArgumentException::makeMessage(const std::string &name, const std::unordered_map<std::string, std::any> &args)
