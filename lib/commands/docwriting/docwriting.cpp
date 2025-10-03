@@ -73,6 +73,7 @@ namespace cli::commands::docwriting
         for (const auto &argGroupPtr : command.getArgumentGroups())
         {
             addGroupArgumentDocString(builder, *argGroupPtr);
+            builder << ' ';
         }
 
         builder << "\n\n"
@@ -115,7 +116,7 @@ namespace cli::commands::docwriting
     {
         std::ostringstream builder;
         auto [inBracket, outBracket] = getOptionArgumentBrackets(argument.isRequired());
-        builder << inBracket << argument.getName() << ',' << argument.getShortName() << ' ';
+        builder << inBracket << argument.getName() << ' ' << argument.getShortName() << ' ';
         builder << '<' << argument.getValueName() << '>' << outBracket;
         return builder.str();
     }

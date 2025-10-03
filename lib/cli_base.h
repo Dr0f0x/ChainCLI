@@ -55,6 +55,8 @@ namespace cli
     private:
         int internalRun(int argc, char *argv[]) const;
         const commands::Command *locateCommand(std::vector<std::string> &args) const;
+        bool rootShortCircuits(std::vector<std::string> &args, const cli::commands::Command& cmd) const;
+        bool commandShortCircuits(std::vector<std::string> &args, const cli::commands::Command& cmd) const;
         void globalHelp() const;
 
         commands::CommandTree commandsTree;

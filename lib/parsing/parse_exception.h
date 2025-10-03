@@ -9,4 +9,10 @@ namespace cli::parsing
         using runtime_error::runtime_error;
     };
 
+    class GroupParseException : public std::runtime_error
+    {
+    public:
+        using runtime_error::runtime_error;
+    };
+
 }

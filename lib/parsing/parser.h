@@ -15,5 +15,9 @@ namespace cli::parsing
             const cli::commands::Command& command,
             const std::vector<std::string>& inputs,
             ContextBuilder& contextBuilder);
+
+        static void checkGroups(
+            const cli::commands::Command& command,
+            const ContextBuilder& contextBuilder);
     };
 }

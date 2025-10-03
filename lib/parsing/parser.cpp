@@ -30,13 +30,32 @@ namespace cli::parsing
                     break;
                 }
             }
-
             if (matchedOpt)
             {
-                //contextBuilder.addOptionArgumentPresence(matchedOpt->getName());
-                //contextBuilder.addOptionArgumentPresence(matchedOpt->getShortName());
-
+                auto val = matchedOpt->parseToValue(inputs[i + 1]);
+                contextBuilder.addOptionArgument(matchedOpt->getName(), val);
+                contextBuilder.addOptionArgument(matchedOpt->getShortName(), val);
+                i++;
                 continue;
+            }
+
+            const cli::commands::FlagArgument *matchedFlag = nullptr;
+            for (const auto &flag : flagArguments)
+            {
+                if (input == flag->getShortName() || input == flag->getName())
+                {
+                    matchedFlag = flag.get();
+                    break;
+                }
+            }
+            if(matchedFlag){
+                contextBuilder.addFlagArgument(matchedFlag->getShortName());
+                contextBuilder.addFlagArgument(matchedFlag->getName());
+                continue;
+            }
+
+            if(posArgsIndex >= posArguments.size()){
+                throw ParseException("More positional arguments provided than command accepts");
             }
 
             const auto &posArg = *posArguments.at(posArgsIndex);
@@ -44,6 +63,40 @@ namespace cli::parsing
             auto val = posArg.parseToValue(input);
             contextBuilder.addPositionalArgument(posArg.getName(), val);
             ++posArgsIndex;
+        }
+        checkGroups(command, contextBuilder);
+    }
+
+    void StringParser::checkGroups(const cli::commands::Command &command, const ContextBuilder &contextBuilder)
+    {
+        for(const auto& argGroup : command.getArgumentGroups()){
+            if(argGroup->isExclusive()){
+                const cli::commands::ArgumentBase* firstProvided = nullptr;
+
+                for(const auto& argPtr : argGroup->getArguments()){
+                    if (!firstProvided && contextBuilder.isArgPresent(std::string(argPtr->getName())))
+                    {
+                        firstProvided = argPtr.get();
+                    }
+                    else if (contextBuilder.isArgPresent(std::string(argPtr->getName()))){
+                        throw GroupParseException("Two arguments of mutually exclusive group were present");
+                    }
+                }
+
+            }
+            else if(argGroup->isInclusive()){
+                const cli::commands::ArgumentBase* firstProvided = nullptr;
+
+                for(const auto& argPtr : argGroup->getArguments()){
+                    if (!firstProvided && contextBuilder.isArgPresent(std::string(argPtr->getName())))
+                    {
+                        firstProvided = argPtr.get();
+                    }
+                    else if (!contextBuilder.isArgPresent(std::string(argPtr->getName()))){
+                        throw GroupParseException("Not all arguments of mutually inclusive group were present");
+                    }
+                }
+            }
         }
     }
 }

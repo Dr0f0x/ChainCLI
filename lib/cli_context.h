@@ -116,6 +116,8 @@ namespace cli
         ContextBuilder &addFlagArgument(const std::string &argName);
         ContextBuilder &addFlagArgument(std::string_view argName);
 
+        bool isArgPresent(const std::string &argName) const;
+
         std::unique_ptr<CliContext> build(cli::logging::Logger& logger);
 
     private:

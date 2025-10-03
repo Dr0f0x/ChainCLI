@@ -25,7 +25,8 @@ void exception_func(const cli::CliContext &ctx)
     std::string arg2;
     ctx.getPositionalArgument("arg2", arg2);
 
-    auto pres = ctx.isOptionArgPresent("--type");
+    auto pres = ctx.getOptionArgument<int>("--type");
+    bool flag = ctx.isFlagPresent("--help");
     std::cout << "exception command called" << std::endl;
     throw std::runtime_error("error");
 }
@@ -57,7 +58,7 @@ void initCommands(cli::CliBase &cliApp)
         .withExecutionFunc(std::function<void(const cli::CliContext &)>(exception_func))
         .withExclusiveGroup(cli::commands::PositionalArgument<int>("arg1", "first argument", true),
                             std::move(arg2))
-        .withOptionArgument(std::move(cli::commands::OptionArgument<int>("--type", "nut", "-t").withRequired(true)))
+        .withOptionArgument(cli::commands::OptionArgument<int>("--type", "nut", "-t"))
         .withFlagArgument(cli::commands::FlagArgument("--help", "-h"));
 
     otherCmd.withSubCommand(std::move(testcmdSub));
@@ -124,6 +125,8 @@ int main(int argc, char *argv[])
 
     auto config = cli::CliConfig();
     config.executableName = "CLIDemo";
+    config.description = "Demo to test the CLI Library";
+    config.version = "1.0.0";
 
     auto cliApp = cli::CliBase(std::move(config));
     auto &logger = cliApp.Logger();
@@ -135,12 +138,10 @@ int main(int argc, char *argv[])
     // Attach file handler (logs everything to one file)
     logger.addHandler(std::make_unique<FileHandler>("app.log", std::make_shared<BasicFormatter>(), LogLevel::TRACE));
 
-    logTest(logger);
+    //logTest(logger);
 
     initCommands(cliApp);
     configureCLI(cliApp);
-
-    cliApp.getCommandTree().print(std::cout);
     // printCommands();
     RUN_CLI_APP(cliApp, argc, argv);
 }

@@ -38,9 +38,6 @@ namespace cli
     void CliBase::init()
     {
         initialized = true;
-        // TODO should be done over a flag for the root command
-        // newCommand("--help", "Show help", "Show help for all commands or a specific command", std::make_unique<std::function<void()>>([this](){ this->globalHelp(); }));
-        // configure root command
 
         commandsTree.forEachCommand(
             [](commands::Command &cmd)
@@ -62,15 +59,17 @@ namespace cli
     {
         auto args = turnArgsToVector(argc, argv);
 
-        if (args.empty())
+        if (rootShortCircuits(args, *(commandsTree.getRootCommand())))
         {
-            logger->trace("no command given"); // TODO call root command
-            globalHelp();
             return 0;
         }
 
         if (const auto *cmd = locateCommand(args))
         {
+            if(commandShortCircuits(args, *cmd)){
+                return 0;
+            }
+
             logger->trace("Executing command: {}", cmd->getIdentifier());
 
             auto contextBuilder = cli::ContextBuilder();
@@ -109,14 +108,48 @@ namespace cli
         return commandPtr;
     }
 
+    bool CliBase::rootShortCircuits(std::vector<std::string> &args, const cli::commands::Command &cmd) const
+    {
+        if (args.empty() && !cmd.hasExecutionFunction())
+        {
+            globalHelp();
+            return true;
+        }
+
+        if (args.size() == 1)
+        {
+            if (args.at(0) == "-h" || args.at(0) == "--help")
+            {
+                globalHelp();
+                return true;
+            }
+            else if (args.at(0) == "-v" || args.at(0) == "--version")
+            {
+                logger->info("Version: {}", configuration->version);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool CliBase::commandShortCircuits(std::vector<std::string> &args, const cli::commands::Command& cmd) const
+    {
+            if (args.size() == 1 && (args.at(0) == "-h" || args.at(0) == "--help"))
+            {
+                logger->info(std::string(cmd.getDocStringLong()));
+                return true;
+            }
+        return false;
+    }
+
     void CliBase::globalHelp() const
     {
-        logger->info() << "USAGE:\n\n";
+        logger->info() << configuration->description << "\n\n";
 
         auto printCmd = [this](const commands::Command &cmd)
         {
-            if(cmd.hasExecutionFunction())
-                logger->info() << cmd.getDocStringLong() << "\n\n";
+            if (cmd.hasExecutionFunction())
+                logger->info() << cmd.getDocStringShort() << "\n\n";
         };
 
         commandsTree.forEachCommand(printCmd);

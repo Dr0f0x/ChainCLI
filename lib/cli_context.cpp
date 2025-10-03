@@ -62,7 +62,12 @@ namespace cli
         return *this;
     }
 
-    std::unique_ptr<CliContext> ContextBuilder::build(cli::logging::Logger& logger)
+    bool ContextBuilder::isArgPresent(const std::string &argName) const
+    {
+        return optionalArgs->contains(argName) || flagArgs->contains(argName) || positionalArgs->contains(argName);
+    }
+
+    std::unique_ptr<CliContext> ContextBuilder::build(cli::logging::Logger &logger)
     {
         return std::make_unique<CliContext>(std::move(positionalArgs), std::move(optionalArgs), std::move(flagArgs), logger);
     }
