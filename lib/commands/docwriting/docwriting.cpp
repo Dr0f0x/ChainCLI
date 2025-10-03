@@ -1,16 +1,18 @@
 #include <sstream>
 #include <string>
+#include <iomanip>
+#include <format>
 #include "commands/argument.h"
 #include "docwriting.h"
 
 namespace cli::commands::docwriting
 {
-    std::pair<char, char> getPositionalArgumentBrackets(bool required)
+    std::pair<std::string, std::string> getPositionalArgumentBrackets(bool required)
     {
         if (required)
-            return {'<', '>'};
+            return {"<", ">"};
         else
-            return {'[', ']'};
+            return {"[<", ">]"};
     }
 
     std::pair<char, char> getOptionArgumentBrackets(bool required)
@@ -92,8 +94,12 @@ namespace cli::commands::docwriting
     std::string generateOptionsDocString(const FlagArgument &argument)
     {
         std::ostringstream builder;
-        builder << argument.getName() << ' ' << argument.getShortName() << '\t' << argument.getUsageComment();
-        return builder.str();
+        builder << argument.getName() << ' ' << argument.getShortName();
+        return std::format("{:<{}}{:>{}}",
+                                     builder.str(),
+                                     20,
+                                     argument.getUsageComment(),
+                                     argument.getUsageComment().size());
     }
 
     std::string generateArgDocString(const FlagArgument &argument)
@@ -107,9 +113,12 @@ namespace cli::commands::docwriting
     std::string generateOptionsDocString(const OptionArgumentBase &argument)
     {
         std::ostringstream builder;
-        builder << argument.getName() << ',' << argument.getShortName() << ' ';
-        builder << '<' << argument.getValueName() << '>' << '\t' << argument.getUsageComment();
-        return builder.str();
+        builder << argument.getName() << ',' << argument.getShortName() << ' ' << '<' << argument.getValueName() << '>';
+        return std::format("{:<{}}{:>{}}",
+                                     builder.str(),
+                                     20,
+                                     argument.getUsageComment(),
+                                     argument.getUsageComment().size());
     }
 
     std::string generateArgDocString(const OptionArgumentBase &argument)
@@ -126,9 +135,12 @@ namespace cli::commands::docwriting
         std::ostringstream builder;
         auto [inBracket, outBracket] = getPositionalArgumentBrackets(argument.isRequired());
 
-        builder << inBracket << argument.getName();
-        builder << outBracket << '\t' << argument.getUsageComment();
-        return builder.str();
+        builder << inBracket << argument.getName()<< outBracket;
+        return std::format("{:<{}}{:>{}}",
+                                     builder.str(),
+                                     20,
+                                     argument.getUsageComment(),
+                                     argument.getUsageComment().size());
     }
 
     std::string generateArgDocString(const PositionalArgumentBase &argument)

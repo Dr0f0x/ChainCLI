@@ -82,3 +82,7 @@ TODO properly define dll api with
     #define MY_DLL_API
   #endif
 #endif
+
+**current Group restrictions**
+
+- if two positional arguments are in a a mutually exclusive group and one is optional, the parser still always attempts to parse it (it isnt skipped), this may be fixable or not

@@ -23,7 +23,8 @@ void exception_func(const cli::CliContext &ctx)
 {
     int arg1 = ctx.getPositionalArgument<int>("arg1");
     std::string arg2;
-    ctx.getPositionalArgument("arg2", arg2);
+    bool arg2Pres = ctx.isPositionalArgPresent("arg2");
+    //ctx.getPositionalArgument("arg2", arg2);
 
     auto pres = ctx.getOptionArgument<int>("--type");
     bool flag = ctx.isFlagPresent("--help");
@@ -45,7 +46,7 @@ void initCommands(cli::CliBase &cliApp)
 
     auto arg2 = cli::commands::PositionalArgument<std::string>("arg2");
     arg2.withOptionsComment("second argument")
-        .withRequired(true);
+        .withRequired(false);
 
     auto testcmdSub = cli::commands::Command("subchild1");
     testcmdSub.withShortDescription("Subchild 1")
