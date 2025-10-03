@@ -13,7 +13,11 @@ namespace cli::commands
     class PositionalArgumentBase : public TypedArgumentBase
     {
     public:
-        using TypedArgumentBase::TypedArgumentBase;
+        PositionalArgumentBase(std::string_view name,
+                               std::string_view usage_comment,
+                               bool required,
+                               std::type_index t)
+            : TypedArgumentBase(name, usage_comment, ArgumentKind::Positional, required, t) {}
     };
 
     template <typename T>

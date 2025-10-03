@@ -9,6 +9,7 @@ target_sources(${LIBRARY_OUTPUT_NAME}
         flag_argument.cpp
         command_tree.h
         command_tree.cpp
+        argument_group.h
 )
 
 add_subdirectory(docwriting)

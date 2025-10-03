@@ -7,6 +7,7 @@
 #include "positional_argument.h"
 #include "option_argument.h"
 #include "flag_argument.h"
+#include "argument_group.h"
 #include "cli_context.h"
 
 namespace cli::commands
@@ -30,19 +31,28 @@ namespace cli::commands
         Command(const Command &) = delete;
         Command &operator=(const Command &) = delete;
 
-        // Accessors
+        // Virtual destructor for base class
+        virtual ~Command() = default;
+
+#pragma region Accessors
         [[nodiscard]] constexpr std::string_view getIdentifier() const noexcept { return identifier; }
         [[nodiscard]] constexpr std::string_view getShortDescription() const noexcept { return shortDescription; }
         [[nodiscard]] constexpr std::string_view getLongDescription() const noexcept { return longDescription; }
-        [[nodiscard]] const std::vector<std::unique_ptr<PositionalArgumentBase>> &getPositionalArguments() const noexcept { return positionalArguments; }
-        [[nodiscard]] const std::vector<std::unique_ptr<OptionArgumentBase>> &getOptionArguments() const noexcept { return optionArguments; }
-        [[nodiscard]] const std::vector<std::unique_ptr<FlagArgument>> &getFlagArguments() const noexcept { return flagArguments; }
+
+        [[nodiscard]] const std::vector<std::shared_ptr<PositionalArgumentBase>> &getPositionalArguments() const noexcept { return positionalArguments; }
+        [[nodiscard]] const std::vector<std::shared_ptr<OptionArgumentBase>> &getOptionArguments() const noexcept { return optionArguments; }
+        [[nodiscard]] const std::vector<std::shared_ptr<FlagArgument>> &getFlagArguments() const noexcept { return flagArguments; }
+        [[nodiscard]] const std::vector<std::unique_ptr<ArgumentGroup>> &getArgumentGroups() const noexcept { return argumentGroups; }
 
         [[nodiscard]] std::string_view getDocStringShort() const;
         [[nodiscard]] std::string_view getDocStringLong() const;
 
-        // Virtual destructor for base class
-        virtual ~Command() = default;
+        [[nodiscard]] Command *getSubCommand(std::string_view id);
+        [[nodiscard]] const Command *getSubCommand(std::string_view id) const;
+
+        [[nodiscard]] auto &getSubCommands() { return subCommands; }
+        [[nodiscard]] auto const &getSubCommands() const { return subCommands; }
+#pragma endredion Accessor
 
         // try to run the passed callable
         void execute(const CliContext &context) const;
@@ -50,33 +60,34 @@ namespace cli::commands
         // Generate documentation strings for the command and its arguments to avoid having to rebuilt them each time
         void buildDocStrings();
 
+#pragma region ChainingMethods
         Command &withShortDescription(std::string_view desc);
         Command &withLongDescription(std::string_view desc);
 
         template <typename T>
-        Command &withPositionalArgument(std::unique_ptr<PositionalArgument<T>> arg)
+        Command &withPositionalArgument(std::shared_ptr<PositionalArgument<T>> arg)
         {
             positionalArguments.push_back(std::move(arg));
             return *this;
         }
         template <typename T>
-        Command &withPositionalArgument(PositionalArgument<T> &&arg) { return withPositionalArgument(std::make_unique<PositionalArgument<T>>(std::move(arg))); }
+        Command &withPositionalArgument(PositionalArgument<T> &&arg) { return withPositionalArgument(std::make_shared<PositionalArgument<T>>(std::move(arg))); }
 
         template <typename T>
-        Command &withOptionArgument(std::unique_ptr<OptionArgument<T>> arg)
+        Command &withOptionArgument(std::shared_ptr<OptionArgument<T>> arg)
         {
             optionArguments.push_back(std::move(arg));
             return *this;
         }
         template <typename T>
-        Command &withOptionArgument(OptionArgument<T> &&arg) { return withOptionArgument(std::make_unique<OptionArgument<T>>(std::move(arg))); }
+        Command &withOptionArgument(OptionArgument<T> &&arg) { return withOptionArgument(std::make_shared<OptionArgument<T>>(std::move(arg))); }
 
-        Command &withFlagArgument(std::unique_ptr<FlagArgument> arg)
+        Command &withFlagArgument(std::shared_ptr<FlagArgument> arg)
         {
             flagArguments.push_back(std::move(arg));
             return *this;
         }
-        Command &withFlagArgument(FlagArgument &&arg) { return withFlagArgument(std::make_unique<FlagArgument>(std::move(arg))); }
+        Command &withFlagArgument(FlagArgument &&arg) { return withFlagArgument(std::make_shared<FlagArgument>(std::move(arg))); }
 
         Command &withExecutionFunc(std::unique_ptr<std::function<void(const CliContext &)>> actionPtr);
         Command &withExecutionFunc(std::function<void(const CliContext &)> &&action)
@@ -87,22 +98,30 @@ namespace cli::commands
         Command &withSubCommand(std::unique_ptr<Command> subCommandPtr);
         Command &withSubCommand(Command &&subCommand) { return withSubCommand(std::make_unique<Command>(std::move(subCommand))); }
 
-        Command *getSubCommand(std::string_view id);
-        const Command *getSubCommand(std::string_view id) const;
+        template <typename... Args>
+            requires((sizeof...(Args) > 0) &&
+                     (std::derived_from<std::remove_cvref_t<Args>, ArgumentBase> && ...))
+        Command &withExclusiveGroup(Args &&...args);
 
-        auto &getSubCommands() { return subCommands; }
-        auto const &getSubCommands() const { return subCommands; }
+        template <typename... Args>
+            requires((sizeof...(Args) > 0) &&
+                     (std::derived_from<std::remove_cvref_t<Args>, ArgumentBase> && ...))
+        Command &withInclusiveGroup(Args &&...args);
+#pragma endregion ChainingMethods
 
     private:
+        void addArgGroup(const ArgumentGroup& argGroup);
+
         const std::string identifier;
         std::string shortDescription;
         std::string longDescription;
         std::unique_ptr<std::function<void(const CliContext &)>> executePtr;
 
         // arguments
-        std::vector<std::unique_ptr<PositionalArgumentBase>> positionalArguments;
-        std::vector<std::unique_ptr<OptionArgumentBase>> optionArguments;
-        std::vector<std::unique_ptr<FlagArgument>> flagArguments;
+        std::vector<std::shared_ptr<PositionalArgumentBase>> positionalArguments;
+        std::vector<std::shared_ptr<OptionArgumentBase>> optionArguments;
+        std::vector<std::shared_ptr<FlagArgument>> flagArguments;
+        std::vector<std::unique_ptr<ArgumentGroup>> argumentGroups;
 
         std::string docStringShort; // cached short doc string
         std::string docStringLong;  // cached long doc string
@@ -123,4 +142,26 @@ namespace cli::commands
 
         static std::string buildMessage(const Command &cmd, const std::string &msg);
     };
+
+    template <typename... Args>
+        requires((sizeof...(Args) > 0) &&
+                 (std::derived_from<std::remove_cvref_t<Args>, ArgumentBase> && ...))
+    inline Command &Command::withExclusiveGroup(Args &&...args)
+    {
+        argumentGroups.emplace_back(
+            std::make_unique<ExclusiveGroup>(std::forward<Args>(args)...));
+        addArgGroup(*argumentGroups.back());
+        return *this;
+    }
+
+    template <typename... Args>
+        requires((sizeof...(Args) > 0) &&
+                 (std::derived_from<std::remove_cvref_t<Args>, ArgumentBase> && ...))
+    inline Command &Command::withInclusiveGroup(Args &&...args)
+    {
+        argumentGroups.emplace_back(
+            std::make_unique<InclusiveGroup>(std::forward<Args>(args)...));
+        addArgGroup(*argumentGroups.back());
+        return *this;
+    }
 } // namespace cli::commands

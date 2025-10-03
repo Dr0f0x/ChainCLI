@@ -11,10 +11,11 @@ namespace cli::commands
     class FlagArgument : public ArgumentBase, public FlaggedArgumentBase
     {
     public:
-        FlagArgument(std::string_view name,
-                     std::string_view shortName,
-                     std::string_view usage_comment = "")
-            : ArgumentBase(name, usage_comment, false),
+        explicit FlagArgument(std::string_view name,
+                              std::string_view shortName = "",
+                              std::string_view usageComment = "",
+                              bool isRequired = false)
+            : ArgumentBase(name, usageComment, ArgumentKind::Flag, isRequired),
               FlaggedArgumentBase(shortName) {}
 
         std::string getOptionsDocString() const override;

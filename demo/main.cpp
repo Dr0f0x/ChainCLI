@@ -30,7 +30,7 @@ void exception_func(const cli::CliContext &ctx)
     throw std::runtime_error("error");
 }
 
-void initCommands(cli::CliBase& cliApp)
+void initCommands(cli::CliBase &cliApp)
 {
     // use newCommand helper
     cliApp.createNewCommand("other", std::make_unique<std::function<void(const cli::CliContext &)>>(other_func))
@@ -55,9 +55,9 @@ void initCommands(cli::CliBase& cliApp)
     otherCmd.withShortDescription("other2 short")
         .withLongDescription("other2 long")
         .withExecutionFunc(std::function<void(const cli::CliContext &)>(exception_func))
-        .withPositionalArgument(cli::commands::PositionalArgument<int>("arg1", "first argument", true))
-        .withPositionalArgument(std::move(arg2))
-        .withOptionArgument(cli::commands::OptionArgument<int>("--type", "-t", "nut"))
+        .withExclusiveGroup(cli::commands::PositionalArgument<int>("arg1", "first argument", true),
+                            std::move(arg2))
+        .withOptionArgument(cli::commands::OptionArgument<int>("--type", "nut", "-t"))
         .withFlagArgument(cli::commands::FlagArgument("--help", "-h"));
 
     otherCmd.withSubCommand(std::move(testcmdSub));
@@ -68,13 +68,13 @@ void initCommands(cli::CliBase& cliApp)
     cliApp.withCommand(std::move(otherCmd));
 }
 
-void configureCLI(cli::CliBase& cliApp)
+void configureCLI(cli::CliBase &cliApp)
 {
     auto &config = cliApp.getConfig();
     config.executableName = "cliLibDemo";
 }
 
-void printCommands(cli::CliBase& cliApp)
+void printCommands(cli::CliBase &cliApp)
 {
     std::cout << "Available commands:\n";
 

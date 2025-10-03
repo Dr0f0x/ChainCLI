@@ -6,6 +6,13 @@
 
 namespace cli::commands
 {
+    enum class ArgumentKind
+    {
+        Positional,
+        Option,
+        Flag,
+    };
+
     class ArgumentBase
     {
     public:
@@ -18,6 +25,7 @@ namespace cli::commands
         [[nodiscard]] constexpr std::string_view getName() const noexcept { return name; }
         [[nodiscard]] constexpr std::string_view getUsageComment() const noexcept { return usageComment; }
         [[nodiscard]] constexpr bool isRequired() const noexcept { return required; }
+        [[nodiscard]] constexpr ArgumentKind getArgType() const { return argType; }
 
         [[nodiscard]] virtual std::string getOptionsDocString() const = 0;
         [[nodiscard]] virtual std::string getArgDocString() const = 0;
@@ -25,11 +33,13 @@ namespace cli::commands
     protected:
         ArgumentBase(std::string_view name,
                      std::string_view usage_comment,
+                     ArgumentKind argType,
                      bool required)
-            : name(name), usageComment(usage_comment), required(required) {}
+            : name(name), usageComment(usage_comment), argType(argType), required(required) {}
 
         const std::string name;
         std::string usageComment;
+        ArgumentKind argType;
         bool required{true};
     };
 
@@ -46,9 +56,10 @@ namespace cli::commands
     protected:
         TypedArgumentBase(std::string_view name,
                           std::string_view usage_comment,
+                          ArgumentKind argType,
                           bool required,
                           std::type_index t)
-            : ArgumentBase(name, usage_comment, required), type(t) {}
+            : ArgumentBase(name, usage_comment, argType, required), type(t) {}
 
         std::type_index type;
     };

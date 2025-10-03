@@ -26,7 +26,7 @@ namespace cli::commands
         return docStringLong;
     }
 
-    void Command::execute(const CliContext& context) const
+    void Command::execute(const CliContext &context) const
     {
         if (executePtr && *executePtr)
         {
@@ -34,7 +34,7 @@ namespace cli::commands
         }
         else
         {
-            //cli::CLI().Logger().error("Command {} currently has no execute function", identifier);
+            // cli::CLI().Logger().error("Command {} currently has no execute function", identifier);
         }
     }
 
@@ -68,6 +68,27 @@ namespace cli::commands
         return *this;
     }
 
+    void Command::addArgGroup(const ArgumentGroup &argGroup)
+    {
+        for (auto &arg : argGroup.getArguments())
+        {
+            switch (arg->getArgType())
+            {
+            case ArgumentKind::Flag:
+                flagArguments.push_back(std::static_pointer_cast<FlagArgument>(arg));
+                break;
+
+            case ArgumentKind::Positional:
+                positionalArguments.push_back(std::static_pointer_cast<PositionalArgumentBase>(arg));
+                break;
+
+            case ArgumentKind::Option:
+                optionArguments.push_back(std::static_pointer_cast<OptionArgumentBase>(arg));
+                break;
+            }
+        }
+    }
+
     Command *Command::getSubCommand(std::string_view id)
     {
         auto it = subCommands.find(id);
@@ -89,8 +110,8 @@ namespace cli::commands
 
         for (size_t i = 0; i < cmd.positionalArguments.size(); ++i)
         {
-            //if (cmd.arguments[i])
-                //out << *(cmd.arguments[i]); // assumes Argument has operator<<
+            // if (cmd.arguments[i])
+            // out << *(cmd.arguments[i]); // assumes Argument has operator<<
             if (i + 1 < cmd.positionalArguments.size())
                 out << ", ";
         }

@@ -66,7 +66,7 @@ namespace cli
 
             auto contextBuilder = cli::ContextBuilder();
 
-            parsing::StringParser::parseArguments(cmd->getPositionalArguments(), cmd->getOptionArguments(), cmd->getFlagArguments(), args, contextBuilder);
+            parsing::StringParser::parseArguments(*cmd, args, contextBuilder);
             cmd->execute(*contextBuilder.build(*logger));
         }
         else

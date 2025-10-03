@@ -18,7 +18,7 @@ namespace cli::commands
                            std::type_index t,
                            std::string_view shortName,
                            std::string_view valueName)
-            : TypedArgumentBase(name, usage_comment, required, t),
+            : TypedArgumentBase(name, usage_comment, ArgumentKind::Option, required, t),
               FlaggedArgumentBase(shortName),
               valueName(valueName) {}
 
@@ -37,8 +37,8 @@ namespace cli::commands
 
     public:
         explicit OptionArgument(std::string_view name,
-                                std::string_view shortName,
                                 std::string_view valueName,
+                                std::string_view shortName = "",
                                 std::string_view usage_comment = "",
                                 bool required = false)
             : OptionArgumentBase(name, usage_comment, required, typeid(T), shortName, valueName) {}
