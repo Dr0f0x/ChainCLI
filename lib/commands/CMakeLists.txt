@@ -4,12 +4,15 @@ target_sources(${LIBRARY_OUTPUT_NAME}
         command.cpp
         argument.h
         positional_argument.h
+        positional_argument.cpp
         option_argument.h
+        option_argument.cpp
         flag_argument.h
         flag_argument.cpp
         command_tree.h
         command_tree.cpp
         argument_group.h
+        argument_group.cpp
 )
 
 add_subdirectory(docwriting)

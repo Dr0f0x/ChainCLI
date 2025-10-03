@@ -33,7 +33,7 @@ namespace cli
         CliBase &operator=(CliBase &&) = default;
 
         explicit CliBase(std::string_view executableName);
-        explicit CliBase(const CliConfig&& config);
+        explicit CliBase(CliConfig&& config);
         ~CliBase() = default;
 
         commands::Command &createNewCommand(std::string_view id, std::unique_ptr<std::function<void(const CliContext &)>> actionPtr);
@@ -45,6 +45,7 @@ namespace cli
         [[nodiscard]] const commands::CommandTree &getCommandTree() const { return commandsTree; };
         [[nodiscard]] CliConfig &getConfig() { return *configuration; };
 
+        void init();
         int run(int argc, char *argv[]);
 
         [[nodiscard]] logging::Logger &Logger() { return *logger; }
@@ -52,7 +53,6 @@ namespace cli
         void setLogger(std::unique_ptr<logging::Logger> &&newLogger) { logger = std::move(newLogger); }
 
     private:
-        void init();
         int internalRun(int argc, char *argv[]) const;
         const commands::Command *locateCommand(std::vector<std::string> &args) const;
         void globalHelp() const;

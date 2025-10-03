@@ -1,16 +1,15 @@
-#include "flag_argument.h"
+#include "positional_argument.h"
 #include "docwriting/docwriting.h"
 
 namespace cli::commands
 {
-    std::string FlagArgument::getOptionsDocString() const
+    std::string PositionalArgumentBase::getOptionsDocString() const
     {
         return docwriting::generateOptionsDocString(*this);
     }
 
-    std::string FlagArgument::getArgDocString() const
+    std::string PositionalArgumentBase::getArgDocString() const
     {
         return docwriting::generateArgDocString(*this);
     }
-
-}
+} // namespace cli::commands

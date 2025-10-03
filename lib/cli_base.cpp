@@ -8,10 +8,10 @@
 
 namespace cli
 {
-    CliBase::CliBase(const CliConfig &&config)
+    CliBase::CliBase(CliConfig &&config)
         : commandsTree(config.executableName)
     {
-        configuration = std::make_unique<CliConfig>(config);
+        configuration = std::make_unique<CliConfig>(std::move(config));
     }
 
     CliBase::CliBase(std::string_view executableName)
@@ -65,6 +65,7 @@ namespace cli
         if (args.empty())
         {
             logger->trace("no command given"); // TODO call root command
+            globalHelp();
             return 0;
         }
 
@@ -114,7 +115,8 @@ namespace cli
 
         auto printCmd = [this](const commands::Command &cmd)
         {
-            logger->info() << cmd.getDocStringShort() << "\n\n";
+            if(cmd.hasExecutionFunction())
+                logger->info() << cmd.getDocStringLong() << "\n\n";
         };
 
         commandsTree.forEachCommand(printCmd);

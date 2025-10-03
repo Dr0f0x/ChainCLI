@@ -68,6 +68,14 @@ namespace cli::commands
         return *this;
     }
 
+    void Command::safeAddToArgGroup(const std::shared_ptr<ArgumentBase> &arg)
+    {
+        if(indexForNewArgGroup >= argumentGroups.size()){
+            argumentGroups.push_back(std::make_unique<ArgumentGroup>(false, false));
+        }
+        argumentGroups[indexForNewArgGroup]->addArgument(arg);
+    }
+
     void Command::addArgGroup(const ArgumentGroup &argGroup)
     {
         for (auto &arg : argGroup.getArguments())

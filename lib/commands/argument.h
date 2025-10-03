@@ -23,7 +23,7 @@ namespace cli::commands
         ArgumentBase &operator=(ArgumentBase &&) noexcept = default;
 
         [[nodiscard]] constexpr std::string_view getName() const noexcept { return name; }
-        [[nodiscard]] constexpr std::string_view getUsageComment() const noexcept { return usageComment; }
+        [[nodiscard]] constexpr std::string_view getUsageComment() const noexcept { return optionsComment; }
         [[nodiscard]] constexpr bool isRequired() const noexcept { return required; }
         [[nodiscard]] constexpr ArgumentKind getArgType() const { return argType; }
 
@@ -32,13 +32,13 @@ namespace cli::commands
 
     protected:
         ArgumentBase(std::string_view name,
-                     std::string_view usage_comment,
+                     std::string_view optionsComment,
                      ArgumentKind argType,
                      bool required)
-            : name(name), usageComment(usage_comment), argType(argType), required(required) {}
+            : name(name), optionsComment(optionsComment), argType(argType), required(required) {}
 
         const std::string name;
-        std::string usageComment;
+        std::string optionsComment;
         ArgumentKind argType;
         bool required{true};
     };
@@ -55,11 +55,11 @@ namespace cli::commands
 
     protected:
         TypedArgumentBase(std::string_view name,
-                          std::string_view usage_comment,
+                          std::string_view optionsComment,
                           ArgumentKind argType,
                           bool required,
                           std::type_index t)
-            : ArgumentBase(name, usage_comment, argType, required), type(t) {}
+            : ArgumentBase(name, optionsComment, argType, required), type(t) {}
 
         std::type_index type;
     };

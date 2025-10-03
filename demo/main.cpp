@@ -44,7 +44,7 @@ void initCommands(cli::CliBase &cliApp)
 
     auto arg2 = cli::commands::PositionalArgument<std::string>("arg2");
     arg2.withOptionsComment("second argument")
-        .withRequired(false);
+        .withRequired(true);
 
     auto testcmdSub = cli::commands::Command("subchild1");
     testcmdSub.withShortDescription("Subchild 1")
@@ -57,7 +57,7 @@ void initCommands(cli::CliBase &cliApp)
         .withExecutionFunc(std::function<void(const cli::CliContext &)>(exception_func))
         .withExclusiveGroup(cli::commands::PositionalArgument<int>("arg1", "first argument", true),
                             std::move(arg2))
-        .withOptionArgument(cli::commands::OptionArgument<int>("--type", "nut", "-t"))
+        .withOptionArgument(std::move(cli::commands::OptionArgument<int>("--type", "nut", "-t").withRequired(true)))
         .withFlagArgument(cli::commands::FlagArgument("--help", "-h"));
 
     otherCmd.withSubCommand(std::move(testcmdSub));
@@ -122,8 +122,10 @@ int main(int argc, char *argv[])
 {
     using namespace cli::logging;
 
-    // setup logger
-    auto cliApp = cli::CliBase("CLIDemo");
+    auto config = cli::CliConfig();
+    config.executableName = "CLIDemo";
+
+    auto cliApp = cli::CliBase(std::move(config));
     auto &logger = cliApp.Logger();
     logger.setLevel(LogLevel::TRACE);
 

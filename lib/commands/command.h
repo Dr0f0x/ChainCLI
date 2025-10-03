@@ -19,9 +19,11 @@ namespace cli::commands
     public:
         // Constructor initializes the identifier and description
         constexpr Command(std::string_view id, std::string_view short_desc, std::string_view long_desc, std::unique_ptr<std::function<void(const CliContext &)>> actionPtr)
-            : identifier(id), shortDescription(short_desc), longDescription(long_desc), executePtr(std::move(actionPtr)) {}
+            : identifier(id), shortDescription(short_desc), longDescription(long_desc), executePtr(std::move(actionPtr))
+        { }
         explicit constexpr Command(std::string_view id)
-            : identifier(id), shortDescription(""), longDescription(""), executePtr(nullptr) {}
+            : identifier(id), shortDescription(""), longDescription(""), executePtr(nullptr)
+        { }
 
         // Movable
         Command(Command &&) noexcept = default;
@@ -31,13 +33,13 @@ namespace cli::commands
         Command(const Command &) = delete;
         Command &operator=(const Command &) = delete;
 
-        // Virtual destructor for base class
         virtual ~Command() = default;
 
 #pragma region Accessors
         [[nodiscard]] constexpr std::string_view getIdentifier() const noexcept { return identifier; }
         [[nodiscard]] constexpr std::string_view getShortDescription() const noexcept { return shortDescription; }
         [[nodiscard]] constexpr std::string_view getLongDescription() const noexcept { return longDescription; }
+        [[nodiscard]] constexpr bool hasExecutionFunction() const noexcept { return executePtr.get(); }
 
         [[nodiscard]] const std::vector<std::shared_ptr<PositionalArgumentBase>> &getPositionalArguments() const noexcept { return positionalArguments; }
         [[nodiscard]] const std::vector<std::shared_ptr<OptionArgumentBase>> &getOptionArguments() const noexcept { return optionArguments; }
@@ -67,7 +69,8 @@ namespace cli::commands
         template <typename T>
         Command &withPositionalArgument(std::shared_ptr<PositionalArgument<T>> arg)
         {
-            positionalArguments.push_back(std::move(arg));
+            safeAddToArgGroup(arg);
+            positionalArguments.push_back(arg);
             return *this;
         }
         template <typename T>
@@ -76,7 +79,8 @@ namespace cli::commands
         template <typename T>
         Command &withOptionArgument(std::shared_ptr<OptionArgument<T>> arg)
         {
-            optionArguments.push_back(std::move(arg));
+            safeAddToArgGroup(arg);
+            optionArguments.push_back(arg);
             return *this;
         }
         template <typename T>
@@ -84,7 +88,8 @@ namespace cli::commands
 
         Command &withFlagArgument(std::shared_ptr<FlagArgument> arg)
         {
-            flagArguments.push_back(std::move(arg));
+            safeAddToArgGroup(arg);
+            flagArguments.push_back(arg);
             return *this;
         }
         Command &withFlagArgument(FlagArgument &&arg) { return withFlagArgument(std::make_shared<FlagArgument>(std::move(arg))); }
@@ -110,7 +115,9 @@ namespace cli::commands
 #pragma endregion ChainingMethods
 
     private:
-        void addArgGroup(const ArgumentGroup& argGroup);
+        int indexForNewArgGroup{0};
+        void safeAddToArgGroup(const std::shared_ptr<ArgumentBase>& arg);
+        void addArgGroup(const ArgumentGroup &argGroup);
 
         const std::string identifier;
         std::string shortDescription;
@@ -151,6 +158,7 @@ namespace cli::commands
         argumentGroups.emplace_back(
             std::make_unique<ExclusiveGroup>(std::forward<Args>(args)...));
         addArgGroup(*argumentGroups.back());
+        indexForNewArgGroup++;
         return *this;
     }
 
@@ -162,6 +170,7 @@ namespace cli::commands
         argumentGroups.emplace_back(
             std::make_unique<InclusiveGroup>(std::forward<Args>(args)...));
         addArgGroup(*argumentGroups.back());
+        indexForNewArgGroup++;
         return *this;
     }
 } // namespace cli::commands

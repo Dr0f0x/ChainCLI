@@ -14,10 +14,13 @@ namespace cli::commands
     {
     public:
         PositionalArgumentBase(std::string_view name,
-                               std::string_view usage_comment,
+                               std::string_view optionsComment,
                                bool required,
                                std::type_index t)
-            : TypedArgumentBase(name, usage_comment, ArgumentKind::Positional, required, t) {}
+            : TypedArgumentBase(name, optionsComment, ArgumentKind::Positional, required, t) {}
+
+        [[nodiscard]] std::string getOptionsDocString() const override;
+        [[nodiscard]] std::string getArgDocString() const override;
     };
 
     template <typename T>
@@ -25,15 +28,15 @@ namespace cli::commands
     {
         friend std::ostream &operator<<(std::ostream &out, const PositionalArgument<T> &arg)
         {
-            out << arg.name << " (" << arg.usageComment << ")";
+            out << arg.name << " (" << arg.optionsComment << ")";
             return out;
         }
 
     public:
         explicit PositionalArgument(std::string_view name,
-                                    std::string_view usage_comment = "",
+                                    std::string_view optionsComment = "",
                                     bool required = true)
-            : PositionalArgumentBase(name, usage_comment, required, typeid(T)) {}
+            : PositionalArgumentBase(name, optionsComment, required, typeid(T)) {}
 
         // Movable
         PositionalArgument(PositionalArgument &&) noexcept = default;
@@ -41,12 +44,9 @@ namespace cli::commands
 
         [[nodiscard]] std::any parseToValue(const std::string &input) const override;
 
-        std::string getOptionsDocString() const override;
-        std::string getArgDocString() const override;
-
         PositionalArgument<T> &withOptionsComment(std::string_view usage_comment)
         {
-            usageComment = usage_comment;
+            optionsComment = usage_comment;
             return *this;
         }
 
@@ -61,17 +61,5 @@ namespace cli::commands
     inline std::any PositionalArgument<T>::parseToValue(const std::string &input) const
     {
         return cli::parsing::ParseHelper::parse<T>(input);
-    }
-
-    template <typename T>
-    inline std::string PositionalArgument<T>::getOptionsDocString() const
-    {
-        return "Options doc string for " + std::string(name);
-    }
-
-    template <typename T>
-    inline std::string PositionalArgument<T>::getArgDocString() const
-    {
-        return "Argument doc string for " + std::string(name);
     }
 }

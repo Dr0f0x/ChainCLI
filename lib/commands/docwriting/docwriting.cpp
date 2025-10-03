@@ -5,51 +5,63 @@
 
 namespace cli::commands::docwriting
 {
-    std::pair<char, char> getArgumentBrackets(const ArgumentBase& argument)
+    std::pair<char, char> getPositionalArgumentBrackets(bool required)
     {
-        if (argument.isRequired())
+        if (required)
             return {'<', '>'};
         else
             return {'[', ']'};
     }
 
-    std::string generateOptionsDocString(const ArgumentBase &argument)
+    std::pair<char, char> getOptionArgumentBrackets(bool required)
     {
-        std::ostringstream builder;
-        auto [inBracket, outBracket] = getArgumentBrackets(argument);
-
-        builder << inBracket << argument.getName();
-        //if (argument.hasShortName())
-        //    builder << "," + std::string(argument.getShortName());
-        builder << outBracket << '\t' << argument.getUsageComment();
-        return builder.str();
+        if (required)
+            return {'(', ')'};
+        else
+            return {'[', ']'};
     }
 
-    std::string generateArgDocString(const ArgumentBase &argument)
+    void addGroupArgumentDocString(std::ostringstream &builder, const cli::commands::ArgumentGroup &groupArgs)
     {
-        std::ostringstream builder;
-        auto [inBracket, outBracket] = getArgumentBrackets(argument);
+        auto [inBracket, outBracket] = getOptionArgumentBrackets(groupArgs.isRequired());
+        if (groupArgs.isExclusive() || groupArgs.isInclusive())
+        {
+            builder << inBracket;
+        }
 
-        builder << inBracket << argument.getName();
-        //if (argument.hasShortName())
-        //    builder << "," + std::string(argument.getShortName()) << outBracket;
-        return builder.str();
+        auto args = groupArgs.getArguments();
+        for (size_t i = 0; i < args.size(); ++i)
+        {
+            const auto &argPtr = args[i];
+            builder << argPtr->getArgDocString();
+
+            if (i < args.size() - 1) // not the last element
+            {
+                if (groupArgs.isExclusive())
+                    builder << " | ";
+                else
+                    builder << " ";
+            }
+        }
+
+        if (groupArgs.isExclusive() || groupArgs.isInclusive())
+        {
+            builder << outBracket;
+        }
     }
 
     std::string generateShortDocString(const Command &command)
     {
         std::ostringstream builder;
         builder << command.getIdentifier() << " ";
-        /*
-        for (const auto &argPtr : command.getArguments())
+
+        for (const auto &argGroupPtr : command.getArgumentGroups())
         {
-            if (argPtr)
-            {
-                builder << argPtr->getArgDocString() << " ";
-            }
+            addGroupArgumentDocString(builder, *argGroupPtr);
+            builder << " ";
         }
-            */
-        builder << "\n" << command.getShortDescription();
+        builder << "\n"
+                << command.getShortDescription();
         return builder.str();
     }
 
@@ -57,23 +69,74 @@ namespace cli::commands::docwriting
     {
         std::ostringstream builder;
         builder << command.getIdentifier() << " ";
-        /*
-        for (const auto &argPtr : command.getArguments())
+
+        for (const auto &argGroupPtr : command.getArgumentGroups())
         {
-            if (argPtr)
-            {
-                builder << argPtr->getArgDocString() << " ";
-            }
+            addGroupArgumentDocString(builder, *argGroupPtr);
         }
-        builder << "\n\n" << command.getLongDescription() << "\n\nOptions:\n";
-        for (const auto &argPtr : command.getArguments())
+
+        builder << "\n\n"
+                << command.getLongDescription() << "\n\nOptions:\n";
+
+        for (const auto &argGroupPtr : command.getArgumentGroups())
         {
-            if (argPtr)
+            for (const auto &argPtr : argGroupPtr->getArguments())
             {
                 builder << argPtr->getOptionsDocString() << "\n";
             }
         }
-        */
         return builder.str();
     }
-}// namespace cli::commands::docwriting
+
+    std::string generateOptionsDocString(const FlagArgument &argument)
+    {
+        std::ostringstream builder;
+        builder << argument.getName() << ' ' << argument.getShortName() << '\t' << argument.getUsageComment();
+        return builder.str();
+    }
+
+    std::string generateArgDocString(const FlagArgument &argument)
+    {
+        std::ostringstream builder;
+        auto [inBracket, outBracket] = getOptionArgumentBrackets(argument.isRequired());
+        builder << inBracket << argument.getName() << ',' << argument.getShortName() << outBracket;
+        return builder.str();
+    }
+
+    std::string generateOptionsDocString(const OptionArgumentBase &argument)
+    {
+        std::ostringstream builder;
+        builder << argument.getName() << ',' << argument.getShortName() << ' ';
+        builder << '<' << argument.getValueName() << '>' << '\t' << argument.getUsageComment();
+        return builder.str();
+    }
+
+    std::string generateArgDocString(const OptionArgumentBase &argument)
+    {
+        std::ostringstream builder;
+        auto [inBracket, outBracket] = getOptionArgumentBrackets(argument.isRequired());
+        builder << inBracket << argument.getName() << ',' << argument.getShortName() << ' ';
+        builder << '<' << argument.getValueName() << '>' << outBracket;
+        return builder.str();
+    }
+
+    std::string generateOptionsDocString(const PositionalArgumentBase &argument)
+    {
+        std::ostringstream builder;
+        auto [inBracket, outBracket] = getPositionalArgumentBrackets(argument.isRequired());
+
+        builder << inBracket << argument.getName();
+        builder << outBracket << '\t' << argument.getUsageComment();
+        return builder.str();
+    }
+
+    std::string generateArgDocString(const PositionalArgumentBase &argument)
+    {
+        std::ostringstream builder;
+        auto [inBracket, outBracket] = getPositionalArgumentBrackets(argument.isRequired());
+
+        builder << inBracket << argument.getName();
+        builder << outBracket;
+        return builder.str();
+    }
+} // namespace cli::commands::docwriting
