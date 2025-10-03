@@ -27,7 +27,7 @@ namespace cli::commands
     class CommandTree
     {
     public:
-        CommandTree();
+        explicit CommandTree(std::string_view rootName);
 
         // Insert as child under a chain of parent ids
         template <typename... Ids>

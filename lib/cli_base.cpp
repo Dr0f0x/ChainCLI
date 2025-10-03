@@ -8,9 +8,17 @@
 
 namespace cli
 {
-    CliBase::CliBase()
+    CliBase::CliBase(const CliConfig &&config)
+        : commandsTree(config.executableName)
     {
-        configuration = CliConfig();
+        configuration = std::make_unique<CliConfig>(config);
+    }
+
+    CliBase::CliBase(std::string_view executableName)
+        : commandsTree(executableName)
+    {
+        configuration = std::make_unique<CliConfig>();
+        configuration->executableName = std::string(executableName);
     }
 
     commands::Command &CliBase::createNewCommand(std::string_view id, std::unique_ptr<std::function<void(const CliContext &)>> actionPtr)

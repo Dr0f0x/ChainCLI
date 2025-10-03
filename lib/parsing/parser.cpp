@@ -39,7 +39,7 @@ namespace cli::parsing
                 continue;
             }
 
-            const auto &posArg = *posArguments[posArgsIndex];
+            const auto &posArg = *posArguments.at(posArgsIndex);
 
             auto val = posArg.parseToValue(input);
             contextBuilder.addPositionalArgument(posArg.getName(), val);

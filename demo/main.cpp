@@ -108,7 +108,7 @@ void logTest(Logger &logger)
 void CommandTreeTest()
 {
     // Create a command tree
-    auto cmdTree = cli::commands::CommandTree();
+    auto cmdTree = cli::commands::CommandTree("CLIDemo");
 
     // Insert commands into the tree
     cmdTree.insert(std::make_unique<cli::commands::Command>("child1", "Child 1", "First child command", nullptr));
@@ -123,7 +123,7 @@ int main(int argc, char *argv[])
     using namespace cli::logging;
 
     // setup logger
-    auto cliApp = cli::CliBase();
+    auto cliApp = cli::CliBase("CLIDemo");
     auto &logger = cliApp.Logger();
     logger.setLevel(LogLevel::TRACE);
 
@@ -140,6 +140,5 @@ int main(int argc, char *argv[])
 
     cliApp.getCommandTree().print(std::cout);
     // printCommands();
-
     RUN_CLI_APP(cliApp, argc, argv);
 }

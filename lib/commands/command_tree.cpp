@@ -3,11 +3,10 @@
 
 namespace cli::commands
 {
-    CommandTree::CommandTree()
+    CommandTree::CommandTree(std::string_view rootName)
     {
-        root = std::make_unique<Command>("root");
-    };
-
+        root = std::make_unique<Command>(rootName);
+    }
 
     void CommandTree::print(std::ostream &os, int indent) const
     {
