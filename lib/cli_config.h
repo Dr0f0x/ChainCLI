@@ -10,7 +10,7 @@ namespace cli
         std::string version;        // e.g. "1.2.3"
 
         // Runtime flags and options
-        //...
+        char repeatableDelimiter{','};
 
         // Behavior toggles
         // ...

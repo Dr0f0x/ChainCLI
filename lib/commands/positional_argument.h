@@ -15,9 +15,10 @@ namespace cli::commands
     public:
         PositionalArgumentBase(std::string_view name,
                                std::string_view optionsComment,
+                               bool repeatable,
                                bool required,
                                std::type_index t)
-            : TypedArgumentBase(name, optionsComment, ArgumentKind::Positional, required, t) {}
+            : TypedArgumentBase(name, optionsComment, ArgumentKind::Positional, repeatable, required, t) {}
 
         [[nodiscard]] std::string getOptionsDocString() const override;
         [[nodiscard]] std::string getArgDocString() const override;
@@ -35,8 +36,9 @@ namespace cli::commands
     public:
         explicit PositionalArgument(std::string_view name,
                                     std::string_view optionsComment = "",
-                                    bool required = true)
-            : PositionalArgumentBase(name, optionsComment, required, typeid(T)) {}
+                                    bool required = true,
+                                    bool repeatable = false)
+            : PositionalArgumentBase(name, optionsComment, repeatable, required, typeid(T)) {}
 
         // Movable
         PositionalArgument(PositionalArgument &&) noexcept = default;

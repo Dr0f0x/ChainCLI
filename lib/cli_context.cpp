@@ -19,6 +19,11 @@ namespace cli
         return flagArgs->contains(argName);
     }
 
+    bool CliContext::isArgPresent(const std::string &argName) const
+    {
+        return isOptionArgPresent(argName) || isFlagPresent(argName) || isPositionalArgPresent(argName);
+    }
+
     ContextBuilder::ContextBuilder()
     {
         positionalArgs = std::make_unique<std::unordered_map<std::string, std::any>>();

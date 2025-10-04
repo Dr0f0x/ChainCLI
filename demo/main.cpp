@@ -21,12 +21,12 @@ void other_func([[maybe_unused]] const cli::CliContext &ctx)
 
 void exception_func([[maybe_unused]] const cli::CliContext &ctx)
 {
-    //int arg1 = ctx.getPositionalArgument<int>("arg1");
-    std::string arg2;
+    //auto arg1 = ctx.getRepeatableArg<int>("arg1");
+    //std::string arg2;
     //bool arg2Pres = ctx.isPositionalArgPresent("arg2");
     //ctx.getPositionalArgument("arg2", arg2);
 
-    //auto pres = ctx.getOptionArgument<int>("--type");
+    //auto pres = ctx.getRepeatableOptionArg<int>("--type");
     //bool flag = ctx.isFlagPresent("--help");
     std::cout << "exception command called" << std::endl;
     throw std::runtime_error("error");
@@ -57,9 +57,9 @@ void initCommands(cli::CliBase &cliApp)
     otherCmd.withShortDescription("other2 short")
         .withLongDescription("other2 long")
         .withExecutionFunc(std::function<void(const cli::CliContext &)>(exception_func))
-        .withExclusiveGroup(cli::commands::PositionalArgument<int>("arg1", "first argument", true),
+        .withExclusiveGroup(cli::commands::PositionalArgument<int>("arg1", "first argument", true, true),
                             std::move(arg2))
-        .withOptionArgument(cli::commands::OptionArgument<int>("--type", "nut", "-t"))
+        .withOptionArgument(cli::commands::OptionArgument<int>("--type", "nut", "-t", "", false, true))
         .withFlagArgument(cli::commands::FlagArgument("--help", "-h"));
 
     otherCmd.withSubCommand(std::move(testcmdSub));

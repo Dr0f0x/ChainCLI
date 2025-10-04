@@ -43,42 +43,129 @@ namespace cli
             std::unique_ptr<std::unordered_map<std::string, std::any>> posArgs,
             std::unique_ptr<std::unordered_map<std::string, std::any>> optArgs,
             std::unique_ptr<std::unordered_set<std::string>> flagArgs,
-            cli::logging::Logger& logger)
-            : Logger(logger), positionalArgs(std::move(posArgs)), optionArgs(std::move(optArgs)), flagArgs(std::move(flagArgs)){}
+            cli::logging::Logger &logger)
+            : Logger(logger), positionalArgs(std::move(posArgs)), optionArgs(std::move(optArgs)), flagArgs(std::move(flagArgs)) {}
 
         // Non-copyable
         CliContext(const CliContext &) = delete;
         CliContext &operator=(const CliContext &) = delete;
 
+        bool isArgPresent(const std::string &argName) const;
         bool isOptionArgPresent(const std::string &argName) const;
         bool isPositionalArgPresent(const std::string &argName) const;
         bool isFlagPresent(const std::string &argName) const;
 
         template <typename T>
-        T getPositionalArgument(const std::string &argName) const
+        T getPositionalArg(const std::string &argName) const
         {
             return getAnyCast<T>(argName, *positionalArgs);
         }
 
         template <typename T>
-        void getPositionalArgument(const std::string &argName, T &out) const
+        void getPositionalArg(const std::string &argName, T &out) const
         {
             out = getAnyCast<T>(argName, *positionalArgs);
         }
 
         template <typename T>
-        T getOptionArgument(const std::string &argName) const
+        T getOptionArg(const std::string &argName) const
         {
             return getAnyCast<T>(argName, *optionArgs);
         }
 
         template <typename T>
-        void getOptionArgument(const std::string &argName, T &out) const
+        void getOptionArg(const std::string &argName, T &out) const
         {
             out = getAnyCast<T>(argName, *optionArgs);
         }
 
-        cli::logging::Logger& Logger;
+        template <typename T>
+        std::vector<T> getRepeatableOptionArg(const std::string &argName) const
+        {
+            auto it = optionArgs->find(argName);
+            if (it == optionArgs->end())
+                throw MissingArgumentException(argName, *optionArgs);
+
+            try
+            {
+                auto anyVec = getAnyCast<std::vector<std::any>>(argName, *optionArgs);
+                std::vector<T> result;
+                result.reserve(anyVec.size());
+
+                for (const auto &elem : anyVec)
+                {
+                    result.push_back(std::any_cast<T>(elem));
+                }
+
+                return result;
+            }
+            catch (const std::bad_any_cast &)
+            {
+                throw InvalidArgumentTypeException(argName, typeid(std::vector<T>), it->second.type());
+            }
+        }
+
+        template <typename T>
+        std::vector<T> getRepeatablePositionalArg(const std::string &argName) const
+        {
+            auto it = positionalArgs->find(argName);
+            if (it == positionalArgs->end())
+                throw MissingArgumentException(argName, *positionalArgs);
+
+            try
+            {
+                auto anyVec = getAnyCast<std::vector<std::any>>(argName, *positionalArgs);
+                std::vector<T> result;
+                result.reserve(anyVec.size());
+
+                for (const auto &elem : anyVec)
+                {
+                    result.push_back(std::any_cast<T>(elem));
+                }
+
+                return result;
+            }
+            catch (const std::bad_any_cast &)
+            {
+                throw InvalidArgumentTypeException(argName, typeid(std::vector<T>), it->second.type());
+            }
+        }
+
+        template <typename T>
+        T getArg(const std::string &argName) const
+        {
+            if (isPositionalArgPresent(argName))
+            {
+                return getAnyCast<T>(argName, *positionalArgs);
+            }
+            else if (isOptionArgPresent(argName))
+            {
+                return getAnyCast<T>(argName, *optionArgs);
+            }
+            else
+            {
+                throw MissingArgumentException(argName, *positionalArgs);
+            }
+        }
+
+        template <typename T>
+        auto getRepeatableArg(const std::string &argName) const
+        {
+            if (isPositionalArgPresent(argName))
+            {
+                return getRepeatablePositionalArg<T>(argName);
+            }
+            else if (isOptionArgPresent(argName))
+            {
+                return getRepeatableOptionArg<T>(argName);
+            }
+            else
+            {
+                throw MissingArgumentException(argName, *positionalArgs);
+            }
+        }
+
+        cli::logging::Logger &Logger;
 
     private:
         std::unique_ptr<std::unordered_map<std::string, std::any>> positionalArgs;
@@ -86,7 +173,7 @@ namespace cli
         std::unique_ptr<std::unordered_set<std::string>> flagArgs;
 
         template <typename T>
-        static T getAnyCast(const std::string &name, std::unordered_map<std::string, std::any>& dict)
+        static T getAnyCast(const std::string &name, std::unordered_map<std::string, std::any> &dict)
         {
             try
             {
@@ -118,7 +205,7 @@ namespace cli
 
         bool isArgPresent(const std::string &argName) const;
 
-        std::unique_ptr<CliContext> build(cli::logging::Logger& logger);
+        std::unique_ptr<CliContext> build(cli::logging::Logger &logger);
 
     private:
         std::unique_ptr<std::unordered_map<std::string, std::any>> positionalArgs;

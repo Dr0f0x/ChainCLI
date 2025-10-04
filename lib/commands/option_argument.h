@@ -14,11 +14,12 @@ namespace cli::commands
     public:
         OptionArgumentBase(std::string_view name,
                            std::string_view optionsComment,
+                           bool repeatable,
                            bool required,
                            std::type_index t,
                            std::string_view shortName,
                            std::string_view valueName)
-            : TypedArgumentBase(name, optionsComment, ArgumentKind::Option, required, t),
+            : TypedArgumentBase(name, optionsComment, ArgumentKind::Option, repeatable, required, t),
               FlaggedArgumentBase(shortName),
               valueName(valueName) {}
 
@@ -45,8 +46,9 @@ namespace cli::commands
                                 std::string_view valueName,
                                 std::string_view shortName = "",
                                 std::string_view optionsComment = "",
-                                bool required = false)
-            : OptionArgumentBase(name, optionsComment, required, typeid(T), shortName, valueName) {}
+                                bool required = false,
+                                bool repeatable = false)
+            : OptionArgumentBase(name, optionsComment, repeatable, required, typeid(T), shortName, valueName) {}
 
         // Movable
         OptionArgument(OptionArgument &&) noexcept = default;

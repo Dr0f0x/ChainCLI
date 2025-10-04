@@ -15,7 +15,7 @@ namespace cli::commands
                               std::string_view shortName = "",
                               std::string_view optionsComment = "",
                               bool isRequired = false)
-            : ArgumentBase(name, optionsComment, ArgumentKind::Flag, isRequired),
+            : ArgumentBase(name, optionsComment, ArgumentKind::Flag, false, isRequired),
               FlaggedArgumentBase(shortName) {}
 
         std::string getOptionsDocString() const override;

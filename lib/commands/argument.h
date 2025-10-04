@@ -25,6 +25,7 @@ namespace cli::commands
         [[nodiscard]] constexpr std::string_view getName() const noexcept { return name; }
         [[nodiscard]] constexpr std::string_view getUsageComment() const noexcept { return optionsComment; }
         [[nodiscard]] constexpr bool isRequired() const noexcept { return required; }
+        [[nodiscard]] constexpr bool isRepeatable() const noexcept { return repeatable; }
         [[nodiscard]] constexpr ArgumentKind getArgType() const { return argType; }
 
         [[nodiscard]] virtual std::string getOptionsDocString() const = 0;
@@ -34,12 +35,14 @@ namespace cli::commands
         ArgumentBase(std::string_view name,
                      std::string_view optionsComment,
                      ArgumentKind argType,
+                     bool repeatable,
                      bool required)
-            : name(name), optionsComment(optionsComment), argType(argType), required(required) {}
+            : name(name), optionsComment(optionsComment), argType(argType), repeatable(repeatable), required(required) {}
 
         std::string name;
         std::string optionsComment;
         ArgumentKind argType;
+        bool repeatable{false};
         bool required{true};
     };
 
@@ -57,9 +60,10 @@ namespace cli::commands
         TypedArgumentBase(std::string_view name,
                           std::string_view optionsComment,
                           ArgumentKind argType,
+                          bool repeatable,
                           bool required,
                           std::type_index t)
-            : ArgumentBase(name, optionsComment, argType, required), type(t) {}
+            : ArgumentBase(name, optionsComment, argType, repeatable, required), type(t) {}
 
         std::type_index type;
     };

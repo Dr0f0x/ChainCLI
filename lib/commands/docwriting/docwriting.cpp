@@ -114,6 +114,8 @@ namespace cli::commands::docwriting
     {
         std::ostringstream builder;
         builder << argument.getName() << ',' << argument.getShortName() << ' ' << '<' << argument.getValueName() << '>';
+        if (argument.isRepeatable())
+            builder << "...";
         return std::format("{:<{}}{:>{}}",
                                      builder.str(),
                                      20,
@@ -127,6 +129,9 @@ namespace cli::commands::docwriting
         auto [inBracket, outBracket] = getOptionArgumentBrackets(argument.isRequired());
         builder << inBracket << argument.getName() << ' ' << argument.getShortName() << ' ';
         builder << '<' << argument.getValueName() << '>' << outBracket;
+
+        if (argument.isRepeatable())
+            builder << "...";
         return builder.str();
     }
 
@@ -136,6 +141,8 @@ namespace cli::commands::docwriting
         auto [inBracket, outBracket] = getPositionalArgumentBrackets(argument.isRequired());
 
         builder << inBracket << argument.getName()<< outBracket;
+        if (argument.isRepeatable())
+            builder << "...";
         return std::format("{:<{}}{:>{}}",
                                      builder.str(),
                                      20,
@@ -150,6 +157,9 @@ namespace cli::commands::docwriting
 
         builder << inBracket << argument.getName();
         builder << outBracket;
+
+        if (argument.isRepeatable())
+            builder << "...";
         return builder.str();
     }
 } // namespace cli::commands::docwriting
