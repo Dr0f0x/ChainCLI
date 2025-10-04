@@ -37,7 +37,7 @@ namespace cli::commands
                      bool required)
             : name(name), optionsComment(optionsComment), argType(argType), required(required) {}
 
-        const std::string name;
+        std::string name;
         std::string optionsComment;
         ArgumentKind argType;
         bool required{true};

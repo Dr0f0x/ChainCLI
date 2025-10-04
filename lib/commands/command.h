@@ -18,10 +18,10 @@ namespace cli::commands
 
     public:
         // Constructor initializes the identifier and description
-        constexpr Command(std::string_view id, std::string_view short_desc, std::string_view long_desc, std::unique_ptr<std::function<void(const CliContext &)>> actionPtr)
+        Command(std::string_view id, std::string_view short_desc, std::string_view long_desc, std::unique_ptr<std::function<void(const CliContext &)>> actionPtr)
             : identifier(id), shortDescription(short_desc), longDescription(long_desc), executePtr(std::move(actionPtr))
         { }
-        explicit constexpr Command(std::string_view id)
+        explicit Command(std::string_view id)
             : identifier(id), shortDescription(""), longDescription(""), executePtr(nullptr)
         { }
 
@@ -54,7 +54,7 @@ namespace cli::commands
 
         [[nodiscard]] auto &getSubCommands() { return subCommands; }
         [[nodiscard]] auto const &getSubCommands() const { return subCommands; }
-#pragma endredion Accessor
+#pragma endregion Accessor
 
         // try to run the passed callable
         void execute(const CliContext &context) const;
@@ -115,11 +115,11 @@ namespace cli::commands
 #pragma endregion ChainingMethods
 
     private:
-        int indexForNewArgGroup{0};
+        size_t indexForNewArgGroup{0};
         void safeAddToArgGroup(const std::shared_ptr<ArgumentBase>& arg);
         void addArgGroup(const ArgumentGroup &argGroup);
 
-        const std::string identifier;
+        std::string identifier;
         std::string shortDescription;
         std::string longDescription;
         std::unique_ptr<std::function<void(const CliContext &)>> executePtr;

@@ -7,27 +7,27 @@
 
 using namespace cli::logging;
 
-void command_func(const cli::CliContext &ctx)
+void command_func([[maybe_unused]] const cli::CliContext &ctx)
 {
     std::cout << "command called" << std::endl;
     ctx.Logger.info("run command executed");
 }
 
-void other_func(const cli::CliContext &ctx)
+void other_func([[maybe_unused]] const cli::CliContext &ctx)
 {
     std::cout << "other command called" << std::endl;
     ctx.Logger.info("other command executed");
 }
 
-void exception_func(const cli::CliContext &ctx)
+void exception_func([[maybe_unused]] const cli::CliContext &ctx)
 {
-    int arg1 = ctx.getPositionalArgument<int>("arg1");
+    //int arg1 = ctx.getPositionalArgument<int>("arg1");
     std::string arg2;
-    bool arg2Pres = ctx.isPositionalArgPresent("arg2");
+    //bool arg2Pres = ctx.isPositionalArgPresent("arg2");
     //ctx.getPositionalArgument("arg2", arg2);
 
-    auto pres = ctx.getOptionArgument<int>("--type");
-    bool flag = ctx.isFlagPresent("--help");
+    //auto pres = ctx.getOptionArgument<int>("--type");
+    //bool flag = ctx.isFlagPresent("--help");
     std::cout << "exception command called" << std::endl;
     throw std::runtime_error("error");
 }

@@ -1,0 +1,76 @@
+name: Ubuntu gcc Build
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set reusable strings
+      id: strings
+      shell: bash
+      run: |
+        echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+
+    - name: Configure CMake
+      run: >
+        cmake -B ${{ steps.strings.outputs.build-output-dir }}
+        -DCMAKE_CXX_COMPILER=g++
+        -DCMAKE_CXX_FLAGS="-Wall -Wextra -Wpedantic -Werror"
+        -DCMAKE_BUILD_TYPE=Release
+        -S ${{ github.workspace }}
+
+    - name: Build
+      run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config Release 
+
+    - name: Test
+      working-directory: ${{ steps.strings.outputs.build-output-dir }}
+      run: ctest --build-config Release
+
+    - name: Upload compiled heady executable
+      uses: actions/upload-artifact@v4
+      with:
+        name: heady-executable
+        path: |
+          ${{ steps.strings.outputs.build-output-dir }}/**/heady
+          ${{ steps.strings.outputs.build-output-dir }}/**/Heady
+    
+    - name: Upload build result
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-result
+        path: |
+          ${{ steps.strings.outputs.build-output-dir }}/lib/**/*libcli*.dll
+          ${{ steps.strings.outputs.build-output-dir }}/lib/**/*libcli*.lib
+          ${{ steps.strings.outputs.build-output-dir }}/lib/**/*libcli*.so
+          ${{ steps.strings.outputs.build-output-dir }}/lib/**/*libcli*.a
+          ${{ steps.strings.outputs.build-output-dir }}/lib/**/*libcli*.dylib
+
+    - name: Install gcovr
+      run: pip install gcovr
+
+    - name: Run gcovr
+      shell: pwsh
+      run: |
+        New-Item -ItemType Directory -Force -Path build\coverage
+        gcovr -r . --filter lib/ --html-details build/coverage/coverage.html --cobertura -o build/coverage/coverage.xml --exclude '_deps' --gcov-ignore-errors=no_working_dir_found
+
+    - name: Upload coverage artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-report
+        path: build/coverage
+
+    - name: Upload coverage reports to Codecov
+      if: ${{ vars.UPLOAD_COVERAGE == 'true' }}
+      uses: codecov/codecov-action@v5
+      with:
+        directory: build/coverage/
+        token: ${{ secrets.CODECOV_TOKEN }}

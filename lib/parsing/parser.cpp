@@ -16,7 +16,7 @@ namespace cli::parsing
         const auto &optArguments = command.getOptionArguments();
         const auto &flagArguments = command.getFlagArguments();
 
-        int posArgsIndex = 0;
+        size_t posArgsIndex = 0;
         for (size_t i = 0; i < inputs.size(); ++i)
         {
             const auto &input = inputs[i];

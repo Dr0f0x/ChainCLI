@@ -44,7 +44,7 @@ namespace cli
             std::unique_ptr<std::unordered_map<std::string, std::any>> optArgs,
             std::unique_ptr<std::unordered_set<std::string>> flagArgs,
             cli::logging::Logger& logger)
-            : positionalArgs(std::move(posArgs)), optionArgs(std::move(optArgs)), flagArgs(std::move(flagArgs)), Logger(logger) {}
+            : Logger(logger), positionalArgs(std::move(posArgs)), optionArgs(std::move(optArgs)), flagArgs(std::move(flagArgs)){}
 
         // Non-copyable
         CliContext(const CliContext &) = delete;

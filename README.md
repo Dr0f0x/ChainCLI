@@ -1,3 +1,9 @@
+[![CMake Ubuntu Clang](https://github.com/Dr0f0x/CliLib/actions/workflows/ubuntu-clang.yml/badge.svg)](https://github.com/Dr0f0x/CliLib/actions/workflows/ubuntu-clang.yml)
+[![CMake Ubuntu GCC](https://github.com/Dr0f0x/CliLib/actions/workflows/ubuntu-gcc.yml/badge.svg)](https://github.com/Dr0f0x/CliLib/actions/workflows/ubuntu-gcc.yml)
+[![CMake Windows MSVC](https://github.com/Dr0f0x/CliLib/actions/workflows/windows-msvc.yml/badge.svg)](https://github.com/Dr0f0x/CliLib/actions/workflows/windows-msvc.yml)
+[![heady build](https://github.com/Dr0f0x/CliLib/actions/workflows/heady.yml/badge.svg)](https://github.com/Dr0f0x/CliLib/actions/workflows/heady.yml)
+[![codecov](https://codecov.io/gh/Dr0f0x/CliLib/graph/badge.svg?token=Q62QP5D61I)](https://codecov.io/gh/Dr0f0x/CliLib)
+
 ### Folder Structure: ###
 
 ```

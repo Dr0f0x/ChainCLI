@@ -58,7 +58,6 @@ namespace cli::logging
                              std::shared_ptr<IFormatter> f,
                              LogLevel minLevel = LogLevel::DEBUG,
                              std::shared_ptr<const LogStyleMap> styles = nullptr);
-        ;
         ~FileHandler() override;
 
     private:

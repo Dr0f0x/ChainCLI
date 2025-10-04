@@ -16,7 +16,7 @@ namespace cli::commands
     void CommandTree::printRecursive(std::ostream &os, const Command *cmdPtr, bool last, int indentStep)
     {
         // Print indentation with vertical guides
-        for (size_t i = 0; i < indentStep; ++i)
+        for (int i = 0; i < indentStep; ++i)
         {
             if (i + 1 == indentStep)
                 os << (last? "`-- " : "|-- ");

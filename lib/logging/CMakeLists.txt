@@ -1,4 +1,16 @@
-target_sources(${LIBRARY_OUTPUT_NAME}
+target_sources(${LIBRARY_NAME_STATIC}
+    PRIVATE
+        formatter.h
+        formatter.cpp
+        handler.h
+        handler.cpp
+        logger.h
+        logger.cpp
+        loglevel.h
+        logrecord.h
+)
+
+target_sources(${LIBRARY_NAME_SHARED}
     PRIVATE
         formatter.h
         formatter.cpp

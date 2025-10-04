@@ -1,0 +1,39 @@
+name: heady build
+
+on:
+  workflow_run:
+    workflows: ["Ubuntu gcc Build"]
+    types:
+      - completed
+
+jobs:
+  build_single_header:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Download Heady executable
+      uses: actions/download-artifact@v4
+      with:
+        name: heady-executable
+        run-id: ${{ github.event.workflow_run.id }}
+        github-token: ${{ secrets.WORKFLOW_ARTIFACT_TOKEN }}
+
+    - name: Run Heady
+      run: |
+        mkdir -p build
+        chmod +x ./tools/heady/heady
+
+        ./tools/heady/heady \
+          --define HEADY_HEADER_ONLY \
+          --source ./lib \
+          --output build/CliLib.hpp \
+          --recursive \
+          --excluded CMakeLists.txt
+
+    - name: Upload amalgamated header artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: single_header
+        path: ./build/CliLib.hpp
