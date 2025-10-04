@@ -25,5 +25,8 @@ add_subdirectory(demo)
 # Include tests
 add_subdirectory(test)
 
+# Include tools
+add_subdirectory(tools)
+
 # Make BUILD_SHARED_LIBS visible in GUIs like ccmake / cmake-gui
-option(BUILD_SHARED_LIBS "Build libraries as shared instead of static" OFF)
+option(BUILD_SHARED_LIBS "Build libraries as shared instead of static" ON)
