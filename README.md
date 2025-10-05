@@ -75,20 +75,57 @@ Options:
 TODO properly define dll api with
 #pragma once
 
-#if defined(_WIN32) || defined(_WIN64)
-  #ifdef BUILD_MY_DLL      // Defined when building the DLL
-    #define MY_DLL_API __declspec(dllexport)
-  #else                    // Defined when consuming the DLL
-    #define MY_DLL_API __declspec(dllimport)
-  #endif
-#else
-  #if defined(BUILD_MY_DLL)
-    #define MY_DLL_API __attribute__((visibility("default")))
+// Define EXPORTED for any platform
+#if defined _WIN32 || defined __CYGWIN__
+  #ifdef WIN_EXPORT
+    // Exporting...
+    #ifdef __GNUC__
+      #define EXPORTED __attribute__ ((dllexport))
+    #else
+      #define EXPORTED __declspec(dllexport) // Note: actually gcc seems to also supports this syntax.
+    #endif
   #else
-    #define MY_DLL_API
+    #ifdef __GNUC__
+      #define EXPORTED __attribute__ ((dllimport))
+    #else
+      #define EXPORTED __declspec(dllimport) // Note: actually gcc seems to also supports this syntax.
+    #endif
+  #endif
+  #define NOT_EXPORTED
+#else
+  #if __GNUC__ >= 4
+    #define EXPORTED __attribute__ ((visibility ("default")))
+    #define NOT_EXPORTED  __attribute__ ((visibility ("hidden")))
+  #else
+    #define EXPORTED
+    #define NOT_EXPORTED
   #endif
 #endif
+
+if(MSVC)
+    # Microsoft Visual C++
+    target_compile_definitions(${LIBRARY_NAME_SHARED} PRIVATE WIN_EXPORT)
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    # Clang and AppleClang
+    add_compile_options(-fvisibility=hidden)
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+    # GCC
+    message("setting default vis to hidden")
+    set_target_properties(${LIBRARY_NAME_SHARED} PROPERTIES CXX_VISIBILITY_PRESET hidden)
+    set_target_properties(${LIBRARY_NAME_SHARED} PROPERTIES VISIBILITY_INLINES_HIDDEN YES)
+endif()
+
+install(TARGETS ${LIBRARY_NAME_SHARED}
+        EXPORT CliLibTargets
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib
+        RUNTIME DESTINATION bin
+        INCLUDES DESTINATION include)
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/lib/include/ DESTINATION include)
 
 **current Group restrictions**
 
 - if two positional arguments are in a a mutually exclusive group and one is optional, the parser still always attempts to parse it (it isnt skipped), this may be fixable or not
+
+cmake -DCMAKE_INSTALL_PREFIX="C:/Users/dczek/Desktop/C_C++/CliLib/install" ..
+>> cmake --build . --target install

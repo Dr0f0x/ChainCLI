@@ -22,6 +22,10 @@ jobs:
     - name: Configure CMake
       run: >
         cmake -B ${{ steps.strings.outputs.build-output-dir }}
+        -DBUILD_TOOLS=OFF
+        -DBUILD_DEMO=OFF
+        -DBUILD_TESTS=ON
+        -DBUILD_LIB=ON
         -DCMAKE_CXX_COMPILER=g++
         -DCMAKE_CXX_FLAGS="-Wall -Wextra -Wpedantic -Werror"
         -DCMAKE_BUILD_TYPE=Release
@@ -33,14 +37,6 @@ jobs:
     - name: Test
       working-directory: ${{ steps.strings.outputs.build-output-dir }}
       run: ctest --build-config Release
-
-    - name: Upload compiled heady executable
-      uses: actions/upload-artifact@v4
-      with:
-        name: heady-executable
-        path: |
-          ${{ steps.strings.outputs.build-output-dir }}/**/heady
-          ${{ steps.strings.outputs.build-output-dir }}/**/Heady
     
     - name: Upload build result
       uses: actions/upload-artifact@v4

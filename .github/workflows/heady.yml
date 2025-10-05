@@ -13,27 +13,28 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Download Heady executable
-      uses: actions/download-artifact@v4
-      with:
-        name: heady-executable
-        run-id: ${{ github.event.workflow_run.id }}
-        github-token: ${{ secrets.WORKFLOW_ARTIFACT_TOKEN }}
-
-    - name: Run Heady
+    - name: Set reusable strings
+      id: strings
+      shell: bash
       run: |
-        mkdir -p build
-        chmod +x ./tools/heady/heady
+        echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
 
-        ./tools/heady/heady \
-          --define HEADY_HEADER_ONLY \
-          --source ./lib \
-          --output build/CliLib.hpp \
-          --recursive \
-          --excluded CMakeLists.txt
+    - name: Configure CMake
+      run: >
+        cmake -B ${{ steps.strings.outputs.build-output-dir }}
+        -DBUILD_TOOLS=ON
+        -DBUILD_DEMO=ON
+        -DBUILD_TESTS=OFF
+        -DBUILD_LIB=OFF
+        -DCMAKE_CXX_COMPILER=g++
+        -DCMAKE_BUILD_TYPE=Release
+        -S ${{ github.workspace }}
+
+    - name: Build tools and demo (Runs heady)
+      run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config Release 
 
     - name: Upload amalgamated header artifact
       uses: actions/upload-artifact@v4
       with:
         name: single_header
-        path: ./build/CliLib.hpp
+        path: ./demo/CliLib.hpp

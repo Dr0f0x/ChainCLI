@@ -22,6 +22,10 @@ jobs:
     - name: Configure CMake
       run: >
         cmake -B ${{ steps.strings.outputs.build-output-dir }}
+        -DBUILD_TOOLS=OFF
+        -DBUILD_DEMO=OFF
+        -DBUILD_TESTS=ON
+        -DBUILD_LIB=ON
         -DCMAKE_CXX_COMPILER=cl
         -DCMAKE_CXX_FLAGS="/W4 /WX"
         -DCMAKE_BUILD_TYPE=Release

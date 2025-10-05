@@ -18,7 +18,7 @@ function Run-Heady {
     [CmdletBinding()]
     param (
         [string]$SourceDir = ".\lib",
-        [string]$OutputFile = "build\CliLib.hpp"
+        [string]$OutputFile = "demo\CliLib.hpp"
     )
 
     $headyExe = Join-Path -Path $PSScriptRoot -ChildPath "..\build\tools\heady\heady.exe"

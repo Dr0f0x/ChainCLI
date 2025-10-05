@@ -10,7 +10,7 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# prohect specific vars
+# project specific vars
 set(LIBRARY_NAME_STATIC cli_lib_static)
 set(LIBRARY_NAME_SHARED cli_lib)
 set(DEMO_OUTPUT_NAME cli_demo)
@@ -19,7 +19,7 @@ find_program(CLANG_TIDY_EXE NAMES clang-tidy)
 
 if(CLANG_TIDY_EXE)
     message(STATUS "Found clang-tidy: ${CLANG_TIDY_EXE}")
-    #set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY_EXE}")
+    #set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY_EXE}") //TODO currently produces errors
 else()
     message(STATUS "clang-tidy not found")
 endif()
@@ -43,16 +43,25 @@ if(ENABLE_WARNINGS_AS_ERRORS)
     endif()
 endif()
 
+option(BUILD_TOOLS "Build tools folder" OFF)
+option(BUILD_LIB "Build library folder" ON)
+option(BUILD_DEMO "Build demo folder" OFF)
+option(BUILD_TESTS "Build tests folder" ON)
+
 enable_testing()
+add_subdirectory(tools)
 
 # Build the library
-add_subdirectory(lib)
-
-# Build the demo app
-add_subdirectory(demo)
+if(BUILD_LIB)
+    add_subdirectory(lib)
+endif()
 
 # Include tests
-add_subdirectory(test)
+if(BUILD_TESTS)
+    add_subdirectory(test)
+endif()
 
-# Include tools
-add_subdirectory(tools)
+# Build the demo app
+if(BUILD_DEMO)
+    add_subdirectory(demo)
+endif()

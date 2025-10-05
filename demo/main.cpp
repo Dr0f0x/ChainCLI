@@ -1,9 +1,6 @@
-#include "cli_base.h"
-#include "logging/logger.h"
-#include "commands/command.h"
 #include <memory>
 #include <iostream>
-#include <commands/command_tree.h>
+#include "CliLib.hpp"
 
 using namespace cli::logging;
 
