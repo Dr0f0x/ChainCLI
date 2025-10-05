@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/ChainCliLogoTransparent.svg" alt="Description" style="max-width: 600px; width: 80%; padding-right=30px">
+</p>
+
 [![CMake Ubuntu Clang](https://github.com/Dr0f0x/CliLib/actions/workflows/ubuntu-clang.yml/badge.svg)](https://github.com/Dr0f0x/CliLib/actions/workflows/ubuntu-clang.yml)
 [![CMake Ubuntu GCC](https://github.com/Dr0f0x/CliLib/actions/workflows/ubuntu-gcc.yml/badge.svg)](https://github.com/Dr0f0x/CliLib/actions/workflows/ubuntu-gcc.yml)
 [![CMake Windows MSVC](https://github.com/Dr0f0x/CliLib/actions/workflows/windows-msvc.yml/badge.svg)](https://github.com/Dr0f0x/CliLib/actions/workflows/windows-msvc.yml)
