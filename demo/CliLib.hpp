@@ -1036,10 +1036,12 @@ namespace cli::commands
         // Constructor initializes the identifier and description
         Command(std::string_view id, std::string_view short_desc, std::string_view long_desc, std::unique_ptr<std::function<void(const CliContext &)>> actionPtr)
             : identifier(id), shortDescription(short_desc), longDescription(long_desc), executePtr(std::move(actionPtr))
-        { }
+        {
+        }
         explicit Command(std::string_view id)
             : identifier(id), shortDescription(""), longDescription(""), executePtr(nullptr)
-        { }
+        {
+        }
 
         // Movable
         Command(Command &&) noexcept = default;
@@ -1076,7 +1078,7 @@ namespace cli::commands
         void execute(const CliContext &context) const;
 
         // Generate documentation strings for the command and its arguments to avoid having to rebuilt them each time
-        void buildDocStrings();
+        void buildDocStrings(std::string_view fullCommandPath);
 
 #pragma region ChainingMethods
         Command &withShortDescription(std::string_view desc);
@@ -1132,7 +1134,7 @@ namespace cli::commands
 
     private:
         size_t indexForNewArgGroup{0};
-        void safeAddToArgGroup(const std::shared_ptr<ArgumentBase>& arg);
+        void safeAddToArgGroup(const std::shared_ptr<ArgumentBase> &arg);
         void addArgGroup(const ArgumentGroup &argGroup);
 
         std::string identifier;
@@ -1244,6 +1246,14 @@ namespace cli::commands
         }
 
         // Iterate over all commands in the tree (DFS)
+        void forEachCommand(const std::function<void(Command *)> &func) const
+        {
+            if (root)
+            {
+                forEachCommandRecursive(root.get(), func);
+            }
+        }
+
         void forEachCommand(const std::function<void(Command &)> &func) const
         {
             if (root)
@@ -1256,9 +1266,15 @@ namespace cli::commands
         void print(std::ostream &os, int indent = 0) const;
         Command *getRootCommand() { return root.get(); }
         const Command *getRootCommand() const { return root.get(); }
+        std::string_view getPathForCommand(Command* cmd) const;
+        void buildCommandPathMap(const std::string &separator = " ");
 
     private:
         std::unique_ptr<Command> root;
+        std::unordered_map<Command*, std::string> commandPathMap;
+ 
+        void buildCommandPathMapRecursive(Command *cmd, std::vector<std::string> &path,
+                                                 const std::string &separator);
 
         // Recursive finder
         template <typename... Ids>
@@ -1282,6 +1298,18 @@ namespace cli::commands
         static Command *findRecursive(Command *cmdPtr) { return cmdPtr; }
 
         // Recursive DFS helper
+        static void forEachCommandRecursive(Command *cmdPtr, const std::function<void(Command *)> &func)
+        {
+            if (cmdPtr)
+            {
+                func(cmdPtr); // call user-provided function
+                for (const auto &[key, subCommandPtr] : cmdPtr->getSubCommands())
+                {
+                    forEachCommandRecursive(subCommandPtr.get(), func);
+                }
+            }
+        }
+
         static void forEachCommandRecursive(Command *cmdPtr, const std::function<void(Command &)> &func)
         {
             if (cmdPtr)
@@ -1317,6 +1345,7 @@ namespace cli
     struct CliConfig
     {
         // General CLI metadata
+        std::string title;
         std::string executableName; // e.g. argv[0]
         std::string description;    // human-readable description
         std::string version;        // e.g. "1.2.3"
@@ -1493,10 +1522,12 @@ namespace cli
     {
         initialized = true;
 
+        commandsTree.buildCommandPathMap();
+
         commandsTree.forEachCommand(
-            [](commands::Command &cmd)
+            [this](commands::Command *cmd)
             {
-                cmd.buildDocStrings(); // no const_cast needed
+                cmd->buildDocStrings(this->commandsTree.getPathForCommand(cmd)); // no const_cast needed
             });
     }
 
@@ -1600,10 +1631,10 @@ namespace cli
     {
         logger->info() << configuration->description << "\n\n";
 
-        auto printCmd = [this](const commands::Command &cmd)
+        auto printCmd = [this](const commands::Command *cmd)
         {
-            if (cmd.hasExecutionFunction())
-                logger->info() << cmd.getDocStringShort() << "\n\n";
+            if (cmd->hasExecutionFunction())
+                logger->info() << cmd->getDocStringShort() << "\n\n";
         };
 
         commandsTree.forEachCommand(printCmd);
@@ -1778,9 +1809,9 @@ namespace cli::commands::docwriting
         using runtime_error::runtime_error;
     };
 
-    std::string generateLongDocString(const Command &command);
+    std::string generateLongDocString(const Command &command, std::string_view fullCommandPath);
 
-    std::string generateShortDocString(const Command &command);
+    std::string generateShortDocString(const Command &command, std::string_view fullCommandPath);
 
     std::string generateOptionsDocString(const FlagArgument &argument);
 
@@ -1836,10 +1867,10 @@ namespace cli::commands
         }
     }
 
-    void Command::buildDocStrings()
+    void Command::buildDocStrings(std::string_view fullPath)
     {
-        docStringShort = docwriting::generateShortDocString(*this);
-        docStringLong = docwriting::generateLongDocString(*this);
+        docStringShort = docwriting::generateShortDocString(*this, fullPath);
+        docStringLong = docwriting::generateLongDocString(*this, fullPath);
     }
 
     Command &Command::withShortDescription(std::string_view desc)
@@ -1965,7 +1996,7 @@ namespace cli::commands
         for (int i = 0; i < indentStep; ++i)
         {
             if (i + 1 == indentStep)
-                os << (last? "`-- " : "|-- ");
+                os << (last ? "`-- " : "|-- ");
             else
                 os << "|   ";
         }
@@ -1978,6 +2009,45 @@ namespace cli::commands
             bool isLast = std::next(it) == cmdPtr->getSubCommands().end();
             printRecursive(os, it->second.get(), isLast, indentStep + 1);
         }
+    }
+
+    std::string_view CommandTree::getPathForCommand(Command *cmd) const
+    {
+        return commandPathMap.at(cmd);
+    }
+
+    void CommandTree::buildCommandPathMap(const std::string &separator)
+    {
+        std::unordered_map<Command *, std::string> map;
+        if (root)
+        {
+            std::vector<std::string> path;
+            buildCommandPathMapRecursive(root.get(), path, separator);
+        }
+    }
+
+    void CommandTree::buildCommandPathMapRecursive(Command *cmd, std::vector<std::string> &path, const std::string &separator)
+    {
+        path.emplace_back(cmd->getIdentifier());
+
+        // Build the full path string
+        std::string fullPath;
+        for (size_t i = 0; i < path.size(); ++i)
+        {
+            fullPath += path[i];
+            if (i + 1 < path.size())
+                fullPath += separator;
+        }
+
+        commandPathMap[cmd] = fullPath;
+
+        // Recurse into subcommands
+        for (const auto &[key, value] : cmd->getSubCommands())
+        {
+            buildCommandPathMapRecursive(value.get(), path, separator);
+        }
+
+        path.pop_back();
     }
 
     std::string CommandNotFoundException::buildMessage(const std::string &id, const std::vector<std::string> &chain)
@@ -2053,10 +2123,10 @@ namespace cli::commands::docwriting
         }
     }
 
-    std::string generateShortDocString(const Command &command)
+    std::string generateShortDocString(const Command &command, std::string_view fullCommandPath)
     {
         std::ostringstream builder;
-        builder << command.getIdentifier() << " ";
+        builder << fullCommandPath << " ";
 
         for (const auto &argGroupPtr : command.getArgumentGroups())
         {
@@ -2068,10 +2138,10 @@ namespace cli::commands::docwriting
         return builder.str();
     }
 
-    std::string generateLongDocString(const Command &command)
+    std::string generateLongDocString(const Command &command, std::string_view fullCommandPath)
     {
         std::ostringstream builder;
-        builder << command.getIdentifier() << " ";
+        builder << fullCommandPath << " ";
 
         for (const auto &argGroupPtr : command.getArgumentGroups())
         {

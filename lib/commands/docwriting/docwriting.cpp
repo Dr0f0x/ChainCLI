@@ -52,10 +52,10 @@ namespace cli::commands::docwriting
         }
     }
 
-    std::string generateShortDocString(const Command &command)
+    std::string generateShortDocString(const Command &command, std::string_view fullCommandPath)
     {
         std::ostringstream builder;
-        builder << command.getIdentifier() << " ";
+        builder << fullCommandPath << " ";
 
         for (const auto &argGroupPtr : command.getArgumentGroups())
         {
@@ -67,10 +67,10 @@ namespace cli::commands::docwriting
         return builder.str();
     }
 
-    std::string generateLongDocString(const Command &command)
+    std::string generateLongDocString(const Command &command, std::string_view fullCommandPath)
     {
         std::ostringstream builder;
-        builder << command.getIdentifier() << " ";
+        builder << fullCommandPath << " ";
 
         for (const auto &argGroupPtr : command.getArgumentGroups())
         {

@@ -62,7 +62,7 @@ namespace cli::commands
         void execute(const CliContext &context) const;
 
         // Generate documentation strings for the command and its arguments to avoid having to rebuilt them each time
-        void buildDocStrings();
+        void buildDocStrings(std::string_view fullCommandPath);
 
 #pragma region ChainingMethods
         Command &withShortDescription(std::string_view desc);

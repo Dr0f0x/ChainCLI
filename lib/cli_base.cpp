@@ -39,10 +39,12 @@ namespace cli
     {
         initialized = true;
 
+        commandsTree.buildCommandPathMap();
+
         commandsTree.forEachCommand(
-            [](commands::Command &cmd)
+            [this](commands::Command *cmd)
             {
-                cmd.buildDocStrings(); // no const_cast needed
+                cmd->buildDocStrings(this->commandsTree.getPathForCommand(cmd)); // no const_cast needed
             });
     }
 
@@ -146,10 +148,10 @@ namespace cli
     {
         logger->info() << configuration->description << "\n\n";
 
-        auto printCmd = [this](const commands::Command &cmd)
+        auto printCmd = [this](const commands::Command *cmd)
         {
-            if (cmd.hasExecutionFunction())
-                logger->info() << cmd.getDocStringShort() << "\n\n";
+            if (cmd->hasExecutionFunction())
+                logger->info() << cmd->getDocStringShort() << "\n\n";
         };
 
         commandsTree.forEachCommand(printCmd);

@@ -55,6 +55,14 @@ namespace cli::commands
         }
 
         // Iterate over all commands in the tree (DFS)
+        void forEachCommand(const std::function<void(Command *)> &func) const
+        {
+            if (root)
+            {
+                forEachCommandRecursive(root.get(), func);
+            }
+        }
+
         void forEachCommand(const std::function<void(Command &)> &func) const
         {
             if (root)
@@ -67,9 +75,15 @@ namespace cli::commands
         void print(std::ostream &os, int indent = 0) const;
         Command *getRootCommand() { return root.get(); }
         const Command *getRootCommand() const { return root.get(); }
+        std::string_view getPathForCommand(Command* cmd) const;
+        void buildCommandPathMap(const std::string &separator = " ");
 
     private:
         std::unique_ptr<Command> root;
+        std::unordered_map<Command*, std::string> commandPathMap;
+ 
+        void buildCommandPathMapRecursive(Command *cmd, std::vector<std::string> &path,
+                                                 const std::string &separator);
 
         // Recursive finder
         template <typename... Ids>
@@ -93,6 +107,18 @@ namespace cli::commands
         static Command *findRecursive(Command *cmdPtr) { return cmdPtr; }
 
         // Recursive DFS helper
+        static void forEachCommandRecursive(Command *cmdPtr, const std::function<void(Command *)> &func)
+        {
+            if (cmdPtr)
+            {
+                func(cmdPtr); // call user-provided function
+                for (const auto &[key, subCommandPtr] : cmdPtr->getSubCommands())
+                {
+                    forEachCommandRecursive(subCommandPtr.get(), func);
+                }
+            }
+        }
+
         static void forEachCommandRecursive(Command *cmdPtr, const std::function<void(Command &)> &func)
         {
             if (cmdPtr)

@@ -38,10 +38,10 @@ namespace cli::commands
         }
     }
 
-    void Command::buildDocStrings()
+    void Command::buildDocStrings(std::string_view fullPath)
     {
-        docStringShort = docwriting::generateShortDocString(*this);
-        docStringLong = docwriting::generateLongDocString(*this);
+        docStringShort = docwriting::generateShortDocString(*this, fullPath);
+        docStringLong = docwriting::generateLongDocString(*this, fullPath);
     }
 
     Command &Command::withShortDescription(std::string_view desc)

@@ -14,9 +14,9 @@ namespace cli::commands::docwriting
         using runtime_error::runtime_error;
     };
 
-    std::string generateLongDocString(const Command &command);
+    std::string generateLongDocString(const Command &command, std::string_view fullCommandPath);
 
-    std::string generateShortDocString(const Command &command);
+    std::string generateShortDocString(const Command &command, std::string_view fullCommandPath);
 
     std::string generateOptionsDocString(const FlagArgument &argument);
 

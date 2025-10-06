@@ -19,7 +19,7 @@ namespace cli::commands
         for (int i = 0; i < indentStep; ++i)
         {
             if (i + 1 == indentStep)
-                os << (last? "`-- " : "|-- ");
+                os << (last ? "`-- " : "|-- ");
             else
                 os << "|   ";
         }
@@ -32,6 +32,45 @@ namespace cli::commands
             bool isLast = std::next(it) == cmdPtr->getSubCommands().end();
             printRecursive(os, it->second.get(), isLast, indentStep + 1);
         }
+    }
+
+    std::string_view CommandTree::getPathForCommand(Command *cmd) const
+    {
+        return commandPathMap.at(cmd);
+    }
+
+    void CommandTree::buildCommandPathMap(const std::string &separator)
+    {
+        std::unordered_map<Command *, std::string> map;
+        if (root)
+        {
+            std::vector<std::string> path;
+            buildCommandPathMapRecursive(root.get(), path, separator);
+        }
+    }
+
+    void CommandTree::buildCommandPathMapRecursive(Command *cmd, std::vector<std::string> &path, const std::string &separator)
+    {
+        path.emplace_back(cmd->getIdentifier());
+
+        // Build the full path string
+        std::string fullPath;
+        for (size_t i = 0; i < path.size(); ++i)
+        {
+            fullPath += path[i];
+            if (i + 1 < path.size())
+                fullPath += separator;
+        }
+
+        commandPathMap[cmd] = fullPath;
+
+        // Recurse into subcommands
+        for (const auto &[key, value] : cmd->getSubCommands())
+        {
+            buildCommandPathMapRecursive(value.get(), path, separator);
+        }
+
+        path.pop_back();
     }
 
     std::string CommandNotFoundException::buildMessage(const std::string &id, const std::vector<std::string> &chain)

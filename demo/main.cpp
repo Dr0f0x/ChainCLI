@@ -112,7 +112,7 @@ void logTest(Logger &logger)
 void CommandTreeTest()
 {
     // Create a command tree
-    auto cmdTree = CommandTree("CLIDemo");
+    auto cmdTree = CommandTree("cli_demo");
 
     // Insert commands into the tree
     cmdTree.insert(std::make_unique<Command>("child1", "Child 1", "First child command", nullptr));
@@ -127,7 +127,8 @@ int main(int argc, char *argv[])
     using namespace cli::logging;
 
     auto config = cli::CliConfig();
-    config.executableName = "CLIDemo";
+    config.title = "CLIDemo";
+    config.executableName = "cli_demo";
     config.description = "Demo to test the CLI Library";
     config.version = "1.0.0";
 
