@@ -45,7 +45,7 @@ endif()
 
 option(BUILD_TOOLS "Build tools folder" ON)
 option(BUILD_LIB "Build library folder" ON)
-option(BUILD_DEMO "Build demo folder" ON)
+option(BUILD_DEMO "Build demo folder" OFF)
 option(BUILD_TESTS "Build tests folder" ON)
 
 enable_testing()

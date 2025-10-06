@@ -51,6 +51,7 @@ namespace cli
         CliContext &operator=(const CliContext &) = delete;
 
         bool isArgPresent(const std::string &argName) const;
+        bool isArgPresent(std::string_view argName) const;
         bool isOptionArgPresent(const std::string &argName) const;
         bool isPositionalArgPresent(const std::string &argName) const;
         bool isFlagPresent(const std::string &argName) const;

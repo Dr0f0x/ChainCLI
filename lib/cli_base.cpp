@@ -2,7 +2,6 @@
 #include "utils.h"
 #include "logging/logger.h"
 #include "commands/command.h"
-#include "parsing/parser.h"
 #include "cli_context.h"
 #include <iostream>
 
@@ -12,6 +11,7 @@ namespace cli
         : commandsTree(config.executableName)
     {
         configuration = std::make_unique<CliConfig>(std::move(config));
+        parser = std::make_unique<parsing::StringParser>(*configuration);
     }
 
     CliBase::CliBase(std::string_view executableName)
@@ -19,6 +19,7 @@ namespace cli
     {
         configuration = std::make_unique<CliConfig>();
         configuration->executableName = std::string(executableName);
+        parser = std::make_unique<parsing::StringParser>(*configuration);
     }
 
     commands::Command &CliBase::createNewCommand(std::string_view id, std::unique_ptr<std::function<void(const CliContext &)>> actionPtr)
@@ -76,7 +77,7 @@ namespace cli
 
             auto contextBuilder = cli::ContextBuilder();
 
-            parsing::StringParser::parseArguments(*cmd, args, contextBuilder);
+            parser->parseArguments(*cmd, args, contextBuilder);
             cmd->execute(*contextBuilder.build(*logger));
         }
         else

@@ -19,13 +19,13 @@ void other_func([[maybe_unused]] const cli::CliContext &ctx)
 
 void exception_func([[maybe_unused]] const cli::CliContext &ctx)
 {
-    // auto arg1 = ctx.getRepeatableArg<int>("arg1");
-    // std::string arg2;
-    // bool arg2Pres = ctx.isPositionalArgPresent("arg2");
-    // ctx.getPositionalArgument("arg2", arg2);
+    auto arg1 = ctx.getRepeatableArg<int>("arg1");
+    std::string arg2;
+    //bool arg2Pres = ctx.isPositionalArgPresent("arg2");
+    //ctx.getPositionalArg("arg2", arg2);
 
-    // auto pres = ctx.getRepeatableOptionArg<int>("--type");
-    // bool flag = ctx.isFlagPresent("--help");
+    auto pres = ctx.getRepeatableOptionArg<int>("--type");
+    bool flag = ctx.isFlagPresent("--help");
     std::cout << "exception command called" << std::endl;
     throw std::runtime_error("error");
 }

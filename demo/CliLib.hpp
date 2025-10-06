@@ -12,6 +12,10 @@
 // begin --- cli_base.h --- 
 
 #pragma once
+#include <unordered_map>
+#include <memory>
+#include <string_view>
+#include <string>
 
 // begin --- command_tree.h --- 
 
@@ -859,6 +863,7 @@ namespace cli
         CliContext &operator=(const CliContext &) = delete;
 
         bool isArgPresent(const std::string &argName) const;
+        bool isArgPresent(std::string_view argName) const;
         bool isOptionArgPresent(const std::string &argName) const;
         bool isPositionalArgPresent(const std::string &argName) const;
         bool isFlagPresent(const std::string &argName) const;
@@ -1331,13 +1336,10 @@ namespace cli::commands
 // end --- command_tree.h --- 
 
 
-#include <unordered_map>
-#include <memory>
-#include <string_view>
-#include <string>
 
 // begin --- cli_config.h --- 
 
+#pragma once
 #include <string>
 
 namespace cli
@@ -1360,6 +1362,63 @@ namespace cli
 }
 
 // end --- cli_config.h --- 
+
+
+
+// begin --- parser.h --- 
+
+#pragma once
+#include <string>
+#include <vector>
+#include <memory>
+
+namespace cli::parsing
+{
+    class StringParser
+    {
+    public:
+        explicit StringParser(const CliConfig &config)
+            : configuration(config) {}
+
+        void parseArguments(
+            const cli::commands::Command &command,
+            const std::vector<std::string> &inputs,
+            ContextBuilder &contextBuilder);
+
+    private:
+        std::any parseRepeatableList(
+            const cli::commands::TypedArgumentBase &arg,
+            const std::string &input) const;
+
+        void parseRepeatable(
+            const cli::commands::OptionArgumentBase &arg,
+            const std::string &input,
+            ContextBuilder &ContextBuilder) const;
+
+        void parseRepeatable(
+            const cli::commands::PositionalArgumentBase &arg,
+            const std::string &input,
+            ContextBuilder &ContextBuilder) const;
+
+        void checkGroups(
+            const cli::commands::Command &command,
+            const ContextBuilder &contextBuilder) const;
+
+        bool tryOptionArg(const std::vector<std::shared_ptr<cli::commands::OptionArgumentBase>> &optionArguments,
+                          const std::vector<std::string> &inputs,
+                          const std::string &currentParsing,
+                          int index,
+                          ContextBuilder &contextBuilder) const;
+
+        bool tryFlagArg(const std::vector<std::shared_ptr<cli::commands::FlagArgument>> &flagArguments,
+                        const std::string &currentParsing,
+                        ContextBuilder &contextBuilder) const;
+
+        const CliConfig &configuration;
+    };
+}
+
+// end --- parser.h --- 
 
 
 
@@ -1420,6 +1479,7 @@ namespace cli
 
         std::unique_ptr<logging::Logger> logger = std::make_unique<logging::Logger>(logging::LogLevel::DEBUG);
         std::unique_ptr<CliConfig> configuration;
+        std::unique_ptr<parsing::StringParser> parser;
     };
 } // namespace cli
 
@@ -1445,48 +1505,6 @@ namespace cli{
 // end --- utils.h --- 
 
 
-
-// begin --- parser.h --- 
-
-#pragma once
-#include <string>
-#include <vector>
-#include <memory>
-
-namespace cli::parsing
-{
-    class StringParser
-    {
-    public:
-
-        static void parseArguments(
-            const cli::commands::Command& command,
-            const std::vector<std::string>& inputs,
-            ContextBuilder& contextBuilder);
-
-        static std::any parseRepeatableList(
-            const cli::commands::TypedArgumentBase& arg,
-            const std::string& input);
-
-        static void parseRepeatable(
-            const cli::commands::OptionArgumentBase& arg,
-            const std::string& input,
-            ContextBuilder& ContextBuilder);
-
-        static void parseRepeatable(
-            const cli::commands::PositionalArgumentBase& arg,
-            const std::string& input,
-            ContextBuilder& ContextBuilder);
-
-        static void checkGroups(
-            const cli::commands::Command& command,
-            const ContextBuilder& contextBuilder);
-    };
-}
-
-// end --- parser.h --- 
-
-
 #include <iostream>
 
 namespace cli
@@ -1495,6 +1513,7 @@ namespace cli
         : commandsTree(config.executableName)
     {
         configuration = std::make_unique<CliConfig>(std::move(config));
+        parser = std::make_unique<parsing::StringParser>(*configuration);
     }
 
     CliBase::CliBase(std::string_view executableName)
@@ -1502,6 +1521,7 @@ namespace cli
     {
         configuration = std::make_unique<CliConfig>();
         configuration->executableName = std::string(executableName);
+        parser = std::make_unique<parsing::StringParser>(*configuration);
     }
 
     commands::Command &CliBase::createNewCommand(std::string_view id, std::unique_ptr<std::function<void(const CliContext &)>> actionPtr)
@@ -1559,7 +1579,7 @@ namespace cli
 
             auto contextBuilder = cli::ContextBuilder();
 
-            parsing::StringParser::parseArguments(*cmd, args, contextBuilder);
+            parser->parseArguments(*cmd, args, contextBuilder);
             cmd->execute(*contextBuilder.build(*logger));
         }
         else
@@ -2472,93 +2492,18 @@ namespace cli::logging
 #include <algorithm>
 #include <any>
 
+// used by heady
+#define inline_t
+
 namespace cli::parsing
 {
-
-    void cli::parsing::StringParser::parseArguments(
-        const cli::commands::Command &command,
-        const std::vector<std::string> &inputs,
-        ContextBuilder &contextBuilder)
-    {
-        const auto &posArguments = command.getPositionalArguments();
-        const auto &optArguments = command.getOptionArguments();
-        const auto &flagArguments = command.getFlagArguments();
-
-        size_t posArgsIndex = 0;
-        for (size_t i = 0; i < inputs.size(); ++i)
-        {
-            const auto &input = inputs[i];
-
-            const cli::commands::OptionArgumentBase *matchedOpt = nullptr;
-            for (const auto &opt : optArguments)
-            {
-                if (input == opt->getShortName() || input == opt->getName())
-                {
-                    matchedOpt = opt.get();
-                    break;
-                }
-            }
-            if (matchedOpt)
-            {
-                if (matchedOpt->isRepeatable())
-                {
-                    parseRepeatable(*matchedOpt, inputs[i + 1], contextBuilder);
-                }
-                else
-                {
-                    auto val = matchedOpt->parseToValue(inputs[i + 1]);
-                    contextBuilder.addOptionArgument(matchedOpt->getName(), val);
-                    contextBuilder.addOptionArgument(matchedOpt->getShortName(), val);
-                }
-                i++;
-                continue;
-            }
-
-            const cli::commands::FlagArgument *matchedFlag = nullptr;
-            for (const auto &flag : flagArguments)
-            {
-                if (input == flag->getShortName() || input == flag->getName())
-                {
-                    matchedFlag = flag.get();
-                    break;
-                }
-            }
-            if (matchedFlag)
-            {
-                contextBuilder.addFlagArgument(matchedFlag->getShortName());
-                contextBuilder.addFlagArgument(matchedFlag->getName());
-                continue;
-            }
-
-            if (posArgsIndex >= posArguments.size())
-            {
-                throw ParseException("More positional arguments provided than command accepts");
-            }
-
-            const auto &posArg = *posArguments.at(posArgsIndex);
-
-            if (posArg.isRepeatable())
-            {
-                parseRepeatable(posArg, input, contextBuilder);
-            }
-            else
-            {
-                auto val = posArg.parseToValue(input);
-                contextBuilder.addPositionalArgument(posArg.getName(), val);
-            }
-
-            ++posArgsIndex;
-        }
-        checkGroups(command, contextBuilder);
-    }
-
-    std::any StringParser::parseRepeatableList(const cli::commands::TypedArgumentBase &arg, const std::string &input)
+    std::any StringParser::parseRepeatableList(const cli::commands::TypedArgumentBase &arg, const std::string &input) const
     {
         std::stringstream ss(input);
         std::string token;
         std::vector<std::any> parsedValues;
 
-        while (std::getline(ss, token, ','))
+        while (std::getline(ss, token, configuration.repeatableDelimiter))
         {
             // Trim leading whitespace
             token.erase(token.begin(),
@@ -2582,54 +2527,173 @@ namespace cli::parsing
         return parsedValues;
     }
 
-    void StringParser::parseRepeatable(const cli::commands::OptionArgumentBase &arg, const std::string &input, ContextBuilder &contextBuilder)
+    void StringParser::parseRepeatable(const cli::commands::OptionArgumentBase &arg, const std::string &input, ContextBuilder &contextBuilder) const
     {
         auto values = parseRepeatableList(arg, input);
         contextBuilder.addOptionArgument(arg.getShortName(), values);
         contextBuilder.addOptionArgument(arg.getName(), values);
     }
 
-    void StringParser::parseRepeatable(const cli::commands::PositionalArgumentBase &arg, const std::string &input, ContextBuilder &contextBuilder)
+    void StringParser::parseRepeatable(const cli::commands::PositionalArgumentBase &arg, const std::string &input, ContextBuilder &contextBuilder) const
     {
         auto values = parseRepeatableList(arg, input);
         contextBuilder.addPositionalArgument(arg.getName(), values);
     }
 
-    void StringParser::checkGroups(const cli::commands::Command &command, const ContextBuilder &contextBuilder)
+    bool StringParser::tryOptionArg(const std::vector<std::shared_ptr<cli::commands::OptionArgumentBase>> &optionArguments,
+                                    const std::vector<std::string> &inputs,
+                                    const std::string &currentParsing,
+                                    int index,
+                                    ContextBuilder &contextBuilder) const
+    {
+        const cli::commands::OptionArgumentBase *matchedOpt = nullptr;
+        for (const auto &opt : optionArguments)
+        {
+            if (currentParsing == opt->getShortName() || currentParsing == opt->getName())
+            {
+                matchedOpt = opt.get();
+                break;
+            }
+        }
+        if (matchedOpt)
+        {
+            if (matchedOpt->isRepeatable())
+            {
+                parseRepeatable(*matchedOpt, inputs[index + 1], contextBuilder);
+            }
+            else
+            {
+                if (!matchedOpt->isRepeatable() && contextBuilder.isArgPresent(std::string(matchedOpt->getName())))
+                {
+                    throw ParseException("Non Repeatable Argument was repeated");
+                }
+
+                auto val = matchedOpt->parseToValue(inputs[index + 1]);
+                contextBuilder.addOptionArgument(matchedOpt->getName(), val);
+                contextBuilder.addOptionArgument(matchedOpt->getShortName(), val);
+            }
+            index++;
+            return true;
+        }
+        return false;
+    }
+
+    bool StringParser::tryFlagArg(const std::vector<std::shared_ptr<cli::commands::FlagArgument>> &flagArguments,
+                                  const std::string &currentParsing,
+                                  ContextBuilder &contextBuilder) const
+    {
+        const cli::commands::FlagArgument *matchedFlag = nullptr;
+        for (const auto &flag : flagArguments)
+        {
+            if (currentParsing == flag->getShortName() || currentParsing == flag->getName())
+            {
+                matchedFlag = flag.get();
+                break;
+            }
+        }
+        if (matchedFlag)
+        {
+            contextBuilder.addFlagArgument(matchedFlag->getShortName());
+            contextBuilder.addFlagArgument(matchedFlag->getName());
+            return true;
+        }
+        return false;
+    }
+
+    void cli::parsing::StringParser::parseArguments(
+        const cli::commands::Command &command,
+        const std::vector<std::string> &inputs,
+        ContextBuilder &contextBuilder)
+    {
+        const auto &posArguments = command.getPositionalArguments();
+        const auto &optArguments = command.getOptionArguments();
+        const auto &flagArguments = command.getFlagArguments();
+
+        size_t posArgsIndex = 0;
+        for (size_t i = 0; i < inputs.size(); ++i)
+        {
+            const auto &input = inputs[i];
+            if (tryOptionArg(optArguments, inputs, input, i, contextBuilder))
+            {
+                i++;
+                continue;
+            }
+
+            if (tryFlagArg(flagArguments, input, contextBuilder))
+            {
+                continue;
+            }
+
+            if (posArgsIndex >= posArguments.size())
+            {
+                throw ParseException("More positional arguments provided than command accepts");
+            }
+
+            if (const auto &posArg = *posArguments.at(posArgsIndex);
+                posArg.isRepeatable())
+            {
+                parseRepeatable(posArg, input, contextBuilder);
+            }
+            else
+            {
+                if (!posArg.isRepeatable() && contextBuilder.isArgPresent(std::string(posArg.getName())))
+                {
+                    throw ParseException("Non Repeatable Argument was repeated");
+                }
+                auto val = posArg.parseToValue(input);
+                contextBuilder.addPositionalArgument(posArg.getName(), val);
+            }
+
+            ++posArgsIndex;
+        }
+        checkGroups(command, contextBuilder);
+    }
+
+    inline void exclusiveCheck(const commands::ArgumentGroup *argGroup, const ContextBuilder &contextBuilder)
+    {
+        const cli::commands::ArgumentBase *firstProvided = nullptr;
+
+        for (const auto &argPtr : argGroup->getArguments())
+        {
+            if (!firstProvided && contextBuilder.isArgPresent(std::string(argPtr->getName())))
+            {
+                firstProvided = argPtr.get();
+            }
+            else if (contextBuilder.isArgPresent(std::string(argPtr->getName())))
+            {
+                throw GroupParseException("Two arguments of mutually exclusive group were present");
+            }
+        }
+    }
+
+    inline void inclusiveCheck(const commands::ArgumentGroup *argGroup, const ContextBuilder &contextBuilder)
+    {
+        const cli::commands::ArgumentBase *firstProvided = nullptr;
+
+        for (const auto &argPtr : argGroup->getArguments())
+        {
+            if (!firstProvided && contextBuilder.isArgPresent(std::string(argPtr->getName())))
+            {
+                firstProvided = argPtr.get();
+            }
+            else if (!contextBuilder.isArgPresent(std::string(argPtr->getName())))
+            {
+                throw GroupParseException("Not all arguments of mutually inclusive group were present");
+            }
+        }
+    }
+
+    void StringParser::checkGroups(const cli::commands::Command &command, const ContextBuilder &contextBuilder) const
     {
         for (const auto &argGroup : command.getArgumentGroups())
         {
             if (argGroup->isExclusive())
             {
-                const cli::commands::ArgumentBase *firstProvided = nullptr;
-
-                for (const auto &argPtr : argGroup->getArguments())
-                {
-                    if (!firstProvided && contextBuilder.isArgPresent(std::string(argPtr->getName())))
-                    {
-                        firstProvided = argPtr.get();
-                    }
-                    else if (contextBuilder.isArgPresent(std::string(argPtr->getName())))
-                    {
-                        throw GroupParseException("Two arguments of mutually exclusive group were present");
-                    }
-                }
+                exclusiveCheck(argGroup.get(), contextBuilder);
             }
             else if (argGroup->isInclusive())
             {
-                const cli::commands::ArgumentBase *firstProvided = nullptr;
-
-                for (const auto &argPtr : argGroup->getArguments())
-                {
-                    if (!firstProvided && contextBuilder.isArgPresent(std::string(argPtr->getName())))
-                    {
-                        firstProvided = argPtr.get();
-                    }
-                    else if (!contextBuilder.isArgPresent(std::string(argPtr->getName())))
-                    {
-                        throw GroupParseException("Not all arguments of mutually inclusive group were present");
-                    }
-                }
+                inclusiveCheck(argGroup.get(), contextBuilder);
             }
         }
     }

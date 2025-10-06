@@ -1,11 +1,12 @@
 #pragma once
-#include "commands/command_tree.h"
-#include "logging/logger.h"
 #include <unordered_map>
 #include <memory>
 #include <string_view>
 #include <string>
+#include "commands/command_tree.h"
+#include "logging/logger.h"
 #include "cli_config.h"
+#include "parsing/parser.h"
 
 #define RUN_CLI_APP(cliInstance, argc_, argv_)                                             \
     try                                                                                    \
@@ -64,5 +65,6 @@ namespace cli
 
         std::unique_ptr<logging::Logger> logger = std::make_unique<logging::Logger>(logging::LogLevel::DEBUG);
         std::unique_ptr<CliConfig> configuration;
+        std::unique_ptr<parsing::StringParser> parser;
     };
 } // namespace cli
