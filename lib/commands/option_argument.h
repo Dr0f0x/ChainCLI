@@ -9,7 +9,7 @@
 
 namespace cli::commands
 {
-    class OptionArgumentBase : public TypedArgumentBase, public FlaggedArgumentBase
+    class OptionArgumentBase : public TypedArgumentBase, public ArgumentBase, public FlaggedArgumentBase
     {
     public:
         OptionArgumentBase(std::string_view name,
@@ -19,7 +19,8 @@ namespace cli::commands
                            std::type_index t,
                            std::string_view shortName,
                            std::string_view valueName)
-            : TypedArgumentBase(name, optionsComment, ArgumentKind::Option, repeatable, required, t),
+            : TypedArgumentBase(t),
+              ArgumentBase(name, optionsComment, ArgumentKind::Option, repeatable, required),
               FlaggedArgumentBase(shortName),
               valueName(valueName) {}
 
@@ -29,7 +30,7 @@ namespace cli::commands
         [[nodiscard]] constexpr std::string_view getValueName() const noexcept { return valueName; }
 
     protected:
-        std::string valueName;
+        const std::string valueName;
     };
 
     template <typename T>
@@ -50,21 +51,29 @@ namespace cli::commands
                                 bool repeatable = false)
             : OptionArgumentBase(name, optionsComment, repeatable, required, typeid(T), shortName, valueName) {}
 
-        // Movable
-        OptionArgument(OptionArgument &&) noexcept = default;
-        OptionArgument &operator=(OptionArgument &&) noexcept = default;
-
         [[nodiscard]] std::any parseToValue(const std::string &input) const override;
 
-        OptionArgument<T> &withOptionsComment(std::string_view usage_comment)
+        OptionArgument<T> &withOptionsComment(std::string_view optionsComment)
         {
-            optionsComment = usage_comment;
+            this->optionsComment = optionsComment;
             return *this;
         }
 
         OptionArgument<T> &withRequired(bool req)
         {
             required = req;
+            return *this;
+        }
+
+        OptionArgument<T> &withShortName(std:: string_view shortName)
+        {
+            this->shortName = shortName;
+            return *this;
+        }
+
+        OptionArgument<T> &withRepeatable(bool rep)
+        {
+            repeatable = rep;
             return *this;
         }
     };

@@ -10,7 +10,7 @@
 namespace cli::commands
 {
     // untemplated base class for storing in same STL
-    class PositionalArgumentBase : public TypedArgumentBase
+    class PositionalArgumentBase : public TypedArgumentBase, public ArgumentBase
     {
     public:
         PositionalArgumentBase(std::string_view name,
@@ -18,7 +18,8 @@ namespace cli::commands
                                bool repeatable,
                                bool required,
                                std::type_index t)
-            : TypedArgumentBase(name, optionsComment, ArgumentKind::Positional, repeatable, required, t) {}
+            : TypedArgumentBase(t),
+              ArgumentBase(name, optionsComment, ArgumentKind::Positional, repeatable, required) {}
 
         [[nodiscard]] std::string getOptionsDocString() const override;
         [[nodiscard]] std::string getArgDocString() const override;
@@ -40,10 +41,6 @@ namespace cli::commands
                                     bool repeatable = false)
             : PositionalArgumentBase(name, optionsComment, repeatable, required, typeid(T)) {}
 
-        // Movable
-        PositionalArgument(PositionalArgument &&) noexcept = default;
-        PositionalArgument &operator=(PositionalArgument &&) noexcept = default;
-
         [[nodiscard]] std::any parseToValue(const std::string &input) const override;
 
         PositionalArgument<T> &withOptionsComment(std::string_view usage_comment)
@@ -55,6 +52,18 @@ namespace cli::commands
         PositionalArgument<T> &withRequired(bool req)
         {
             required = req;
+            return *this;
+        }
+
+        PositionalArgument<T> &withShortName(std:: string_view shortName)
+        {
+            this->shortName = shortName;
+            return *this;
+        }
+
+        PositionalArgument<T> &withRepeatable(bool rep)
+        {
+            repeatable = rep;
             return *this;
         }
     };

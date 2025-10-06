@@ -20,5 +20,23 @@ namespace cli::commands
 
         std::string getOptionsDocString() const override;
         std::string getArgDocString() const override;
+
+        FlagArgument &withOptionsComment(std::string_view usage_comment)
+        {
+            optionsComment = usage_comment;
+            return *this;
+        }
+
+        FlagArgument &withRequired(bool req)
+        {
+            required = req;
+            return *this;
+        }
+
+        FlagArgument &withShortName(std:: string_view shortName)
+        {
+            this->shortName = shortName;
+            return *this;
+        }
     };
 }

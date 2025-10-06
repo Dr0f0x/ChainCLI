@@ -66,6 +66,10 @@ namespace cli::commands
         ArgumentBase(ArgumentBase &&) noexcept = default;
         ArgumentBase &operator=(ArgumentBase &&) noexcept = default;
 
+        // Copyable
+        ArgumentBase(const ArgumentBase &) = default;
+        ArgumentBase &operator=(const ArgumentBase &) = default;
+
         [[nodiscard]] constexpr std::string_view getName() const noexcept { return name; }
         [[nodiscard]] constexpr std::string_view getUsageComment() const noexcept { return optionsComment; }
         [[nodiscard]] constexpr bool isRequired() const noexcept { return required; }
@@ -83,16 +87,22 @@ namespace cli::commands
                      bool required)
             : name(name), optionsComment(optionsComment), argType(argType), repeatable(repeatable), required(required) {}
 
-        std::string name;
+        const std::string name;
         std::string optionsComment;
-        ArgumentKind argType;
+        const ArgumentKind argType;
         bool repeatable{false};
         bool required{true};
     };
 
-    class TypedArgumentBase : public ArgumentBase
+    class TypedArgumentBase
     {
     public:
+        virtual ~TypedArgumentBase() = default;
+
+        // Copyable
+        TypedArgumentBase(const TypedArgumentBase &) = default;
+        TypedArgumentBase &operator=(const TypedArgumentBase &) = default;
+
         // Movable
         TypedArgumentBase(TypedArgumentBase &&) noexcept = default;
         TypedArgumentBase &operator=(TypedArgumentBase &&) noexcept = default;
@@ -101,15 +111,10 @@ namespace cli::commands
         [[nodiscard]] virtual std::any parseToValue(const std::string &input) const = 0;
 
     protected:
-        TypedArgumentBase(std::string_view name,
-                          std::string_view optionsComment,
-                          ArgumentKind argType,
-                          bool repeatable,
-                          bool required,
-                          std::type_index t)
-            : ArgumentBase(name, optionsComment, argType, repeatable, required), type(t) {}
+        explicit TypedArgumentBase(std::type_index t)
+            : type(t) {}
 
-        std::type_index type;
+        const std::type_index type;
     };
 
     class FlaggedArgumentBase
@@ -203,7 +208,7 @@ namespace cli::parsing
 namespace cli::commands
 {
     // untemplated base class for storing in same STL
-    class PositionalArgumentBase : public TypedArgumentBase
+    class PositionalArgumentBase : public TypedArgumentBase, public ArgumentBase
     {
     public:
         PositionalArgumentBase(std::string_view name,
@@ -211,7 +216,8 @@ namespace cli::commands
                                bool repeatable,
                                bool required,
                                std::type_index t)
-            : TypedArgumentBase(name, optionsComment, ArgumentKind::Positional, repeatable, required, t) {}
+            : TypedArgumentBase(t),
+              ArgumentBase(name, optionsComment, ArgumentKind::Positional, repeatable, required) {}
 
         [[nodiscard]] std::string getOptionsDocString() const override;
         [[nodiscard]] std::string getArgDocString() const override;
@@ -233,10 +239,6 @@ namespace cli::commands
                                     bool repeatable = false)
             : PositionalArgumentBase(name, optionsComment, repeatable, required, typeid(T)) {}
 
-        // Movable
-        PositionalArgument(PositionalArgument &&) noexcept = default;
-        PositionalArgument &operator=(PositionalArgument &&) noexcept = default;
-
         [[nodiscard]] std::any parseToValue(const std::string &input) const override;
 
         PositionalArgument<T> &withOptionsComment(std::string_view usage_comment)
@@ -248,6 +250,18 @@ namespace cli::commands
         PositionalArgument<T> &withRequired(bool req)
         {
             required = req;
+            return *this;
+        }
+
+        PositionalArgument<T> &withShortName(std:: string_view shortName)
+        {
+            this->shortName = shortName;
+            return *this;
+        }
+
+        PositionalArgument<T> &withRepeatable(bool rep)
+        {
+            repeatable = rep;
             return *this;
         }
     };
@@ -274,7 +288,7 @@ namespace cli::commands
 
 namespace cli::commands
 {
-    class OptionArgumentBase : public TypedArgumentBase, public FlaggedArgumentBase
+    class OptionArgumentBase : public TypedArgumentBase, public ArgumentBase, public FlaggedArgumentBase
     {
     public:
         OptionArgumentBase(std::string_view name,
@@ -284,7 +298,8 @@ namespace cli::commands
                            std::type_index t,
                            std::string_view shortName,
                            std::string_view valueName)
-            : TypedArgumentBase(name, optionsComment, ArgumentKind::Option, repeatable, required, t),
+            : TypedArgumentBase(t),
+              ArgumentBase(name, optionsComment, ArgumentKind::Option, repeatable, required),
               FlaggedArgumentBase(shortName),
               valueName(valueName) {}
 
@@ -294,7 +309,7 @@ namespace cli::commands
         [[nodiscard]] constexpr std::string_view getValueName() const noexcept { return valueName; }
 
     protected:
-        std::string valueName;
+        const std::string valueName;
     };
 
     template <typename T>
@@ -315,21 +330,29 @@ namespace cli::commands
                                 bool repeatable = false)
             : OptionArgumentBase(name, optionsComment, repeatable, required, typeid(T), shortName, valueName) {}
 
-        // Movable
-        OptionArgument(OptionArgument &&) noexcept = default;
-        OptionArgument &operator=(OptionArgument &&) noexcept = default;
-
         [[nodiscard]] std::any parseToValue(const std::string &input) const override;
 
-        OptionArgument<T> &withOptionsComment(std::string_view usage_comment)
+        OptionArgument<T> &withOptionsComment(std::string_view optionsComment)
         {
-            optionsComment = usage_comment;
+            this->optionsComment = optionsComment;
             return *this;
         }
 
         OptionArgument<T> &withRequired(bool req)
         {
             required = req;
+            return *this;
+        }
+
+        OptionArgument<T> &withShortName(std:: string_view shortName)
+        {
+            this->shortName = shortName;
+            return *this;
+        }
+
+        OptionArgument<T> &withRepeatable(bool rep)
+        {
+            repeatable = rep;
             return *this;
         }
     };
@@ -367,6 +390,24 @@ namespace cli::commands
 
         std::string getOptionsDocString() const override;
         std::string getArgDocString() const override;
+
+        FlagArgument &withOptionsComment(std::string_view usage_comment)
+        {
+            optionsComment = usage_comment;
+            return *this;
+        }
+
+        FlagArgument &withRequired(bool req)
+        {
+            required = req;
+            return *this;
+        }
+
+        FlagArgument &withShortName(std:: string_view shortName)
+        {
+            this->shortName = shortName;
+            return *this;
+        }
     };
 }
 

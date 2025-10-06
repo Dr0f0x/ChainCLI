@@ -22,6 +22,10 @@ namespace cli::commands
         ArgumentBase(ArgumentBase &&) noexcept = default;
         ArgumentBase &operator=(ArgumentBase &&) noexcept = default;
 
+        // Copyable
+        ArgumentBase(const ArgumentBase &) = default;
+        ArgumentBase &operator=(const ArgumentBase &) = default;
+
         [[nodiscard]] constexpr std::string_view getName() const noexcept { return name; }
         [[nodiscard]] constexpr std::string_view getUsageComment() const noexcept { return optionsComment; }
         [[nodiscard]] constexpr bool isRequired() const noexcept { return required; }
@@ -39,16 +43,22 @@ namespace cli::commands
                      bool required)
             : name(name), optionsComment(optionsComment), argType(argType), repeatable(repeatable), required(required) {}
 
-        std::string name;
+        const std::string name;
         std::string optionsComment;
-        ArgumentKind argType;
+        const ArgumentKind argType;
         bool repeatable{false};
         bool required{true};
     };
 
-    class TypedArgumentBase : public ArgumentBase
+    class TypedArgumentBase
     {
     public:
+        virtual ~TypedArgumentBase() = default;
+
+        // Copyable
+        TypedArgumentBase(const TypedArgumentBase &) = default;
+        TypedArgumentBase &operator=(const TypedArgumentBase &) = default;
+
         // Movable
         TypedArgumentBase(TypedArgumentBase &&) noexcept = default;
         TypedArgumentBase &operator=(TypedArgumentBase &&) noexcept = default;
@@ -57,15 +67,10 @@ namespace cli::commands
         [[nodiscard]] virtual std::any parseToValue(const std::string &input) const = 0;
 
     protected:
-        TypedArgumentBase(std::string_view name,
-                          std::string_view optionsComment,
-                          ArgumentKind argType,
-                          bool repeatable,
-                          bool required,
-                          std::type_index t)
-            : ArgumentBase(name, optionsComment, argType, repeatable, required), type(t) {}
+        explicit TypedArgumentBase(std::type_index t)
+            : type(t) {}
 
-        std::type_index type;
+        const std::type_index type;
     };
 
     class FlaggedArgumentBase

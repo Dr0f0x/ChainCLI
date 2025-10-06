@@ -20,10 +20,12 @@ namespace cli::commands
         // Constructor initializes the identifier and description
         Command(std::string_view id, std::string_view short_desc, std::string_view long_desc, std::unique_ptr<std::function<void(const CliContext &)>> actionPtr)
             : identifier(id), shortDescription(short_desc), longDescription(long_desc), executePtr(std::move(actionPtr))
-        { }
+        {
+        }
         explicit Command(std::string_view id)
             : identifier(id), shortDescription(""), longDescription(""), executePtr(nullptr)
-        { }
+        {
+        }
 
         // Movable
         Command(Command &&) noexcept = default;
@@ -116,7 +118,7 @@ namespace cli::commands
 
     private:
         size_t indexForNewArgGroup{0};
-        void safeAddToArgGroup(const std::shared_ptr<ArgumentBase>& arg);
+        void safeAddToArgGroup(const std::shared_ptr<ArgumentBase> &arg);
         void addArgGroup(const ArgumentGroup &argGroup);
 
         std::string identifier;
