@@ -9,8 +9,9 @@
 namespace cli
 {
 CliBase::CliBase(CliConfig &&config)
-    : commandsTree(config.executableName), configuration(std::make_unique<CliConfig>(config)),
-      parser(*configuration), docWriter(*configuration)
+    : commandsTree(config.executableName),
+      configuration(std::make_unique<CliConfig>(std::move(config))), parser(*configuration),
+      docWriter(*configuration)
 {
 }
 

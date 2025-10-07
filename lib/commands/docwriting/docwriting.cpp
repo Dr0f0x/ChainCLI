@@ -105,8 +105,8 @@ std::string DocWriter::generateOptionsDocString(const FlagArgument &argument) co
 {
     std::ostringstream builder;
     builder << argument.getName() << ' ' << argument.getShortName();
-    return std::format("{:<{}}{:>{}}", builder.str(), 20, argument.getUsageComment(),
-                       argument.getUsageComment().size());
+    return std::format("{:<{}}{:>{}}", builder.str(), configuration.optionsWidth,
+                       argument.getUsageComment(), argument.getUsageComment().size());
 }
 
 std::string DocWriter::generateArgDocString(const FlagArgument &argument) const
@@ -124,8 +124,8 @@ std::string DocWriter::generateOptionsDocString(const OptionArgumentBase &argume
             << argument.getValueName() << '>';
     if (argument.isRepeatable())
         builder << "...";
-    return std::format("{:<{}}{:>{}}", builder.str(), 20, argument.getUsageComment(),
-                       argument.getUsageComment().size());
+    return std::format("{:<{}}{:>{}}", builder.str(), configuration.optionsWidth,
+                       argument.getUsageComment(), argument.getUsageComment().size());
 }
 
 std::string DocWriter::generateArgDocString(const OptionArgumentBase &argument) const
@@ -148,8 +148,8 @@ std::string DocWriter::generateOptionsDocString(const PositionalArgumentBase &ar
     builder << inBracket << argument.getName() << outBracket;
     if (argument.isRepeatable())
         builder << "...";
-    return std::format("{:<{}}{:>{}}", builder.str(), 20, argument.getUsageComment(),
-                       argument.getUsageComment().size());
+    return std::format("{:<{}}{:>{}}", builder.str(), configuration.optionsWidth,
+                       argument.getUsageComment(), argument.getUsageComment().size());
 }
 
 std::string DocWriter::generateArgDocString(const PositionalArgumentBase &argument) const

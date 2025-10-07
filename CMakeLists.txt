@@ -46,9 +46,9 @@ if(CLANG_TIDY_EXE)
     endif()
 
     # Apply clang-tidy checks automatically during build
-    #set(CMAKE_CXX_CLANG_TIDY
-    #    "${CLANG_TIDY_EXE};--config-file=${CLANG_TIDY_CONFIG_FILE};-p=${CMAKE_SOURCE_DIR}/build;${EXTRA_CLANG_TIDY_ARGS_STR}"
-    #)
+    set(CMAKE_CXX_CLANG_TIDY
+        "${CLANG_TIDY_EXE};--config-file=${CLANG_TIDY_CONFIG_FILE};-p=${CMAKE_SOURCE_DIR}/build;${EXTRA_CLANG_TIDY_ARGS_STR}"
+    )
 else()
     message(WARNING "clang-tidy not found — skipping static analysis setup")
 endif()

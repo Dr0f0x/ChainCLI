@@ -13,6 +13,7 @@ struct CliConfig
 
     // Runtime flags and options
     char repeatableDelimiter{','};
+    int optionsWidth{20}; // width that is used to right aling the options text for arguments
 
     // Behavior toggles
     // ...
