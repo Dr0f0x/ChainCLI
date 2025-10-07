@@ -93,7 +93,6 @@ void printCommands(cli::CliBase &cliApp)
             std::cout << "---------\n";
             std::cout << cmd.getDocStringShort() << "\n\n";
         });
-    commandsTree.print(cliApp.Logger().info());
     std::cout << "\n";
 }
 
@@ -118,8 +117,6 @@ void CommandTreeTest()
     cmdTree.insert(std::make_unique<Command>("child1", "Child 1", "First child command", nullptr));
     cmdTree.insert(std::make_unique<Command>("child2", "Child 2", "Second child command", nullptr));
     cmdTree.insert(std::make_unique<Command>("subchild1", "Subchild 1", "First subchild command", nullptr), "child1");
-
-    cmdTree.print(std::cout);
 }
 
 int main(int argc, char *argv[])

@@ -3,14 +3,14 @@
 
 namespace cli::commands
 {
-    std::string FlagArgument::getOptionsDocString() const
-    {
-        return docwriting::generateOptionsDocString(*this);
-    }
-
-    std::string FlagArgument::getArgDocString() const
-    {
-        return docwriting::generateArgDocString(*this);
-    }
-
+std::string FlagArgument::getOptionsDocString(const docwriting::DocWriter &writer) const
+{
+    return writer.generateOptionsDocString(*this);
 }
+
+std::string FlagArgument::getArgDocString(const docwriting::DocWriter &writer) const
+{
+    return writer.generateArgDocString(*this);
+}
+
+} // namespace cli::commands

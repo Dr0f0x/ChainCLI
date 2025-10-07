@@ -38,16 +38,16 @@ jobs:
       working-directory: ${{ steps.strings.outputs.build-output-dir }}
       run: ctest --build-config Release
     
-    - name: Upload build result
-      uses: actions/upload-artifact@v4
-      with:
-        name: build-result
-        path: |
-          ${{ steps.strings.outputs.build-output-dir }}/lib/**/*libcli*.dll
-          ${{ steps.strings.outputs.build-output-dir }}/lib/**/*libcli*.lib
-          ${{ steps.strings.outputs.build-output-dir }}/lib/**/*libcli*.so
-          ${{ steps.strings.outputs.build-output-dir }}/lib/**/*libcli*.a
-          ${{ steps.strings.outputs.build-output-dir }}/lib/**/*libcli*.dylib
+    #- name: Upload build result
+    #  uses: actions/upload-artifact@v4
+    #  with:
+    #    name: build-result
+    #    path: |
+    #      ${{ steps.strings.outputs.build-output-dir }}/lib/**/*libcli*.dll
+    #      ${{ steps.strings.outputs.build-output-dir }}/lib/**/*libcli*.lib
+    #      ${{ steps.strings.outputs.build-output-dir }}/lib/**/*libcli*.so
+    #      ${{ steps.strings.outputs.build-output-dir }}/lib/**/*libcli*.a
+    #      ${{ steps.strings.outputs.build-output-dir }}/lib/**/*libcli*.dylib
 
     - name: Install gcovr
       run: pip install gcovr

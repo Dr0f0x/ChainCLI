@@ -1,7 +1,9 @@
 #include <gtest/gtest.h>
+
 #include <sstream>
-#include "logging/handler.h"
+
 #include "logging/formatter.h"
+#include "logging/handler.h"
 #include "logging/loglevel.h"
 #include "logging/logstyle.h"
 
@@ -15,7 +17,8 @@ public:
 };
 
 // Test Handler with BasicFormatter writes to correct streams
-TEST_F(HandlerTestSociable, WithBasicFormatterEmitsCorrectly) {
+TEST_F(HandlerTestSociable, WithBasicFormatterEmitsCorrectly)
+{
     auto formatter = std::make_unique<BasicFormatter>();
     Handler handler(out, err, std::move(formatter));
 
@@ -32,7 +35,8 @@ TEST_F(HandlerTestSociable, WithBasicFormatterEmitsCorrectly) {
 }
 
 // Test Handler with MessageOnlyFormatter
-TEST_F(HandlerTestSociable, WithMessageOnlyFormatterEmitsCorrectly) {
+TEST_F(HandlerTestSociable, WithMessageOnlyFormatterEmitsCorrectly)
+{
     auto formatter = std::make_unique<MessageOnlyFormatter>();
     Handler handler(out, err, std::move(formatter));
 
@@ -51,7 +55,8 @@ TEST_F(HandlerTestSociable, WithMessageOnlyFormatterEmitsCorrectly) {
 }
 
 // Test styling applied with BasicFormatter
-TEST_F(HandlerTestSociable, StylingAppliedWithBasicFormatter) {
+TEST_F(HandlerTestSociable, StylingAppliedWithBasicFormatter)
+{
     auto formatter = std::make_unique<BasicFormatter>();
     Handler handler(out, err, std::move(formatter));
 
@@ -70,7 +75,8 @@ TEST_F(HandlerTestSociable, StylingAppliedWithBasicFormatter) {
 }
 
 // Test Handler ignores messages below min level
-TEST_F(HandlerTestSociable, IgnoresMessagesBelowMinLevel) {
+TEST_F(HandlerTestSociable, IgnoresMessagesBelowMinLevel)
+{
     auto formatter = std::make_unique<BasicFormatter>();
     Handler handler(out, err, std::move(formatter), LogLevel::ERROR);
 

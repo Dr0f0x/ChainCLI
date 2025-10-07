@@ -6,8 +6,6 @@ add_library(${LIBRARY_NAME_STATIC} STATIC
     cli_base.h
     cli_context.h
     cli_context.cpp
-    utils.cpp
-    utils.h
 )
 
 add_library(${LIBRARY_NAME_SHARED} SHARED
@@ -17,8 +15,6 @@ add_library(${LIBRARY_NAME_SHARED} SHARED
     cli_base.h
     cli_context.h
     cli_context.cpp
-    utils.cpp
-    utils.h
 )
 
 if(ENABLE_COVERAGE)

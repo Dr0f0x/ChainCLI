@@ -1,11 +1,13 @@
-#include <gtest/gtest.h>
 #include <gmock/gmock.h>
+#include <gtest/gtest.h>
+
 #include <sstream>
-#include "mocks.h"
-#include "logging/handler.h"
+
 #include "logging/formatter.h"
+#include "logging/handler.h"
 #include "logging/loglevel.h"
 #include "logging/logstyle.h"
+#include "mocks.h"
 
 using namespace cli::logging;
 using ::testing::Ref;
@@ -15,18 +17,23 @@ using ::testing::Return;
 class TestHandler : public Handler
 {
 public:
-    TestHandler(std::unique_ptr<IFormatter> f, std::ostream &outStream, std::ostream &errStream, LogLevel minLevel = LogLevel::DEBUG)
-        : Handler(outStream, errStream, std::move(f), minLevel) {}
+    TestHandler(std::unique_ptr<IFormatter> f, std::ostream &outStream, std::ostream &errStream,
+                LogLevel minLevel = LogLevel::DEBUG)
+        : Handler(outStream, errStream, std::move(f), minLevel)
+    {
+    }
 };
 
-class HandlerTestSolitary : public ::testing::Test {
+class HandlerTestSolitary : public ::testing::Test
+{
 public:
     std::ostringstream out;
     std::ostringstream err;
     std::unique_ptr<MockFormatter> mockFormatterPtr;
-    MockFormatter* mockFormatterRawPtr = nullptr;
+    MockFormatter *mockFormatterRawPtr = nullptr;
 
-    void SetUp() override {
+    void SetUp() override
+    {
         // Create formatter, keep raw pointer for mocks
         mockFormatterPtr = std::make_unique<MockFormatter>();
         mockFormatterRawPtr = mockFormatterPtr.get();
@@ -40,10 +47,8 @@ TEST_F(HandlerTestSolitary, EmitCallsFormatter)
     LogRecord debugRecord(LogLevel::DEBUG, "debug-msg");
     LogRecord errorRecord(LogLevel::ERROR, "error-msg");
 
-    EXPECT_CALL(*mockFormatterRawPtr, format(Ref(debugRecord)))
-        .WillOnce(Return("MOCK_DEBUG"));
-    EXPECT_CALL(*mockFormatterRawPtr, format(Ref(errorRecord)))
-        .WillOnce(Return("MOCK_ERROR"));
+    EXPECT_CALL(*mockFormatterRawPtr, format(Ref(debugRecord))).WillOnce(Return("MOCK_DEBUG"));
+    EXPECT_CALL(*mockFormatterRawPtr, format(Ref(errorRecord))).WillOnce(Return("MOCK_ERROR"));
 
     handler.emit(debugRecord);
     handler.emit(errorRecord);
@@ -56,9 +61,9 @@ TEST_F(HandlerTestSolitary, EmitWritesToCorrectStream)
     LogRecord debugRecord(LogLevel::DEBUG, "debug-msg");
     LogRecord errorRecord(LogLevel::ERROR, "error-msg");
 
-    ON_CALL(*mockFormatterRawPtr, format(testing::_))
-        .WillByDefault([](const LogRecord &r)
-                       { return "MOCK_" + r.message; });
+    ON_CALL(*mockFormatterRawPtr, format(testing::_)).WillByDefault([](const LogRecord &r) {
+        return "MOCK_" + r.message;
+    });
 
     handler.emit(debugRecord);
     handler.emit(errorRecord);
@@ -117,8 +122,7 @@ TEST_F(HandlerTestSolitary, StylingAppliedToFormattedMessage)
 
     LogRecord detailRecord(LogLevel::SUCCESS, "detail-msg");
 
-    EXPECT_CALL(*mockFormatterRawPtr, format(Ref(detailRecord)))
-        .WillOnce(Return("FORMATTED"));
+    EXPECT_CALL(*mockFormatterRawPtr, format(Ref(detailRecord))).WillOnce(Return("FORMATTED"));
 
     handler.emit(detailRecord);
 
@@ -135,8 +139,7 @@ TEST_F(HandlerTestSolitary, StylingDisabledDoesNotModifyMessage)
 
     LogRecord infoRecord(LogLevel::INFO, "info-msg");
 
-    EXPECT_CALL(*mockFormatterRawPtr, format(Ref(infoRecord)))
-        .WillOnce(Return("FORMATTED"));
+    EXPECT_CALL(*mockFormatterRawPtr, format(Ref(infoRecord))).WillOnce(Return("FORMATTED"));
 
     handler.emit(infoRecord);
 
@@ -157,14 +160,13 @@ TEST_F(HandlerTestSolitary, StylingAppliedOnlyIfLevelMatches)
     LogRecord infoRecord(LogLevel::INFO, "info-msg");
     LogRecord errorRecord(LogLevel::ERROR, "error-msg");
 
-    EXPECT_CALL(*mockFormatterRawPtr, format(Ref(infoRecord)))
-        .WillOnce(Return("INFOFORMATTED"));
-    EXPECT_CALL(*mockFormatterRawPtr, format(Ref(errorRecord)))
-        .WillOnce(Return("ERRORFORMATTED"));
+    EXPECT_CALL(*mockFormatterRawPtr, format(Ref(infoRecord))).WillOnce(Return("INFOFORMATTED"));
+    EXPECT_CALL(*mockFormatterRawPtr, format(Ref(errorRecord))).WillOnce(Return("ERRORFORMATTED"));
 
     handler.emit(infoRecord);  // INFO not in styleMap
     handler.emit(errorRecord); // ERROR has style
 
-    EXPECT_EQ(out.str(), "INFOFORMATTED");                                             // INFO unstyled
-    EXPECT_NE(err.str().find("\o{33}[31mERRORFORMATTED\o{33}[0m"), std::string::npos); // ERROR styled
+    EXPECT_EQ(out.str(), "INFOFORMATTED"); // INFO unstyled
+    EXPECT_NE(err.str().find("\o{33}[31mERRORFORMATTED\o{33}[0m"),
+              std::string::npos); // ERROR styled
 }

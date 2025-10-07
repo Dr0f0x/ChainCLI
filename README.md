@@ -7,6 +7,7 @@
 [![CMake Windows MSVC](https://github.com/Dr0f0x/CliLib/actions/workflows/windows-msvc.yml/badge.svg)](https://github.com/Dr0f0x/CliLib/actions/workflows/windows-msvc.yml)
 [![heady build](https://github.com/Dr0f0x/CliLib/actions/workflows/heady.yml/badge.svg)](https://github.com/Dr0f0x/CliLib/actions/workflows/heady.yml)
 [![codecov](https://codecov.io/gh/Dr0f0x/CliLib/graph/badge.svg?token=Q62QP5D61I)](https://codecov.io/gh/Dr0f0x/CliLib)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/7672ce67e13e4ca184b10fbfb4805a94)](https://app.codacy.com?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 
 ### Folder Structure: ###
 

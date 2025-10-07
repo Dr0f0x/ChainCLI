@@ -24,36 +24,36 @@ THE SOFTWARE.
 
 #pragma once
 
-#include <string>
 #include <cstdint>
+#include <string>
 
 #define inline_t
 
 namespace Heady
 {
-	/// Major version number
-	const uint32_t MajorVersion = 0;
+/// Major version number
+const uint32_t MajorVersion = 0;
 
-	/// Minor version number
-	const uint32_t MinorVersion = 2;
+/// Minor version number
+const uint32_t MinorVersion = 2;
 
-	/// Patch number
-	const uint32_t PatchNumber = 3;
+/// Patch number
+const uint32_t PatchNumber = 3;
 
-	/// Get the version number in string form
-	std::string GetVersionString();
+/// Get the version number in string form
+std::string GetVersionString();
 
-	struct Params
-	{
-		std::string sourceFolder;
-		std::string output;
-		std::string excluded;
-		std::string inlined;
-		std::string define;
-		bool recursiveScan;
-	};
+struct Params
+{
+    std::string sourceFolder;
+    std::string output;
+    std::string excluded;
+    std::string inlined;
+    std::string define;
+    bool recursiveScan;
+};
 
-	/// Generate combined header from source
-	void GenerateHeader(const Params& params);
+/// Generate combined header from source
+void GenerateHeader(const Params &params);
 
-}
+} // namespace Heady

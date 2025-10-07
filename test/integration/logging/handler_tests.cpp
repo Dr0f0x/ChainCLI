@@ -1,7 +1,9 @@
 #include <gtest/gtest.h>
+
 #include <sstream>
-#include "logging/handler.h"
+
 #include "logging/formatter.h"
+#include "logging/handler.h"
 #include "logging/loglevel.h"
 #include "logging/logstyle.h"
 
@@ -43,16 +45,18 @@ TEST(HandlerTestIntegration, FileHandlerThrowsOnBadFile)
     // Choose a filename that's unlikely to be writable
     std::string badFilename = "/invalid/path/log.txt";
 
-    EXPECT_THROW({ FileHandler handler(badFilename, std::move(formatter)); }, std::ios_base::failure);
+    EXPECT_THROW(
+        { FileHandler handler(badFilename, std::move(formatter)); }, std::ios_base::failure);
 }
 
-TEST(HandlerTestIntegration, FileHandlerDestructorClosesFile) {
+TEST(HandlerTestIntegration, FileHandlerDestructorClosesFile)
+{
     std::string tmpFilename = "test_log.txt";
 
     {
         auto formatter = std::make_unique<BasicFormatter>();
         FileHandler handler(tmpFilename, std::move(formatter));
-        
+
         // Emit a record to ensure file is opened and written
         handler.emit(LogRecord(LogLevel::INFO, "test"));
     }

@@ -1,22 +1,20 @@
 #pragma once
-#include "loglevel.h"
-#include <string>
 #include <chrono>
+#include <string>
+
+#include "loglevel.h"
 
 namespace cli::logging
 {
 
-    struct LogRecord
-    {
-        const LogLevel level;
-        const std::string message;
-        const std::chrono::system_clock::time_point timestamp{std::chrono::system_clock::now()};
+struct LogRecord
+{
+    const LogLevel level;
+    const std::string message;
+    const std::chrono::system_clock::time_point timestamp{std::chrono::system_clock::now()};
 
-        // Constructor initializes all fields; fields are immutable
-        LogRecord(LogLevel lvl, std::string msg)
-            : level(lvl),
-              message(std::move(msg))
-        {}
-    };
+    // Constructor initializes all fields; fields are immutable
+    LogRecord(LogLevel lvl, std::string msg) : level(lvl), message(std::move(msg)) {}
+};
 
 } // namespace cli::logging

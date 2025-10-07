@@ -1,22 +1,19 @@
-#include <algorithm>
 #include "argument_group.h"
+
+#include <algorithm>
 
 namespace cli::commands
 {
-    bool ArgumentGroup::isRequired() const
+bool ArgumentGroup::isRequired() const
+{
+    if (exclusive)
     {
-        if (exclusive)
-        {
-            return std::ranges::all_of(arguments,
-                                       [](auto const &arg)
-                                       { return arg->isRequired(); });
-        }
-        if (inclusive)
-        {
-            return std::ranges::any_of(arguments,
-                                       [](auto const &arg)
-                                       { return arg->isRequired(); });
-        }
-        return false;
+        return std::ranges::all_of(arguments, [](auto const &arg) { return arg->isRequired(); });
     }
+    if (inclusive)
+    {
+        return std::ranges::any_of(arguments, [](auto const &arg) { return arg->isRequired(); });
+    }
+    return false;
 }
+} // namespace cli::commands

@@ -3,13 +3,13 @@
 
 namespace cli::commands
 {
-    std::string PositionalArgumentBase::getOptionsDocString() const
-    {
-        return docwriting::generateOptionsDocString(*this);
-    }
+std::string PositionalArgumentBase::getOptionsDocString(const docwriting::DocWriter &writer) const
+{
+    return writer.generateOptionsDocString(*this);
+}
 
-    std::string PositionalArgumentBase::getArgDocString() const
-    {
-        return docwriting::generateArgDocString(*this);
-    }
+std::string PositionalArgumentBase::getArgDocString(const docwriting::DocWriter &writer) const
+{
+    return writer.generateArgDocString(*this);
+}
 } // namespace cli::commands

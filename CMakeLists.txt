@@ -17,11 +17,68 @@ set(DEMO_OUTPUT_NAME cli_demo)
 
 find_program(CLANG_TIDY_EXE NAMES clang-tidy)
 
+# clang tidy setup
 if(CLANG_TIDY_EXE)
     message(STATUS "Found clang-tidy: ${CLANG_TIDY_EXE}")
-    #set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY_EXE}") //TODO currently produces errors
+
+    # Try to find .clang-tidy config file in project root
+    find_file(CLANG_TIDY_CONFIG_FILE
+        NAMES ".clang-tidy"
+        PATHS "${CMAKE_SOURCE_DIR}"
+        NO_DEFAULT_PATH
+    )
+
+    set(EXTRA_CLANG_TIDY_ARGS "")
+
+    list(APPEND EXTRA_CLANG_TIDY_ARGS
+    "--extra-arg=-I${CMAKE_SOURCE_DIR}/lib"
+    "--extra-arg=-I${CMAKE_SOURCE_DIR}/lib/commands"
+    "--extra-arg=-I${CMAKE_SOURCE_DIR}/lib/parsing"
+    "--extra-arg=-I${CMAKE_SOURCE_DIR}/lib/logging"
+    )
+    string(JOIN ";" EXTRA_CLANG_TIDY_ARGS_STR ${EXTRA_CLANG_TIDY_ARGS})
+
+    if(CLANG_TIDY_CONFIG_FILE)
+        message(STATUS "Using clang-tidy config: ${CLANG_TIDY_CONFIG_FILE}")
+    else()
+        message(WARNING "No .clang-tidy config found in ${CMAKE_SOURCE_DIR}")
+        set(CLANG_TIDY_CONFIG_FILE "")
+    endif()
+
+    # Apply clang-tidy checks automatically during build
+    #set(CMAKE_CXX_CLANG_TIDY
+    #    "${CLANG_TIDY_EXE};--config-file=${CLANG_TIDY_CONFIG_FILE};-p=${CMAKE_SOURCE_DIR}/build;${EXTRA_CLANG_TIDY_ARGS_STR}"
+    #)
 else()
-    message(STATUS "clang-tidy not found")
+    message(WARNING "clang-tidy not found — skipping static analysis setup")
+endif()
+
+# clang format setup
+find_program(CLANG_FORMAT_EXE NAMES clang-format)
+
+if(CLANG_FORMAT_EXE)
+    message(STATUS "Found clang-format: ${CLANG_TIDY_EXE}")
+
+    set(CLANG_FORMAT_FILE "${CMAKE_SOURCE_DIR}/.clang-format")
+    if(NOT EXISTS "${CLANG_FORMAT_FILE}")
+        message(FATAL_ERROR ".clang-format not found in ${CMAKE_SOURCE_DIR}")
+    endif()
+
+    file(GLOB_RECURSE ALL_SRC
+        "${CMAKE_SOURCE_DIR}/lib/*.cpp"
+        "${CMAKE_SOURCE_DIR}/lib/*.h"
+        "${CMAKE_SOURCE_DIR}/test/*.cpp"
+        "${CMAKE_SOURCE_DIR}/test/*.h"
+        "${CMAKE_SOURCE_DIR}/tools/*.cpp"
+        "${CMAKE_SOURCE_DIR}/tools/*.h"
+    )
+
+    add_custom_target(
+        clang-format
+        COMMAND ${CLANG_FORMAT_EXE} -i -style=file ${ALL_SRC}
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        COMMENT "Running clang-format on source files..."
+    )
 endif()
 
 option(ENABLE_COVERAGE "Enable GCC/MinGW coverage" ON)

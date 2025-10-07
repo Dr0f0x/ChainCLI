@@ -1,8 +1,10 @@
 #include <gtest/gtest.h>
+
 #include <sstream>
-#include "logging/logger.h"
-#include "logging/handler.h"
+
 #include "logging/formatter.h"
+#include "logging/handler.h"
+#include "logging/logger.h"
 
 using namespace cli::logging;
 
@@ -28,7 +30,8 @@ TEST_F(LoggerTestSociable, LoggerCallsHandlerWhichCallsFormatter)
 TEST_F(LoggerTestSociable, DoesNotCallHandlerBelowMinLevel)
 {
     Logger logger(LogLevel::ERROR);
-    logger.addHandler(std::make_unique<Handler>(out, err, std::make_unique<MessageOnlyFormatter>()));
+    logger.addHandler(
+        std::make_unique<Handler>(out, err, std::make_unique<MessageOnlyFormatter>()));
 
     logger.info("ignored message");
 
@@ -39,7 +42,8 @@ TEST_F(LoggerTestSociable, DoesNotCallHandlerBelowMinLevel)
 TEST_F(LoggerTestSociable, LoggerFormatsArgumentsBeforeEmit)
 {
     Logger logger(LogLevel::TRACE);
-    logger.addHandler(std::make_unique<Handler>(out, err, std::make_unique<MessageOnlyFormatter>()));
+    logger.addHandler(
+        std::make_unique<Handler>(out, err, std::make_unique<MessageOnlyFormatter>()));
 
     int val = 42;
     logger.info("Value={}", val);
@@ -62,7 +66,8 @@ TEST_F(LoggerTestSociable, ConvenienceMethodsUsesCorrectLevel)
 TEST_F(LoggerTestSociable, CorrectLevelsPassedToHandler)
 {
     Logger logger(LogLevel::TRACE);
-    logger.addHandler(std::make_unique<Handler>(out, err, std::make_unique<BasicFormatter>(), LogLevel::TRACE));
+    logger.addHandler(
+        std::make_unique<Handler>(out, err, std::make_unique<BasicFormatter>(), LogLevel::TRACE));
 
     logger.trace("trace msg");
     std::string result = out.str() + err.str();
@@ -72,7 +77,8 @@ TEST_F(LoggerTestSociable, CorrectLevelsPassedToHandler)
 TEST_F(LoggerTestSociable, RemoveAllHandlersPreventsEmits)
 {
     Logger logger(LogLevel::TRACE);
-    logger.addHandler(std::make_unique<Handler>(out, err, std::make_unique<MessageOnlyFormatter>(), LogLevel::TRACE));
+    logger.addHandler(std::make_unique<Handler>(out, err, std::make_unique<MessageOnlyFormatter>(),
+                                                LogLevel::TRACE));
     logger.removeAllHandlers();
 
     EXPECT_NO_THROW(logger.info("any message"));
@@ -96,7 +102,8 @@ TEST_P(LoggerConvenienceParamTest, ConvenienceMethodCallsHandlerWithCorrectLevel
     std::ostringstream out;
     std::ostringstream err;
     Logger logger(LogLevel::TRACE);
-    logger.addHandler(std::make_unique<Handler>(out, err, std::make_unique<BasicFormatter>(), LogLevel::TRACE));
+    logger.addHandler(
+        std::make_unique<Handler>(out, err, std::make_unique<BasicFormatter>(), LogLevel::TRACE));
 
     GetParam().method(logger, GetParam().msg);
 
@@ -105,19 +112,18 @@ TEST_P(LoggerConvenienceParamTest, ConvenienceMethodCallsHandlerWithCorrectLevel
 }
 
 INSTANTIATE_TEST_SUITE_P(
-    DataTestsSociable,
-    LoggerConvenienceParamTest,
+    DataTestsSociable, LoggerConvenienceParamTest,
     ::testing::Values(
-        LoggerMethodCase{LogLevel::TRACE, [](auto &l, const std::string &m)
-                         { l.trace(m); }, "trace message"},
-        LoggerMethodCase{LogLevel::DEBUG, [](auto &l, const std::string &m)
-                         { l.debug(m); }, "debug message"},
-        LoggerMethodCase{LogLevel::INFO, [](auto &l, const std::string &m)
-                         { l.info(m); }, "info message"},
-        LoggerMethodCase{LogLevel::WARNING, [](auto &l, const std::string &m)
-                         { l.warning(m); }, "warning message"},
-        LoggerMethodCase{LogLevel::ERROR, [](auto &l, const std::string &m)
-                         { l.error(m); }, "error message"}));
+        LoggerMethodCase{LogLevel::TRACE, [](auto &l, const std::string &m) { l.trace(m); },
+                         "trace message"},
+        LoggerMethodCase{LogLevel::DEBUG, [](auto &l, const std::string &m) { l.debug(m); },
+                         "debug message"},
+        LoggerMethodCase{LogLevel::INFO, [](auto &l, const std::string &m) { l.info(m); },
+                         "info message"},
+        LoggerMethodCase{LogLevel::WARNING, [](auto &l, const std::string &m) { l.warning(m); },
+                         "warning message"},
+        LoggerMethodCase{LogLevel::ERROR, [](auto &l, const std::string &m) { l.error(m); },
+                         "error message"}));
 
 struct LoggerLevelCase
 {
@@ -134,7 +140,8 @@ TEST_P(LoggerLevelParamTest, CorrectLevelIsPassedToHandler)
     std::ostringstream out;
     std::ostringstream err;
     Logger logger(LogLevel::TRACE);
-    logger.addHandler(std::make_unique<Handler>(out, err, std::make_unique<BasicFormatter>(), LogLevel::TRACE));
+    logger.addHandler(
+        std::make_unique<Handler>(out, err, std::make_unique<BasicFormatter>(), LogLevel::TRACE));
 
     logger.log(GetParam().level, GetParam().msg);
 
@@ -142,12 +149,9 @@ TEST_P(LoggerLevelParamTest, CorrectLevelIsPassedToHandler)
     EXPECT_NE(result.find(GetParam().msg), std::string::npos);
 }
 
-INSTANTIATE_TEST_SUITE_P(
-    DataTestsSociable,
-    LoggerLevelParamTest,
-    ::testing::Values(
-        LoggerLevelCase{LogLevel::TRACE, "trace message"},
-        LoggerLevelCase{LogLevel::DEBUG, "debug message"},
-        LoggerLevelCase{LogLevel::INFO, "info message"},
-        LoggerLevelCase{LogLevel::WARNING, "warning message"},
-        LoggerLevelCase{LogLevel::ERROR, "error message"}));
+INSTANTIATE_TEST_SUITE_P(DataTestsSociable, LoggerLevelParamTest,
+                         ::testing::Values(LoggerLevelCase{LogLevel::TRACE, "trace message"},
+                                           LoggerLevelCase{LogLevel::DEBUG, "debug message"},
+                                           LoggerLevelCase{LogLevel::INFO, "info message"},
+                                           LoggerLevelCase{LogLevel::WARNING, "warning message"},
+                                           LoggerLevelCase{LogLevel::ERROR, "error message"}));
