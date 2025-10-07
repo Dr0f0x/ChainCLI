@@ -17,10 +17,6 @@
 #include <string_view>
 #include <unordered_map>
 
-// begin --- docwriting.h --- 
-
-#pragma once
-
 // begin --- cli_config.h --- 
 
 #pragma once
@@ -38,6 +34,7 @@ struct CliConfig
 
     // Runtime flags and options
     char repeatableDelimiter{','};
+    int optionsWidth{20}; // width that is used to right aling the options text for arguments
 
     // Behavior toggles
     // ...
@@ -48,6 +45,27 @@ struct CliConfig
 // end --- cli_config.h --- 
 
 
+
+// begin --- command_tree.h --- 
+
+#pragma once
+#include <iostream>
+#include <memory>
+#include <stdexcept>
+#include <string_view>
+#include <unordered_map>
+
+// begin --- command.h --- 
+
+#pragma once
+
+// begin --- argument_group.h --- 
+
+#pragma once
+#include <memory>
+#include <type_traits>
+#include <utility>
+#include <vector>
 
 // begin --- argument.h --- 
 
@@ -76,14 +94,6 @@ class ArgumentBase
 public:
     virtual ~ArgumentBase() = default;
 
-    // Movable
-    ArgumentBase(ArgumentBase &&) noexcept = default;
-    ArgumentBase &operator=(ArgumentBase &&) noexcept = default;
-
-    // Copyable
-    ArgumentBase(const ArgumentBase &) = default;
-    ArgumentBase &operator=(const ArgumentBase &) = default;
-
     [[nodiscard]] constexpr std::string_view getName() const noexcept { return name; }
 
     [[nodiscard]] constexpr std::string_view getUsageComment() const noexcept
@@ -97,8 +107,10 @@ public:
 
     [[nodiscard]] constexpr ArgumentKind getArgType() const { return argType; }
 
-    [[nodiscard]] virtual std::string getOptionsDocString(const docwriting::DocWriter& writer) const = 0;
-    [[nodiscard]] virtual std::string getArgDocString(const docwriting::DocWriter& writer) const = 0;
+    [[nodiscard]] virtual std::string getOptionsDocString(
+        const docwriting::DocWriter &writer) const = 0;
+    [[nodiscard]] virtual std::string getArgDocString(
+        const docwriting::DocWriter &writer) const = 0;
 
 protected:
     ArgumentBase(std::string_view name, std::string_view optionsComment, ArgumentKind argType,
@@ -119,14 +131,6 @@ class TypedArgumentBase
 {
 public:
     virtual ~TypedArgumentBase() = default;
-
-    // Copyable
-    TypedArgumentBase(const TypedArgumentBase &) = default;
-    TypedArgumentBase &operator=(const TypedArgumentBase &) = default;
-
-    // Movable
-    TypedArgumentBase(TypedArgumentBase &&) noexcept = default;
-    TypedArgumentBase &operator=(TypedArgumentBase &&) noexcept = default;
 
     [[nodiscard]] std::type_index getType() const { return type; }
 
@@ -153,14 +157,6 @@ protected:
 // end --- argument.h --- 
 
 
-
-// begin --- argument_group.h --- 
-
-#pragma once
-#include <memory>
-#include <type_traits>
-#include <utility>
-#include <vector>
 
 namespace cli::commands
 {
@@ -228,10 +224,6 @@ public:
 // end --- argument_group.h --- 
 
 
-
-// begin --- command.h --- 
-
-#pragma once
 
 // begin --- cli_context.h --- 
 
@@ -884,8 +876,9 @@ public:
     {
     }
 
-    [[nodiscard]] std::string getOptionsDocString(const docwriting::DocWriter& writer) const override;
-    [[nodiscard]] std::string getArgDocString(const docwriting::DocWriter& writer) const override;
+    [[nodiscard]] std::string getOptionsDocString(
+        const docwriting::DocWriter &writer) const override;
+    [[nodiscard]] std::string getArgDocString(const docwriting::DocWriter &writer) const override;
 
     FlagArgument &withOptionsComment(std::string_view usage_comment)
     {
@@ -934,8 +927,9 @@ public:
     {
     }
 
-    [[nodiscard]] std::string getOptionsDocString(const docwriting::DocWriter& writer) const override;
-    [[nodiscard]] std::string getArgDocString(const docwriting::DocWriter& writer) const override;
+    [[nodiscard]] std::string getOptionsDocString(
+        const docwriting::DocWriter &writer) const override;
+    [[nodiscard]] std::string getArgDocString(const docwriting::DocWriter &writer) const override;
     [[nodiscard]] constexpr std::string_view getValueName() const noexcept { return valueName; }
 
 protected:
@@ -1019,8 +1013,9 @@ public:
     {
     }
 
-    [[nodiscard]] std::string getOptionsDocString(const docwriting::DocWriter& writer) const override;
-    [[nodiscard]] std::string getArgDocString(const docwriting::DocWriter& writer) const override;
+    [[nodiscard]] std::string getOptionsDocString(
+        const docwriting::DocWriter &writer) const override;
+    [[nodiscard]] std::string getArgDocString(const docwriting::DocWriter &writer) const override;
 };
 
 template <typename T> class PositionalArgument : public PositionalArgumentBase
@@ -1083,7 +1078,7 @@ inline std::any PositionalArgument<T>::parseToValue(const std::string &input) co
 
 namespace cli::commands
 {
-    
+
 class Command
 {
     friend std::ostream &operator<<(std::ostream &out, const Command &cmd);
@@ -1300,60 +1295,6 @@ inline Command &Command::withInclusiveGroup(Args &&...args)
 
 
 
-namespace cli::commands::docwriting
-{
-
-class DocsNotBuildException : public std::runtime_error
-{
-public:
-    using runtime_error::runtime_error;
-};
-
-class DocWriter
-{
-
-public:
-    explicit DocWriter(const CliConfig &config) : configuration(config) {}
-
-    void setDocStrings(Command &command, std::string_view fullCommandPath) const;
-
-    std::string generateLongDocString(const Command &command, std::string_view fullCommandPath) const;
-
-    std::string generateShortDocString(const Command &command, std::string_view fullCommandPath) const;
-
-    std::string generateOptionsDocString(const FlagArgument &argument) const;
-
-    std::string generateArgDocString(const FlagArgument &argument) const;
-
-    std::string generateOptionsDocString(const OptionArgumentBase &argument) const;
-
-    std::string generateArgDocString(const OptionArgumentBase &argument) const;
-
-    std::string generateOptionsDocString(const PositionalArgumentBase &argument) const;
-
-    std::string generateArgDocString(const PositionalArgumentBase &argument) const;
-
-private:
-    void addGroupArgumentDocString(std::ostringstream &builder,
-                                   const cli::commands::ArgumentGroup &groupArgs) const;
-    const CliConfig &configuration;
-};
-
-} // namespace cli::commands::docwriting
-
-// end --- docwriting.h --- 
-
-
-
-// begin --- command_tree.h --- 
-
-#pragma once
-#include <iostream>
-#include <memory>
-#include <stdexcept>
-#include <string_view>
-#include <unordered_map>
-
 namespace cli::commands
 {
 class CommandNotFoundException : public std::runtime_error
@@ -1492,6 +1433,57 @@ private:
 
 
 
+// begin --- docwriting.h --- 
+
+#pragma once
+
+namespace cli::commands::docwriting
+{
+
+class DocsNotBuildException : public std::runtime_error
+{
+public:
+    using runtime_error::runtime_error;
+};
+
+class DocWriter
+{
+
+public:
+    explicit DocWriter(const CliConfig &config) : configuration(config) {}
+
+    void setDocStrings(Command &command, std::string_view fullCommandPath) const;
+
+    std::string generateLongDocString(const Command &command,
+                                      std::string_view fullCommandPath) const;
+
+    std::string generateShortDocString(const Command &command,
+                                       std::string_view fullCommandPath) const;
+
+    std::string generateOptionsDocString(const FlagArgument &argument) const;
+
+    std::string generateArgDocString(const FlagArgument &argument) const;
+
+    std::string generateOptionsDocString(const OptionArgumentBase &argument) const;
+
+    std::string generateArgDocString(const OptionArgumentBase &argument) const;
+
+    std::string generateOptionsDocString(const PositionalArgumentBase &argument) const;
+
+    std::string generateArgDocString(const PositionalArgumentBase &argument) const;
+
+private:
+    void addGroupArgumentDocString(std::ostringstream &builder,
+                                   const cli::commands::ArgumentGroup &groupArgs) const;
+    const CliConfig &configuration;
+};
+
+} // namespace cli::commands::docwriting
+
+// end --- docwriting.h --- 
+
+
+
 // begin --- parser.h --- 
 
 #pragma once
@@ -1507,7 +1499,8 @@ public:
     explicit StringParser(const CliConfig &config) : configuration(config) {}
 
     void parseArguments(const cli::commands::Command &command,
-                        const std::vector<std::string> &inputs, ContextBuilder &contextBuilder) const;
+                        const std::vector<std::string> &inputs,
+                        ContextBuilder &contextBuilder) const;
 
 private:
     std::any parseRepeatableList(const cli::commands::TypedArgumentBase &arg,
@@ -1610,8 +1603,8 @@ private:
         std::make_unique<logging::Logger>(logging::LogLevel::DEBUG);
 
     std::unique_ptr<CliConfig> configuration;
-    parsing::StringParser parser; 
-    cli::commands::docwriting::DocWriter docWriter; 
+    parsing::StringParser parser;
+    cli::commands::docwriting::DocWriter docWriter;
 };
 } // namespace cli
 
@@ -1625,17 +1618,14 @@ namespace cli
 {
 CliBase::CliBase(CliConfig &&config)
     : commandsTree(config.executableName),
-      configuration(std::make_unique<CliConfig>(config)),
-      parser(*configuration),
+      configuration(std::make_unique<CliConfig>(std::move(config))), parser(*configuration),
       docWriter(*configuration)
 {
 }
 
 CliBase::CliBase(std::string_view executableName)
-    : commandsTree(executableName),
-      configuration(std::make_unique<CliConfig>()),
-      parser(*configuration),
-      docWriter(*configuration)
+    : commandsTree(executableName), configuration(std::make_unique<CliConfig>()),
+      parser(*configuration), docWriter(*configuration)
 {
     configuration->executableName = std::string(executableName);
 }
@@ -2261,8 +2251,8 @@ std::string DocWriter::generateOptionsDocString(const FlagArgument &argument) co
 {
     std::ostringstream builder;
     builder << argument.getName() << ' ' << argument.getShortName();
-    return std::format("{:<{}}{:>{}}", builder.str(), 20, argument.getUsageComment(),
-                       argument.getUsageComment().size());
+    return std::format("{:<{}}{:>{}}", builder.str(), configuration.optionsWidth,
+                       argument.getUsageComment(), argument.getUsageComment().size());
 }
 
 std::string DocWriter::generateArgDocString(const FlagArgument &argument) const
@@ -2280,8 +2270,8 @@ std::string DocWriter::generateOptionsDocString(const OptionArgumentBase &argume
             << argument.getValueName() << '>';
     if (argument.isRepeatable())
         builder << "...";
-    return std::format("{:<{}}{:>{}}", builder.str(), 20, argument.getUsageComment(),
-                       argument.getUsageComment().size());
+    return std::format("{:<{}}{:>{}}", builder.str(), configuration.optionsWidth,
+                       argument.getUsageComment(), argument.getUsageComment().size());
 }
 
 std::string DocWriter::generateArgDocString(const OptionArgumentBase &argument) const
@@ -2304,10 +2294,10 @@ std::string DocWriter::generateOptionsDocString(const PositionalArgumentBase &ar
     builder << inBracket << argument.getName() << outBracket;
     if (argument.isRepeatable())
         builder << "...";
-    return std::format("{:<{}}{:>{}}", builder.str(), 20, argument.getUsageComment(),
-                       argument.getUsageComment().size());
+    return std::format("{:<{}}{:>{}}", builder.str(), configuration.optionsWidth,
+                       argument.getUsageComment(), argument.getUsageComment().size());
 }
- 
+
 std::string DocWriter::generateArgDocString(const PositionalArgumentBase &argument) const
 {
     std::ostringstream builder;
@@ -2332,17 +2322,17 @@ std::string DocWriter::generateArgDocString(const PositionalArgumentBase &argume
 
 namespace cli::commands
 {
-    std::string FlagArgument::getOptionsDocString(const docwriting::DocWriter& writer) const
-    {
-        return writer.generateOptionsDocString(*this);
-    }
-
-    std::string FlagArgument::getArgDocString(const docwriting::DocWriter& writer) const
-    {
-        return writer.generateArgDocString(*this);
-    }
-
+std::string FlagArgument::getOptionsDocString(const docwriting::DocWriter &writer) const
+{
+    return writer.generateOptionsDocString(*this);
 }
+
+std::string FlagArgument::getArgDocString(const docwriting::DocWriter &writer) const
+{
+    return writer.generateArgDocString(*this);
+}
+
+} // namespace cli::commands
 
 // end --- flag_argument.cpp --- 
 
@@ -2354,12 +2344,12 @@ namespace cli::commands
 
 namespace cli::commands
 {
-    std::string OptionArgumentBase::getOptionsDocString(const docwriting::DocWriter& writer) const
+std::string OptionArgumentBase::getOptionsDocString(const docwriting::DocWriter &writer) const
 {
     return writer.generateOptionsDocString(*this);
 }
 
-std::string OptionArgumentBase::getArgDocString(const docwriting::DocWriter& writer) const
+std::string OptionArgumentBase::getArgDocString(const docwriting::DocWriter &writer) const
 {
     return writer.generateArgDocString(*this);
 }
@@ -2375,15 +2365,15 @@ std::string OptionArgumentBase::getArgDocString(const docwriting::DocWriter& wri
 
 namespace cli::commands
 {
-    std::string PositionalArgumentBase::getOptionsDocString(const docwriting::DocWriter& writer) const
-    {
-        return writer.generateOptionsDocString(*this);
-    }
+std::string PositionalArgumentBase::getOptionsDocString(const docwriting::DocWriter &writer) const
+{
+    return writer.generateOptionsDocString(*this);
+}
 
-    std::string PositionalArgumentBase::getArgDocString(const docwriting::DocWriter& writer) const
-    {
-        return writer.generateArgDocString(*this);
-    }
+std::string PositionalArgumentBase::getArgDocString(const docwriting::DocWriter &writer) const
+{
+    return writer.generateArgDocString(*this);
+}
 } // namespace cli::commands
 
 // end --- positional_argument.cpp --- 

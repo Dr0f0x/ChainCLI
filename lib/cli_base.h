@@ -32,9 +32,6 @@ public:
     CliBase(const CliBase &) = delete;
     CliBase &operator=(const CliBase &) = delete;
 
-    CliBase(CliBase &&) = default;
-    CliBase &operator=(CliBase &&) = default;
-
     explicit CliBase(std::string_view executableName);
     explicit CliBase(CliConfig &&config);
     ~CliBase() = default;

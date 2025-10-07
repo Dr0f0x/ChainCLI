@@ -15,9 +15,12 @@ set(LIBRARY_NAME_STATIC cli_lib_static)
 set(LIBRARY_NAME_SHARED cli_lib)
 set(DEMO_OUTPUT_NAME cli_demo)
 
+option(RUN_CLANG_TIDY OFF)
+
 find_program(CLANG_TIDY_EXE NAMES clang-tidy)
 
 # clang tidy setup
+if (RUN_CLANG_TIDY)
 if(CLANG_TIDY_EXE)
     message(STATUS "Found clang-tidy: ${CLANG_TIDY_EXE}")
 
@@ -50,7 +53,8 @@ if(CLANG_TIDY_EXE)
         "${CLANG_TIDY_EXE};--config-file=${CLANG_TIDY_CONFIG_FILE};-p=${CMAKE_SOURCE_DIR}/build;${EXTRA_CLANG_TIDY_ARGS_STR}"
     )
 else()
-    message(WARNING "clang-tidy not found — skipping static analysis setup")
+    message("clang-tidy not found — skipping static analysis setup")
+endif()
 endif()
 
 # clang format setup

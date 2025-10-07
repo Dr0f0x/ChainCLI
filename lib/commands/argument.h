@@ -23,14 +23,6 @@ class ArgumentBase
 public:
     virtual ~ArgumentBase() = default;
 
-    // Movable
-    ArgumentBase(ArgumentBase &&) noexcept = default;
-    ArgumentBase &operator=(ArgumentBase &&) noexcept = default;
-
-    // Copyable
-    ArgumentBase(const ArgumentBase &) = default;
-    ArgumentBase &operator=(const ArgumentBase &) = default;
-
     [[nodiscard]] constexpr std::string_view getName() const noexcept { return name; }
 
     [[nodiscard]] constexpr std::string_view getUsageComment() const noexcept
@@ -68,14 +60,6 @@ class TypedArgumentBase
 {
 public:
     virtual ~TypedArgumentBase() = default;
-
-    // Copyable
-    TypedArgumentBase(const TypedArgumentBase &) = default;
-    TypedArgumentBase &operator=(const TypedArgumentBase &) = default;
-
-    // Movable
-    TypedArgumentBase(TypedArgumentBase &&) noexcept = default;
-    TypedArgumentBase &operator=(TypedArgumentBase &&) noexcept = default;
 
     [[nodiscard]] std::type_index getType() const { return type; }
 
