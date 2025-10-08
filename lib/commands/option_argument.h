@@ -50,9 +50,9 @@ public:
 
     [[nodiscard]] std::any parseToValue(const std::string &input) const override;
 
-    OptionArgument<T> &withOptionsComment(std::string_view optionsComment)
+    OptionArgument<T> &withOptionsComment(std::string_view comment)
     {
-        this->optionsComment = optionsComment;
+        this->optionsComment = comment;
         return *this;
     }
 
@@ -62,9 +62,9 @@ public:
         return *this;
     }
 
-    OptionArgument<T> &withShortName(std::string_view shortName)
+    OptionArgument<T> &withShortName(std::string_view name)
     {
-        this->shortName = shortName;
+        this->shortName = name;
         return *this;
     }
 

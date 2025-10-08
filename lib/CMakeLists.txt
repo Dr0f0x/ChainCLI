@@ -1,18 +1,16 @@
 # Create main library combining all modules
 add_library(${LIBRARY_NAME_STATIC} STATIC
-    cli_base.cpp
-    cli_base.h
+    cli_app.cpp
+    cli_app.h
     cli_config.h
-    cli_base.h
     cli_context.h
     cli_context.cpp
 )
 
 add_library(${LIBRARY_NAME_SHARED} SHARED
-    cli_base.cpp
-    cli_base.h
+    cli_app.cpp
     cli_config.h
-    cli_base.h
+    cli_app.h
     cli_context.h
     cli_context.cpp
 )

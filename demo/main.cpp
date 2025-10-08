@@ -30,7 +30,7 @@ void exception_func([[maybe_unused]] const cli::CliContext &ctx)
     throw std::runtime_error("error");
 }
 
-void initCommands(cli::CliBase &cliApp)
+void initCommands(cli::CliApp &cliApp)
 {
     // use newCommand helper
     cliApp.createNewCommand("other", std::make_unique<std::function<void(const cli::CliContext &)>>(other_func))
@@ -72,13 +72,13 @@ void initCommands(cli::CliBase &cliApp)
     cliApp.withCommand(std::move(otherCmd));
 }
 
-void configureCLI(cli::CliBase &cliApp)
+void configureCLI(cli::CliApp &cliApp)
 {
     auto &config = cliApp.getConfig();
     config.executableName = "cliLibDemo";
 }
 
-void printCommands(cli::CliBase &cliApp)
+void printCommands(cli::CliApp &cliApp)
 {
     std::cout << "Available commands:\n";
 
@@ -129,7 +129,7 @@ int main(int argc, char *argv[])
     config.description = "Demo to test the CLI Library";
     config.version = "1.0.0";
 
-    auto cliApp = cli::CliBase(std::move(config));
+    auto cliApp = cli::CliApp(std::move(config));
     auto &logger = cliApp.Logger();
     logger.setLevel(LogLevel::TRACE);
 
@@ -139,7 +139,7 @@ int main(int argc, char *argv[])
     // Attach file handler (logs everything to one file)
     logger.addHandler(std::make_unique<FileHandler>("app.log", std::make_shared<BasicFormatter>(), LogLevel::TRACE));
 
-    // logTest(logger);
+    logTest(logger);
 
     initCommands(cliApp);
     configureCLI(cliApp);

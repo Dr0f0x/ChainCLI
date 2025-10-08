@@ -25,16 +25,16 @@
 
 namespace cli
 {
-class CliBase
+class CliApp
 {
 public:
     // Non-copyable
-    CliBase(const CliBase &) = delete;
-    CliBase &operator=(const CliBase &) = delete;
+    CliApp(const CliApp &) = delete;
+    CliApp &operator=(const CliApp &) = delete;
 
-    explicit CliBase(std::string_view executableName);
-    explicit CliBase(CliConfig &&config);
-    ~CliBase() = default;
+    explicit CliApp(std::string_view executableName);
+    explicit CliApp(CliConfig &&config);
+    ~CliApp() = default;
 
     commands::Command &createNewCommand(
         std::string_view id, std::unique_ptr<std::function<void(const CliContext &)>> actionPtr);
@@ -44,21 +44,23 @@ public:
         return createNewCommand(id, nullptr);
     };
 
-    CliBase &withCommand(std::unique_ptr<commands::Command> subCommandPtr);
+    CliApp &withCommand(std::unique_ptr<commands::Command> subCommandPtr);
 
-    CliBase &withCommand(commands::Command &&subCommand)
+    CliApp &withCommand(commands::Command &&subCommand)
     {
         return withCommand(std::make_unique<commands::Command>(std::move(subCommand)));
     }
-
-    [[nodiscard]] const commands::CommandTree &getCommandTree() const { return commandsTree; };
-
-    [[nodiscard]] CliConfig &getConfig() { return *configuration; };
 
     void init();
     int run(int argc, char *argv[]);
 
     [[nodiscard]] logging::Logger &Logger() { return *logger; }
+
+    [[nodiscard]] const commands::CommandTree &getCommandTree() const { return commandsTree; };
+
+    [[nodiscard]] CliConfig &getConfig() { return *configuration; };
+
+    [[nodiscard]] commands::docwriting::DocWriter &getDocWriter() { return docWriter; }
 
     void setLogger(std::unique_ptr<logging::Logger> &newLogger) { logger = std::move(newLogger); }
 

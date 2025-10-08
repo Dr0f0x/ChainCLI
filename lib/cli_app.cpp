@@ -1,4 +1,4 @@
-#include "cli_base.h"
+#include "cli_app.h"
 
 #include <iostream>
 
@@ -8,21 +8,21 @@
 
 namespace cli
 {
-CliBase::CliBase(CliConfig &&config)
+CliApp::CliApp(CliConfig &&config)
     : commandsTree(config.executableName),
       configuration(std::make_unique<CliConfig>(std::move(config))), parser(*configuration),
       docWriter(*configuration)
 {
 }
 
-CliBase::CliBase(std::string_view executableName)
+CliApp::CliApp(std::string_view executableName)
     : commandsTree(executableName), configuration(std::make_unique<CliConfig>()),
       parser(*configuration), docWriter(*configuration)
 {
     configuration->executableName = std::string(executableName);
 }
 
-commands::Command &CliBase::createNewCommand(
+commands::Command &CliApp::createNewCommand(
     std::string_view id, std::unique_ptr<std::function<void(const CliContext &)>> actionPtr)
 {
     auto cmd = std::make_unique<commands::Command>(id, "", "",
@@ -32,13 +32,13 @@ commands::Command &CliBase::createNewCommand(
     return ref;
 }
 
-CliBase &CliBase::withCommand(std::unique_ptr<commands::Command> subCommandPtr)
+CliApp &CliApp::withCommand(std::unique_ptr<commands::Command> subCommandPtr)
 {
     commandsTree.insert(std::move(subCommandPtr));
     return *this;
 }
 
-void CliBase::init()
+void CliApp::init()
 {
     initialized = true;
 
@@ -50,7 +50,7 @@ void CliBase::init()
 }
 
 // NOLINTNEXTLINE(cppcoreguidelines-avoid-c-arrays)
-int CliBase::run(int argc, char *argv[])
+int CliApp::run(int argc, char *argv[])
 {
     if (!initialized)
     {
@@ -59,7 +59,7 @@ int CliBase::run(int argc, char *argv[])
     return internalRun(std::span<char *const>(argv + 1, argc - 1));
 }
 
-int CliBase::internalRun(std::span<char *const> args) const
+int CliApp::internalRun(std::span<char *const> args) const
 {
     std::vector<std::string> argVec(args.begin(), args.end());
 
@@ -92,7 +92,7 @@ int CliBase::internalRun(std::span<char *const> args) const
 
 // returns the found command and modifies args to only contain the values that
 // werent consumed in the tree traversal
-const commands::Command *CliBase::locateCommand(std::vector<std::string> &args) const
+const commands::Command *CliApp::locateCommand(std::vector<std::string> &args) const
 {
     const commands::Command *commandPtr = commandsTree.getRootCommand();
 
@@ -114,7 +114,7 @@ const commands::Command *CliBase::locateCommand(std::vector<std::string> &args) 
     return commandPtr;
 }
 
-bool CliBase::rootShortCircuits(std::vector<std::string> &args,
+bool CliApp::rootShortCircuits(std::vector<std::string> &args,
                                 const cli::commands::Command &cmd) const
 {
     if (args.empty() && !cmd.hasExecutionFunction())
@@ -139,7 +139,7 @@ bool CliBase::rootShortCircuits(std::vector<std::string> &args,
     return false;
 }
 
-bool CliBase::commandShortCircuits(std::vector<std::string> &args,
+bool CliApp::commandShortCircuits(std::vector<std::string> &args,
                                    const cli::commands::Command &cmd) const
 {
     if (args.size() == 1 && (args.at(0) == "-h" || args.at(0) == "--help"))
@@ -150,7 +150,7 @@ bool CliBase::commandShortCircuits(std::vector<std::string> &args,
     return false;
 }
 
-void CliBase::globalHelp() const
+void CliApp::globalHelp() const
 {
     logger->info() << configuration->description << "\n\n";
 

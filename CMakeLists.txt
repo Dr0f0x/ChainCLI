@@ -15,46 +15,46 @@ set(LIBRARY_NAME_STATIC cli_lib_static)
 set(LIBRARY_NAME_SHARED cli_lib)
 set(DEMO_OUTPUT_NAME cli_demo)
 
-option(RUN_CLANG_TIDY OFF)
+set(RUN_CLANG_TIDY OFF)
 
 find_program(CLANG_TIDY_EXE NAMES clang-tidy)
 
 # clang tidy setup
 if (RUN_CLANG_TIDY)
-if(CLANG_TIDY_EXE)
-    message(STATUS "Found clang-tidy: ${CLANG_TIDY_EXE}")
+    if(CLANG_TIDY_EXE)
+        message(STATUS "Found clang-tidy: ${CLANG_TIDY_EXE}")
 
-    # Try to find .clang-tidy config file in project root
-    find_file(CLANG_TIDY_CONFIG_FILE
-        NAMES ".clang-tidy"
-        PATHS "${CMAKE_SOURCE_DIR}"
-        NO_DEFAULT_PATH
-    )
+        # Try to find .clang-tidy config file in project root
+        find_file(CLANG_TIDY_CONFIG_FILE
+            NAMES ".clang-tidy"
+            PATHS "${CMAKE_SOURCE_DIR}"
+            NO_DEFAULT_PATH
+        )
 
-    set(EXTRA_CLANG_TIDY_ARGS "")
+        set(EXTRA_CLANG_TIDY_ARGS "")
 
-    list(APPEND EXTRA_CLANG_TIDY_ARGS
-    "--extra-arg=-I${CMAKE_SOURCE_DIR}/lib"
-    "--extra-arg=-I${CMAKE_SOURCE_DIR}/lib/commands"
-    "--extra-arg=-I${CMAKE_SOURCE_DIR}/lib/parsing"
-    "--extra-arg=-I${CMAKE_SOURCE_DIR}/lib/logging"
-    )
-    string(JOIN ";" EXTRA_CLANG_TIDY_ARGS_STR ${EXTRA_CLANG_TIDY_ARGS})
+        list(APPEND EXTRA_CLANG_TIDY_ARGS
+        "--extra-arg=-I${CMAKE_SOURCE_DIR}/lib"
+        "--extra-arg=-I${CMAKE_SOURCE_DIR}/lib/commands"
+        "--extra-arg=-I${CMAKE_SOURCE_DIR}/lib/parsing"
+        "--extra-arg=-I${CMAKE_SOURCE_DIR}/lib/logging"
+        )
+        string(JOIN ";" EXTRA_CLANG_TIDY_ARGS_STR ${EXTRA_CLANG_TIDY_ARGS})
 
-    if(CLANG_TIDY_CONFIG_FILE)
-        message(STATUS "Using clang-tidy config: ${CLANG_TIDY_CONFIG_FILE}")
+        if(CLANG_TIDY_CONFIG_FILE)
+            message(STATUS "Using clang-tidy config: ${CLANG_TIDY_CONFIG_FILE}")
+        else()
+            message(WARNING "No .clang-tidy config found in ${CMAKE_SOURCE_DIR}")
+            set(CLANG_TIDY_CONFIG_FILE "")
+        endif()
+
+        # Apply clang-tidy checks automatically during build
+        set(CMAKE_CXX_CLANG_TIDY
+            "${CLANG_TIDY_EXE};--config-file=${CLANG_TIDY_CONFIG_FILE};-p=${CMAKE_SOURCE_DIR}/build;${EXTRA_CLANG_TIDY_ARGS_STR}"
+        )
     else()
-        message(WARNING "No .clang-tidy config found in ${CMAKE_SOURCE_DIR}")
-        set(CLANG_TIDY_CONFIG_FILE "")
+        message("clang-tidy not found — skipping static analysis setup")
     endif()
-
-    # Apply clang-tidy checks automatically during build
-    set(CMAKE_CXX_CLANG_TIDY
-        "${CLANG_TIDY_EXE};--config-file=${CLANG_TIDY_CONFIG_FILE};-p=${CMAKE_SOURCE_DIR}/build;${EXTRA_CLANG_TIDY_ARGS_STR}"
-    )
-else()
-    message("clang-tidy not found — skipping static analysis setup")
-endif()
 endif()
 
 # clang format setup
@@ -94,7 +94,9 @@ option(ENABLE_WARNINGS_AS_ERRORS "Treat compiler warnings as errors" OFF)
 if(ENABLE_WARNINGS_AS_ERRORS)
     if(MSVC)
         # Microsoft Visual C++
-        add_compile_options(/W4 /WX)
+        add_compile_options(/W4 /WX /EHsc)
+        set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /W4 /WX /EHsc")
+        set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /W4 /WX /EHsc")
     elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
         # Clang and AppleClang
         add_compile_options(-Wall -Wextra -Wpedantic -Werror)

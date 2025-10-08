@@ -43,9 +43,9 @@ public:
 
     [[nodiscard]] std::any parseToValue(const std::string &input) const override;
 
-    PositionalArgument<T> &withOptionsComment(std::string_view usage_comment)
+    PositionalArgument<T> &withOptionsComment(std::string_view comment)
     {
-        optionsComment = usage_comment;
+        optionsComment = comment;
         return *this;
     }
 
@@ -55,9 +55,9 @@ public:
         return *this;
     }
 
-    PositionalArgument<T> &withShortName(std::string_view shortName)
+    PositionalArgument<T> &withShortName(std::string_view name)
     {
-        this->shortName = shortName;
+        this->shortName = name;
         return *this;
     }
 

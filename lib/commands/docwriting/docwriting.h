@@ -1,8 +1,11 @@
 #pragma once
+#include <memory>
+
 #include "cli_config.h"
 #include "commands/argument.h"
 #include "commands/argument_group.h"
 #include "commands/command.h"
+#include "commands/docwriting/docformatter.h"
 #include "commands/flag_argument.h"
 #include "commands/option_argument.h"
 #include "commands/positional_argument.h"
@@ -21,6 +24,15 @@ class DocWriter
 
 public:
     explicit DocWriter(const CliConfig &config) : configuration(config) {}
+
+    void setOptionFormatter(std::unique_ptr<AbstractArgDocFormatter<OptionArgumentBase>> formatter);
+
+    void setPositionalFormatter(
+        std::unique_ptr<AbstractArgDocFormatter<PositionalArgumentBase>> formatter);
+
+    void setFlagFormatter(std::unique_ptr<AbstractArgDocFormatter<FlagArgument>> formatter);
+
+    void setCommandFormatter(std::unique_ptr<AbstractCommandFormatter> formatter);
 
     void setDocStrings(Command &command, std::string_view fullCommandPath) const;
 
@@ -43,9 +55,12 @@ public:
     std::string generateArgDocString(const PositionalArgumentBase &argument) const;
 
 private:
-    void addGroupArgumentDocString(std::ostringstream &builder,
-                                   const cli::commands::ArgumentGroup &groupArgs) const;
     const CliConfig &configuration;
+
+    std::unique_ptr<AbstractCommandFormatter> commandFormatterPtr = std::make_unique<DefaultCommandFormatter>();
+    std::unique_ptr<AbstractArgDocFormatter<FlagArgument>> flagFormatterPtr  = std::make_unique<DefaultFlagFormatter>();
+    std::unique_ptr<AbstractArgDocFormatter<OptionArgumentBase>> optionFormatterPtr  = std::make_unique<DefaultOptionFormatter>();
+    std::unique_ptr<AbstractArgDocFormatter<PositionalArgumentBase>> positionalFormatterPtr = std::make_unique<DefaultPositionalFormatter>();
 };
 
 } // namespace cli::commands::docwriting

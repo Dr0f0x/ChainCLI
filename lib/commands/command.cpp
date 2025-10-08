@@ -3,7 +3,7 @@
 #include <format>
 #include <iostream>
 
-#include "cli_base.h"
+#include "cli_app.h"
 #include "docwriting/docwriting.h"
 
 namespace cli::commands

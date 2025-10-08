@@ -10,65 +10,26 @@
 namespace cli::commands::docwriting
 {
 
-inline_t std::pair<std::string, std::string> getPositionalArgumentBrackets(bool required)
+void DocWriter::setOptionFormatter(
+    std::unique_ptr<AbstractArgDocFormatter<OptionArgumentBase>> formatter)
 {
-    if (required)
-        return {"<", ">"};
-    else
-        return {"[<", ">]"};
+    optionFormatterPtr = std::move(formatter);
 }
 
-inline_t std::pair<char, char> getOptionArgumentBrackets(bool required)
+void DocWriter::setPositionalFormatter(
+    std::unique_ptr<AbstractArgDocFormatter<PositionalArgumentBase>> formatter)
 {
-    if (required)
-        return {'(', ')'};
-    else
-        return {'[', ']'};
+    positionalFormatterPtr = std::move(formatter);
 }
 
-void DocWriter::addGroupArgumentDocString(std::ostringstream &builder,
-                                          const cli::commands::ArgumentGroup &groupArgs) const
+void DocWriter::setFlagFormatter(std::unique_ptr<AbstractArgDocFormatter<FlagArgument>> formatter)
 {
-    auto [inBracket, outBracket] = getOptionArgumentBrackets(groupArgs.isRequired());
-    if (groupArgs.isExclusive() || groupArgs.isInclusive())
-    {
-        builder << inBracket;
-    }
-
-    auto args = groupArgs.getArguments();
-    for (size_t i = 0; i < args.size(); ++i)
-    {
-        const auto &argPtr = args[i];
-        builder << argPtr->getArgDocString(*this);
-
-        if (i < args.size() - 1) // not the last element
-        {
-            if (groupArgs.isExclusive())
-                builder << " | ";
-            else
-                builder << " ";
-        }
-    }
-
-    if (groupArgs.isExclusive() || groupArgs.isInclusive())
-    {
-        builder << outBracket;
-    }
+    flagFormatterPtr = std::move(formatter);
 }
 
-std::string DocWriter::generateShortDocString(const Command &command,
-                                              std::string_view fullCommandPath) const
+void DocWriter::setCommandFormatter(std::unique_ptr<AbstractCommandFormatter> formatter)
 {
-    std::ostringstream builder;
-    builder << fullCommandPath << " ";
-
-    for (const auto &argGroupPtr : command.getArgumentGroups())
-    {
-        addGroupArgumentDocString(builder, *argGroupPtr);
-        builder << " ";
-    }
-    builder << "\n" << command.getShortDescription();
-    return builder.str();
+    commandFormatterPtr = std::move(formatter);
 }
 
 void DocWriter::setDocStrings(Command &command, std::string_view fullCommandPath) const
@@ -77,91 +38,47 @@ void DocWriter::setDocStrings(Command &command, std::string_view fullCommandPath
     command.docStringShort = generateShortDocString(command, fullCommandPath);
 }
 
+std::string DocWriter::generateShortDocString(const Command &command,
+                                              std::string_view fullCommandPath) const
+{
+    return commandFormatterPtr->generateShortDocString(command, fullCommandPath, *this, configuration);
+}
+
+
 std::string DocWriter::generateLongDocString(const Command &command,
                                              std::string_view fullCommandPath) const
 {
-    std::ostringstream builder;
-    builder << fullCommandPath << " ";
-
-    for (const auto &argGroupPtr : command.getArgumentGroups())
-    {
-        addGroupArgumentDocString(builder, *argGroupPtr);
-        builder << ' ';
-    }
-
-    builder << "\n\n" << command.getLongDescription() << "\n\nOptions:\n";
-
-    for (const auto &argGroupPtr : command.getArgumentGroups())
-    {
-        for (const auto &argPtr : argGroupPtr->getArguments())
-        {
-            builder << argPtr->getOptionsDocString(*this) << "\n";
-        }
-    }
-    return builder.str();
+    return commandFormatterPtr->generateLongDocString(command, fullCommandPath, *this, configuration);
 }
 
 std::string DocWriter::generateOptionsDocString(const FlagArgument &argument) const
 {
-    std::ostringstream builder;
-    builder << argument.getName() << ' ' << argument.getShortName();
-    return std::format("{:<{}}{:>{}}", builder.str(), configuration.optionsWidth,
-                       argument.getUsageComment(), argument.getUsageComment().size());
+    return flagFormatterPtr->generateOptionsDocString(argument, configuration);
 }
 
 std::string DocWriter::generateArgDocString(const FlagArgument &argument) const
 {
-    std::ostringstream builder;
-    auto [inBracket, outBracket] = getOptionArgumentBrackets(argument.isRequired());
-    builder << inBracket << argument.getName() << ',' << argument.getShortName() << outBracket;
-    return builder.str();
+    return flagFormatterPtr->generateArgDocString(argument, configuration);
 }
 
 std::string DocWriter::generateOptionsDocString(const OptionArgumentBase &argument) const
 {
-    std::ostringstream builder;
-    builder << argument.getName() << ',' << argument.getShortName() << ' ' << '<'
-            << argument.getValueName() << '>';
-    if (argument.isRepeatable())
-        builder << "...";
-    return std::format("{:<{}}{:>{}}", builder.str(), configuration.optionsWidth,
-                       argument.getUsageComment(), argument.getUsageComment().size());
+    return optionFormatterPtr->generateOptionsDocString(argument, configuration);
 }
 
 std::string DocWriter::generateArgDocString(const OptionArgumentBase &argument) const
 {
-    std::ostringstream builder;
-    auto [inBracket, outBracket] = getOptionArgumentBrackets(argument.isRequired());
-    builder << inBracket << argument.getName() << ' ' << argument.getShortName() << ' ';
-    builder << '<' << argument.getValueName() << '>' << outBracket;
-
-    if (argument.isRepeatable())
-        builder << "...";
-    return builder.str();
+    return optionFormatterPtr->generateArgDocString(argument, configuration);
 }
 
 std::string DocWriter::generateOptionsDocString(const PositionalArgumentBase &argument) const
 {
-    std::ostringstream builder;
-    auto [inBracket, outBracket] = getPositionalArgumentBrackets(argument.isRequired());
-
-    builder << inBracket << argument.getName() << outBracket;
-    if (argument.isRepeatable())
-        builder << "...";
-    return std::format("{:<{}}{:>{}}", builder.str(), configuration.optionsWidth,
-                       argument.getUsageComment(), argument.getUsageComment().size());
+    return positionalFormatterPtr->generateOptionsDocString(argument, configuration);
 }
 
 std::string DocWriter::generateArgDocString(const PositionalArgumentBase &argument) const
 {
-    std::ostringstream builder;
-    auto [inBracket, outBracket] = getPositionalArgumentBrackets(argument.isRequired());
-
-    builder << inBracket << argument.getName();
-    builder << outBracket;
-
-    if (argument.isRepeatable())
-        builder << "...";
-    return builder.str();
+    return positionalFormatterPtr->generateArgDocString(argument, configuration);
 }
+
 } // namespace cli::commands::docwriting

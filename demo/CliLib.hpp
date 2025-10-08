@@ -5,11 +5,11 @@
 #endif
 
 
-// begin --- cli_base.cpp --- 
+// begin --- cli_app.cpp --- 
 
 
 
-// begin --- cli_base.h --- 
+// begin --- cli_app.h --- 
 
 #pragma once
 #include <memory>
@@ -369,6 +369,12 @@ public:
 #include <map>
 #include <string>
 
+#if defined(_MSC_VER)
+  #define ESC "\x1B"
+#else
+  #define ESC "\o{33}"
+#endif
+
 namespace cli::logging
 {
 
@@ -380,13 +386,13 @@ inline LogStyleMap defaultStyles()
 {
     using enum cli::logging::LogLevel;
     return {
-        {TRACE, "\o{33}[90m"},   // gray
-        {VERBOSE, "\o{33}[90m"}, // gray
-        {DEBUG, "\o{33}[36m"},   // cyan
+        {TRACE, ESC "[90m"},   // gray
+        {VERBOSE, ESC "[90m"}, // gray
+        {DEBUG, ESC "[36m"},   // cyan
         // Info uses plain grey text (no color)
-        {SUCCESS, "\o{33}[32m"}, // green
-        {WARNING, "\o{33}[33m"}, // yellow
-        {ERROR, "\o{33}[31m"},   // red
+        {SUCCESS, ESC "[32m"}, // green
+        {WARNING, ESC "[33m"}, // yellow
+        {ERROR, ESC "[31m"},   // red
     };
 }
 } // namespace cli::logging
@@ -1436,6 +1442,86 @@ private:
 // begin --- docwriting.h --- 
 
 #pragma once
+#include <memory>
+
+// begin --- docformatter.h --- 
+
+#pragma once
+#include <format>
+#include <sstream>
+
+namespace cli::commands::docwriting
+{
+
+template <typename T> class AbstractArgDocFormatter
+{
+public:
+    virtual ~AbstractArgDocFormatter() = default;
+    virtual std::string generateArgDocString(const T &argument,
+                                             const cli::CliConfig &configuration) = 0;
+    virtual std::string generateOptionsDocString(const T &argument,
+                                                 const cli::CliConfig &configuration) = 0;
+};
+
+class DefaultFlagFormatter : public AbstractArgDocFormatter<FlagArgument>
+{
+public:
+    std::string generateArgDocString(const FlagArgument &argument,
+                                     const cli::CliConfig &configuration) override;
+    std::string generateOptionsDocString(const FlagArgument &argument,
+                                         const cli::CliConfig &configuration) override;
+};
+
+class DefaultOptionFormatter : public AbstractArgDocFormatter<OptionArgumentBase>
+{
+public:
+    std::string generateArgDocString(const OptionArgumentBase &argument,
+                                     const cli::CliConfig &configuration) override;
+    std::string generateOptionsDocString(const OptionArgumentBase &argument,
+                                         const cli::CliConfig &configuration) override;
+};
+
+class DefaultPositionalFormatter : public AbstractArgDocFormatter<PositionalArgumentBase>
+{
+public:
+    std::string generateArgDocString(const PositionalArgumentBase &argument,
+                                     const cli::CliConfig &configuration) override;
+    std::string generateOptionsDocString(const PositionalArgumentBase &argument,
+                                         const cli::CliConfig &configuration) override;
+};
+
+class AbstractCommandFormatter
+{
+public:
+    virtual ~AbstractCommandFormatter() = default;
+    virtual std::string generateLongDocString(const Command &command,
+                                              std::string_view fullCommandPath,
+                                              const DocWriter &writer,
+                                              const cli::CliConfig &configuration) = 0;
+
+    virtual std::string generateShortDocString(const Command &command,
+                                               std::string_view fullCommandPath,
+                                               const DocWriter &writer,
+                                               const cli::CliConfig &configuration) = 0;
+};
+
+class DefaultCommandFormatter : public AbstractCommandFormatter
+{
+public:
+    std::string generateLongDocString(const Command &command, std::string_view fullCommandPath,
+                                      const DocWriter &writer,
+                                      const cli::CliConfig &configuration) override;
+
+    std::string generateShortDocString(const Command &command, std::string_view fullCommandPath,
+                                       const DocWriter &writer,
+                                       const cli::CliConfig &configuration) override;
+};
+
+} // namespace cli::commands::docwriting
+
+// end --- docformatter.h --- 
+
+
 
 namespace cli::commands::docwriting
 {
@@ -1451,6 +1537,15 @@ class DocWriter
 
 public:
     explicit DocWriter(const CliConfig &config) : configuration(config) {}
+
+    void setOptionFormatter(std::unique_ptr<AbstractArgDocFormatter<OptionArgumentBase>> formatter);
+
+    void setPositionalFormatter(
+        std::unique_ptr<AbstractArgDocFormatter<PositionalArgumentBase>> formatter);
+
+    void setFlagFormatter(std::unique_ptr<AbstractArgDocFormatter<FlagArgument>> formatter);
+
+    void setCommandFormatter(std::unique_ptr<AbstractCommandFormatter> formatter);
 
     void setDocStrings(Command &command, std::string_view fullCommandPath) const;
 
@@ -1473,9 +1568,12 @@ public:
     std::string generateArgDocString(const PositionalArgumentBase &argument) const;
 
 private:
-    void addGroupArgumentDocString(std::ostringstream &builder,
-                                   const cli::commands::ArgumentGroup &groupArgs) const;
     const CliConfig &configuration;
+
+    std::unique_ptr<AbstractCommandFormatter> commandFormatterPtr = std::make_unique<DefaultCommandFormatter>();
+    std::unique_ptr<AbstractArgDocFormatter<FlagArgument>> flagFormatterPtr  = std::make_unique<DefaultFlagFormatter>();
+    std::unique_ptr<AbstractArgDocFormatter<OptionArgumentBase>> optionFormatterPtr  = std::make_unique<DefaultOptionFormatter>();
+    std::unique_ptr<AbstractArgDocFormatter<PositionalArgumentBase>> positionalFormatterPtr = std::make_unique<DefaultPositionalFormatter>();
 };
 
 } // namespace cli::commands::docwriting
@@ -1546,19 +1644,16 @@ private:
 
 namespace cli
 {
-class CliBase
+class CliApp
 {
 public:
     // Non-copyable
-    CliBase(const CliBase &) = delete;
-    CliBase &operator=(const CliBase &) = delete;
+    CliApp(const CliApp &) = delete;
+    CliApp &operator=(const CliApp &) = delete;
 
-    CliBase(CliBase &&) = default;
-    CliBase &operator=(CliBase &&) = default;
-
-    explicit CliBase(std::string_view executableName);
-    explicit CliBase(CliConfig &&config);
-    ~CliBase() = default;
+    explicit CliApp(std::string_view executableName);
+    explicit CliApp(CliConfig &&config);
+    ~CliApp() = default;
 
     commands::Command &createNewCommand(
         std::string_view id, std::unique_ptr<std::function<void(const CliContext &)>> actionPtr);
@@ -1568,21 +1663,23 @@ public:
         return createNewCommand(id, nullptr);
     };
 
-    CliBase &withCommand(std::unique_ptr<commands::Command> subCommandPtr);
+    CliApp &withCommand(std::unique_ptr<commands::Command> subCommandPtr);
 
-    CliBase &withCommand(commands::Command &&subCommand)
+    CliApp &withCommand(commands::Command &&subCommand)
     {
         return withCommand(std::make_unique<commands::Command>(std::move(subCommand)));
     }
-
-    [[nodiscard]] const commands::CommandTree &getCommandTree() const { return commandsTree; };
-
-    [[nodiscard]] CliConfig &getConfig() { return *configuration; };
 
     void init();
     int run(int argc, char *argv[]);
 
     [[nodiscard]] logging::Logger &Logger() { return *logger; }
+
+    [[nodiscard]] const commands::CommandTree &getCommandTree() const { return commandsTree; };
+
+    [[nodiscard]] CliConfig &getConfig() { return *configuration; };
+
+    [[nodiscard]] commands::docwriting::DocWriter &getDocWriter() { return docWriter; }
 
     void setLogger(std::unique_ptr<logging::Logger> &newLogger) { logger = std::move(newLogger); }
 
@@ -1608,7 +1705,7 @@ private:
 };
 } // namespace cli
 
-// end --- cli_base.h --- 
+// end --- cli_app.h --- 
 
 
 
@@ -1616,21 +1713,21 @@ private:
 
 namespace cli
 {
-CliBase::CliBase(CliConfig &&config)
+CliApp::CliApp(CliConfig &&config)
     : commandsTree(config.executableName),
       configuration(std::make_unique<CliConfig>(std::move(config))), parser(*configuration),
       docWriter(*configuration)
 {
 }
 
-CliBase::CliBase(std::string_view executableName)
+CliApp::CliApp(std::string_view executableName)
     : commandsTree(executableName), configuration(std::make_unique<CliConfig>()),
       parser(*configuration), docWriter(*configuration)
 {
     configuration->executableName = std::string(executableName);
 }
 
-commands::Command &CliBase::createNewCommand(
+commands::Command &CliApp::createNewCommand(
     std::string_view id, std::unique_ptr<std::function<void(const CliContext &)>> actionPtr)
 {
     auto cmd = std::make_unique<commands::Command>(id, "", "",
@@ -1640,13 +1737,13 @@ commands::Command &CliBase::createNewCommand(
     return ref;
 }
 
-CliBase &CliBase::withCommand(std::unique_ptr<commands::Command> subCommandPtr)
+CliApp &CliApp::withCommand(std::unique_ptr<commands::Command> subCommandPtr)
 {
     commandsTree.insert(std::move(subCommandPtr));
     return *this;
 }
 
-void CliBase::init()
+void CliApp::init()
 {
     initialized = true;
 
@@ -1658,7 +1755,7 @@ void CliBase::init()
 }
 
 // NOLINTNEXTLINE(cppcoreguidelines-avoid-c-arrays)
-int CliBase::run(int argc, char *argv[])
+int CliApp::run(int argc, char *argv[])
 {
     if (!initialized)
     {
@@ -1667,7 +1764,7 @@ int CliBase::run(int argc, char *argv[])
     return internalRun(std::span<char *const>(argv + 1, argc - 1));
 }
 
-int CliBase::internalRun(std::span<char *const> args) const
+int CliApp::internalRun(std::span<char *const> args) const
 {
     std::vector<std::string> argVec(args.begin(), args.end());
 
@@ -1700,7 +1797,7 @@ int CliBase::internalRun(std::span<char *const> args) const
 
 // returns the found command and modifies args to only contain the values that
 // werent consumed in the tree traversal
-const commands::Command *CliBase::locateCommand(std::vector<std::string> &args) const
+const commands::Command *CliApp::locateCommand(std::vector<std::string> &args) const
 {
     const commands::Command *commandPtr = commandsTree.getRootCommand();
 
@@ -1722,7 +1819,7 @@ const commands::Command *CliBase::locateCommand(std::vector<std::string> &args) 
     return commandPtr;
 }
 
-bool CliBase::rootShortCircuits(std::vector<std::string> &args,
+bool CliApp::rootShortCircuits(std::vector<std::string> &args,
                                 const cli::commands::Command &cmd) const
 {
     if (args.empty() && !cmd.hasExecutionFunction())
@@ -1747,7 +1844,7 @@ bool CliBase::rootShortCircuits(std::vector<std::string> &args,
     return false;
 }
 
-bool CliBase::commandShortCircuits(std::vector<std::string> &args,
+bool CliApp::commandShortCircuits(std::vector<std::string> &args,
                                    const cli::commands::Command &cmd) const
 {
     if (args.size() == 1 && (args.at(0) == "-h" || args.at(0) == "--help"))
@@ -1758,7 +1855,7 @@ bool CliBase::commandShortCircuits(std::vector<std::string> &args,
     return false;
 }
 
-void CliBase::globalHelp() const
+void CliApp::globalHelp() const
 {
     logger->info() << configuration->description << "\n\n";
 
@@ -1774,7 +1871,7 @@ void CliBase::globalHelp() const
 }
 } // namespace cli
 
-// end --- cli_base.cpp --- 
+// end --- cli_app.cpp --- 
 
 
 
@@ -2143,13 +2240,9 @@ std::string CommandNotFoundException::buildMessage(const std::string &id,
 
 
 
-// begin --- docwriting.cpp --- 
+// begin --- docformatter.cpp --- 
 
 
-#include <format>
-#include <iomanip>
-#include <sstream>
-#include <string>
 
 #define inline_t
 
@@ -2172,8 +2265,78 @@ inline std::pair<char, char> getOptionArgumentBrackets(bool required)
         return {'[', ']'};
 }
 
-void DocWriter::addGroupArgumentDocString(std::ostringstream &builder,
-                                          const cli::commands::ArgumentGroup &groupArgs) const
+std::string DefaultFlagFormatter::generateArgDocString(const FlagArgument &argument,
+                                                       const cli::CliConfig &configuration)
+{
+    std::ostringstream builder;
+    auto [inBracket, outBracket] = getOptionArgumentBrackets(argument.isRequired());
+    builder << inBracket << argument.getName() << ',' << argument.getShortName() << outBracket;
+    return builder.str();
+}
+
+std::string DefaultFlagFormatter::generateOptionsDocString(const FlagArgument &argument,
+                                                           const cli::CliConfig &configuration)
+{
+    std::ostringstream builder;
+    builder << argument.getName() << ' ' << argument.getShortName();
+    return std::format("{:<{}}{:>{}}", builder.str(), configuration.optionsWidth,
+                       argument.getUsageComment(), argument.getUsageComment().size());
+}
+
+std::string DefaultOptionFormatter::generateArgDocString(const OptionArgumentBase &argument,
+                                                         const cli::CliConfig &configuration)
+{
+    std::ostringstream builder;
+    auto [inBracket, outBracket] = getOptionArgumentBrackets(argument.isRequired());
+    builder << inBracket << argument.getName() << ' ' << argument.getShortName() << ' ';
+    builder << '<' << argument.getValueName() << '>' << outBracket;
+
+    if (argument.isRepeatable())
+        builder << "...";
+    return builder.str();
+}
+
+std::string DefaultOptionFormatter::generateOptionsDocString(const OptionArgumentBase &argument,
+                                                             const cli::CliConfig &configuration)
+{
+    std::ostringstream builder;
+    builder << argument.getName() << ',' << argument.getShortName() << ' ' << '<'
+            << argument.getValueName() << '>';
+    if (argument.isRepeatable())
+        builder << "...";
+    return std::format("{:<{}}{:>{}}", builder.str(), configuration.optionsWidth,
+                       argument.getUsageComment(), argument.getUsageComment().size());
+}
+
+std::string DefaultPositionalFormatter::generateArgDocString(const PositionalArgumentBase &argument,
+                                                             const cli::CliConfig &configuration)
+{
+    std::ostringstream builder;
+    auto [inBracket, outBracket] = getPositionalArgumentBrackets(argument.isRequired());
+
+    builder << inBracket << argument.getName();
+    builder << outBracket;
+
+    if (argument.isRepeatable())
+        builder << "...";
+    return builder.str();
+}
+
+std::string DefaultPositionalFormatter::generateOptionsDocString(
+    const PositionalArgumentBase &argument, const cli::CliConfig &configuration)
+{
+    std::ostringstream builder;
+    auto [inBracket, outBracket] = getPositionalArgumentBrackets(argument.isRequired());
+
+    builder << inBracket << argument.getName() << outBracket;
+    if (argument.isRepeatable())
+        builder << "...";
+    return std::format("{:<{}}{:>{}}", builder.str(), configuration.optionsWidth,
+                       argument.getUsageComment(), argument.getUsageComment().size());
+}
+
+inline void addGroupArgumentDocString(std::ostringstream &builder,
+                                          const cli::commands::ArgumentGroup &groupArgs, const DocWriter& writer)
 {
     auto [inBracket, outBracket] = getOptionArgumentBrackets(groupArgs.isRequired());
     if (groupArgs.isExclusive() || groupArgs.isInclusive())
@@ -2185,7 +2348,7 @@ void DocWriter::addGroupArgumentDocString(std::ostringstream &builder,
     for (size_t i = 0; i < args.size(); ++i)
     {
         const auto &argPtr = args[i];
-        builder << argPtr->getArgDocString(*this);
+        builder << argPtr->getArgDocString(writer);
 
         if (i < args.size() - 1) // not the last element
         {
@@ -2202,36 +2365,17 @@ void DocWriter::addGroupArgumentDocString(std::ostringstream &builder,
     }
 }
 
-std::string DocWriter::generateShortDocString(const Command &command,
-                                              std::string_view fullCommandPath) const
+std::string DefaultCommandFormatter::generateLongDocString(const Command &command,
+                                                           std::string_view fullCommandPath,
+                                                           const DocWriter&writer,
+                                                           const cli::CliConfig &configuration)
 {
     std::ostringstream builder;
     builder << fullCommandPath << " ";
 
     for (const auto &argGroupPtr : command.getArgumentGroups())
     {
-        addGroupArgumentDocString(builder, *argGroupPtr);
-        builder << " ";
-    }
-    builder << "\n" << command.getShortDescription();
-    return builder.str();
-}
-
-void DocWriter::setDocStrings(Command &command, std::string_view fullCommandPath) const
-{
-    command.docStringLong = generateLongDocString(command, fullCommandPath);
-    command.docStringShort = generateShortDocString(command, fullCommandPath);
-}
-
-std::string DocWriter::generateLongDocString(const Command &command,
-                                             std::string_view fullCommandPath) const
-{
-    std::ostringstream builder;
-    builder << fullCommandPath << " ";
-
-    for (const auto &argGroupPtr : command.getArgumentGroups())
-    {
-        addGroupArgumentDocString(builder, *argGroupPtr);
+        addGroupArgumentDocString(builder, *argGroupPtr, writer);
         builder << ' ';
     }
 
@@ -2241,75 +2385,119 @@ std::string DocWriter::generateLongDocString(const Command &command,
     {
         for (const auto &argPtr : argGroupPtr->getArguments())
         {
-            builder << argPtr->getOptionsDocString(*this) << "\n";
+            builder << argPtr->getOptionsDocString(writer) << "\n";
         }
     }
     return builder.str();
 }
 
-std::string DocWriter::generateOptionsDocString(const FlagArgument &argument) const
+std::string DefaultCommandFormatter::generateShortDocString(const Command &command,
+                                                            std::string_view fullCommandPath,
+                                                            const DocWriter&writer,
+                                                            const cli::CliConfig &configuration)
 {
     std::ostringstream builder;
-    builder << argument.getName() << ' ' << argument.getShortName();
-    return std::format("{:<{}}{:>{}}", builder.str(), configuration.optionsWidth,
-                       argument.getUsageComment(), argument.getUsageComment().size());
+    builder << fullCommandPath << " ";
+
+    for (const auto &argGroupPtr : command.getArgumentGroups())
+    {
+        addGroupArgumentDocString(builder, *argGroupPtr, writer);
+        builder << " ";
+    }
+    builder << "\n" << command.getShortDescription();
+    return builder.str();
+}
+
+} // namespace cli::commands::docwriting
+
+// end --- docformatter.cpp --- 
+
+
+
+// begin --- docwriting.cpp --- 
+
+
+#include <format>
+#include <iomanip>
+#include <sstream>
+#include <string>
+
+#define inline_t
+
+namespace cli::commands::docwriting
+{
+
+void DocWriter::setOptionFormatter(
+    std::unique_ptr<AbstractArgDocFormatter<OptionArgumentBase>> formatter)
+{
+    optionFormatterPtr = std::move(formatter);
+}
+
+void DocWriter::setPositionalFormatter(
+    std::unique_ptr<AbstractArgDocFormatter<PositionalArgumentBase>> formatter)
+{
+    positionalFormatterPtr = std::move(formatter);
+}
+
+void DocWriter::setFlagFormatter(std::unique_ptr<AbstractArgDocFormatter<FlagArgument>> formatter)
+{
+    flagFormatterPtr = std::move(formatter);
+}
+
+void DocWriter::setCommandFormatter(std::unique_ptr<AbstractCommandFormatter> formatter)
+{
+    commandFormatterPtr = std::move(formatter);
+}
+
+void DocWriter::setDocStrings(Command &command, std::string_view fullCommandPath) const
+{
+    command.docStringLong = generateLongDocString(command, fullCommandPath);
+    command.docStringShort = generateShortDocString(command, fullCommandPath);
+}
+
+std::string DocWriter::generateShortDocString(const Command &command,
+                                              std::string_view fullCommandPath) const
+{
+    return commandFormatterPtr->generateShortDocString(command, fullCommandPath, *this, configuration);
+}
+
+
+std::string DocWriter::generateLongDocString(const Command &command,
+                                             std::string_view fullCommandPath) const
+{
+    return commandFormatterPtr->generateLongDocString(command, fullCommandPath, *this, configuration);
+}
+
+std::string DocWriter::generateOptionsDocString(const FlagArgument &argument) const
+{
+    return flagFormatterPtr->generateOptionsDocString(argument, configuration);
 }
 
 std::string DocWriter::generateArgDocString(const FlagArgument &argument) const
 {
-    std::ostringstream builder;
-    auto [inBracket, outBracket] = getOptionArgumentBrackets(argument.isRequired());
-    builder << inBracket << argument.getName() << ',' << argument.getShortName() << outBracket;
-    return builder.str();
+    return flagFormatterPtr->generateArgDocString(argument, configuration);
 }
 
 std::string DocWriter::generateOptionsDocString(const OptionArgumentBase &argument) const
 {
-    std::ostringstream builder;
-    builder << argument.getName() << ',' << argument.getShortName() << ' ' << '<'
-            << argument.getValueName() << '>';
-    if (argument.isRepeatable())
-        builder << "...";
-    return std::format("{:<{}}{:>{}}", builder.str(), configuration.optionsWidth,
-                       argument.getUsageComment(), argument.getUsageComment().size());
+    return optionFormatterPtr->generateOptionsDocString(argument, configuration);
 }
 
 std::string DocWriter::generateArgDocString(const OptionArgumentBase &argument) const
 {
-    std::ostringstream builder;
-    auto [inBracket, outBracket] = getOptionArgumentBrackets(argument.isRequired());
-    builder << inBracket << argument.getName() << ' ' << argument.getShortName() << ' ';
-    builder << '<' << argument.getValueName() << '>' << outBracket;
-
-    if (argument.isRepeatable())
-        builder << "...";
-    return builder.str();
+    return optionFormatterPtr->generateArgDocString(argument, configuration);
 }
 
 std::string DocWriter::generateOptionsDocString(const PositionalArgumentBase &argument) const
 {
-    std::ostringstream builder;
-    auto [inBracket, outBracket] = getPositionalArgumentBrackets(argument.isRequired());
-
-    builder << inBracket << argument.getName() << outBracket;
-    if (argument.isRepeatable())
-        builder << "...";
-    return std::format("{:<{}}{:>{}}", builder.str(), configuration.optionsWidth,
-                       argument.getUsageComment(), argument.getUsageComment().size());
+    return positionalFormatterPtr->generateOptionsDocString(argument, configuration);
 }
 
 std::string DocWriter::generateArgDocString(const PositionalArgumentBase &argument) const
 {
-    std::ostringstream builder;
-    auto [inBracket, outBracket] = getPositionalArgumentBrackets(argument.isRequired());
-
-    builder << inBracket << argument.getName();
-    builder << outBracket;
-
-    if (argument.isRepeatable())
-        builder << "...";
-    return builder.str();
+    return positionalFormatterPtr->generateArgDocString(argument, configuration);
 }
+
 } // namespace cli::commands::docwriting
 
 // end --- docwriting.cpp --- 

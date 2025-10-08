@@ -23,9 +23,9 @@ public:
         const docwriting::DocWriter &writer) const override;
     [[nodiscard]] std::string getArgDocString(const docwriting::DocWriter &writer) const override;
 
-    FlagArgument &withOptionsComment(std::string_view usage_comment)
+    FlagArgument &withOptionsComment(std::string_view comment)
     {
-        optionsComment = usage_comment;
+        optionsComment = comment;
         return *this;
     }
 
@@ -35,9 +35,9 @@ public:
         return *this;
     }
 
-    FlagArgument &withShortName(std::string_view shortName)
+    FlagArgument &withShortName(std::string_view name)
     {
-        this->shortName = shortName;
+        this->shortName = name;
         return *this;
     }
 };
