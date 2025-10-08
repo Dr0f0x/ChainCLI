@@ -7,7 +7,7 @@
     - Run gcovr for code coverage
 #>
 param (
-    [ValidateSet("heady", "gcovr")]
+    [ValidateSet("heady", "gcovr", "license")]
     [string]$Action
 )
 
@@ -67,11 +67,28 @@ function Run-Gcovr {
 }
 
 #-----------------------------
+# Function: Run Gcovr
+#-----------------------------
+function Run-AddLicense {
+    [CmdletBinding()]
+    param (
+        [string]$RunDir = "./lib",
+        [string]$Ignore = "**/*.txt",
+        [string]$Name = "Dominik Czekai Czekai",
+        [string]$Year = "2025"
+    )
+
+    Write-Host "Running addlicense..."
+    & addlicense  -c $Name -v -y $Year -ignore $Ignore $RunDir
+}
+
+#-----------------------------
 # Main logic
 #-----------------------------
 
 switch ($Action) {
     "heady" { Run-Heady }
     "gcovr" { Run-Gcovr }
-    default { Write-Host "Please specify -Action heady or -Action gcovr" }
+    "license" { Run-AddLicense }
+    default { Write-Host "Please specify -Action heady, -Action license or -Action gcovr" }
 }
