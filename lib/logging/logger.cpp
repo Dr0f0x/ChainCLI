@@ -41,7 +41,7 @@ void Logger::setLevel(LogLevel lvl)
     }
 }
 
-void Logger::addHandler(std::unique_ptr<IHandler> handlerPtr)
+void Logger::addHandler(std::unique_ptr<AbstractHandler> handlerPtr)
 {
     handlers.push_back(std::move(handlerPtr));
 }

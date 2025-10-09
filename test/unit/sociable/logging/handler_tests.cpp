@@ -20,7 +20,7 @@ public:
 TEST_F(HandlerTestSociable, WithBasicFormatterEmitsCorrectly)
 {
     auto formatter = std::make_unique<BasicFormatter>();
-    Handler handler(out, err, std::move(formatter));
+    BaseHandler handler(out, err, std::move(formatter));
 
     LogRecord infoRecord(LogLevel::INFO, "info-msg");
     LogRecord errorRecord(LogLevel::ERROR, "error-msg");
@@ -38,7 +38,7 @@ TEST_F(HandlerTestSociable, WithBasicFormatterEmitsCorrectly)
 TEST_F(HandlerTestSociable, WithMessageOnlyFormatterEmitsCorrectly)
 {
     auto formatter = std::make_unique<MessageOnlyFormatter>();
-    Handler handler(out, err, std::move(formatter));
+    BaseHandler handler(out, err, std::move(formatter));
 
     LogRecord infoRecord(LogLevel::INFO, "info-msg");
     LogRecord errorRecord(LogLevel::ERROR, "error-msg");
@@ -58,7 +58,7 @@ TEST_F(HandlerTestSociable, WithMessageOnlyFormatterEmitsCorrectly)
 TEST_F(HandlerTestSociable, StylingAppliedWithBasicFormatter)
 {
     auto formatter = std::make_unique<BasicFormatter>();
-    Handler handler(out, err, std::move(formatter));
+    BaseHandler handler(out, err, std::move(formatter));
 
     auto styles = std::make_shared<LogStyleMap>(defaultStyles());
     handler.setStylingEnabled(true);
@@ -78,7 +78,7 @@ TEST_F(HandlerTestSociable, StylingAppliedWithBasicFormatter)
 TEST_F(HandlerTestSociable, IgnoresMessagesBelowMinLevel)
 {
     auto formatter = std::make_unique<BasicFormatter>();
-    Handler handler(out, err, std::move(formatter), LogLevel::ERROR);
+    BaseHandler handler(out, err, std::move(formatter), LogLevel::ERROR);
 
     LogRecord warningRecord(LogLevel::WARNING, "ignored-msg");
 

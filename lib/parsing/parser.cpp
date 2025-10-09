@@ -27,7 +27,7 @@
 
 namespace cli::parsing
 {
-std::any StringParser::parseRepeatableList(const cli::commands::TypedArgumentBase &arg,
+std::any Parser::parseRepeatableList(const cli::commands::TypedArgumentBase &arg,
                                            const std::string &input) const
 {
     std::stringstream ss(input);
@@ -55,7 +55,7 @@ std::any StringParser::parseRepeatableList(const cli::commands::TypedArgumentBas
     return parsedValues;
 }
 
-void StringParser::parseRepeatable(const cli::commands::OptionArgumentBase &arg,
+void Parser::parseRepeatable(const cli::commands::OptionArgumentBase &arg,
                                    const std::string &input, ContextBuilder &contextBuilder) const
 {
     auto values = parseRepeatableList(arg, input);
@@ -63,14 +63,14 @@ void StringParser::parseRepeatable(const cli::commands::OptionArgumentBase &arg,
     contextBuilder.addOptionArgument(arg.getName(), values);
 }
 
-void StringParser::parseRepeatable(const cli::commands::PositionalArgumentBase &arg,
+void Parser::parseRepeatable(const cli::commands::PositionalArgumentBase &arg,
                                    const std::string &input, ContextBuilder &contextBuilder) const
 {
     auto values = parseRepeatableList(arg, input);
     contextBuilder.addPositionalArgument(arg.getName(), values);
 }
 
-bool StringParser::tryOptionArg(
+bool Parser::tryOptionArg(
     const std::vector<std::shared_ptr<cli::commands::OptionArgumentBase>> &optionArguments,
     const std::vector<std::string> &inputs, const std::string &currentParsing, size_t index,
     ContextBuilder &contextBuilder) const
@@ -108,7 +108,7 @@ bool StringParser::tryOptionArg(
     return false;
 }
 
-bool StringParser::tryFlagArg(
+bool Parser::tryFlagArg(
     const std::vector<std::shared_ptr<cli::commands::FlagArgument>> &flagArguments,
     const std::string &currentParsing, ContextBuilder &contextBuilder) const
 {
@@ -130,7 +130,7 @@ bool StringParser::tryFlagArg(
     return false;
 }
 
-void cli::parsing::StringParser::parseArguments(const cli::commands::Command &command,
+void cli::parsing::Parser::parseArguments(const cli::commands::Command &command,
                                                 const std::vector<std::string> &inputs,
                                                 ContextBuilder &contextBuilder) const
 {
@@ -214,7 +214,7 @@ inline_t void inclusiveCheck(const commands::ArgumentGroup *argGroup,
     }
 }
 
-void StringParser::checkGroups(const cli::commands::Command &command,
+void Parser::checkGroups(const cli::commands::Command &command,
                                const ContextBuilder &contextBuilder) const
 {
     for (const auto &argGroup : command.getArgumentGroups())

@@ -19,6 +19,7 @@
 
 namespace cli
 {
+/// @brief Holds the configuration for the CLI application
 struct CliConfig
 {
     // General CLI metadata

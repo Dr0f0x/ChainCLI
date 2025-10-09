@@ -16,13 +16,13 @@
 
 namespace cli::logging
 {
-Handler::~Handler()
+BaseHandler::~BaseHandler()
 {
     err.flush();
     out.flush();
 }
 
-void Handler::emit(const LogRecord &record) const
+void BaseHandler::emit(const LogRecord &record) const
 {
     if (record.level < minLevel)
         return; // ignore messages below minimum level
@@ -48,14 +48,14 @@ void Handler::emit(const LogRecord &record) const
     }
 }
 
-void Handler::setStyleMap(std::shared_ptr<const LogStyleMap> styles)
+void BaseHandler::setStyleMap(std::shared_ptr<const LogStyleMap> styles)
 {
     styleMapPtr = styles;
 }
 
-FileHandler::FileHandler(const std::string &filename, std::shared_ptr<IFormatter> f,
+FileHandler::FileHandler(const std::string &filename, std::shared_ptr<AbstractFormatter> f,
                          LogLevel minLevel, std::shared_ptr<const LogStyleMap> styles)
-    : Handler(file, file, f, minLevel, std::move(styles)), file(filename, std::ios::app)
+    : BaseHandler(file, file, f, minLevel, std::move(styles)), file(filename, std::ios::app)
 {
     if (!file.is_open())
     {

@@ -23,8 +23,13 @@
 
 namespace cli::parsing
 {
+/// @brief Helper struct providing static methods for parsing strings into various types.
 struct ParseHelper
 {
+    /// @brief Parses a string input into a value of type T.
+    /// @tparam T The type to parse the input into.
+    /// @param input The input string to parse.
+    /// @return The parsed value of type T.
     template <typename T> static T parse(const std::string &input)
     {
         std::istringstream iss(input);
@@ -47,6 +52,10 @@ struct ParseHelper
         return value;
     }
 
+    /// @brief Parses a string input into a value of type T.
+    /// @tparam T The type to parse the input into.
+    /// @param input The input string to parse.
+    /// @param value The variable to store the parsed value.
     template <typename T> static void parse(const std::string &input, T &value)
     {
         // Call the return-by-value version and assign

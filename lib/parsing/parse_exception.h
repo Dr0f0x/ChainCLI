@@ -19,12 +19,15 @@
 
 namespace cli::parsing
 {
+
+/// @brief Exception thrown when parsing fails.
 class ParseException : public std::runtime_error
 {
 public:
     using runtime_error::runtime_error;
 };
 
+/// @brief Exception thrown when parsing a group of arguments fails.
 class GroupParseException : public std::runtime_error
 {
 public:

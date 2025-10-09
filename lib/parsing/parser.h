@@ -26,11 +26,20 @@
 
 namespace cli::parsing
 {
-class StringParser
+/// @brief Class used to parse string inputs into typed argument values based on the command
+/// definition.
+class Parser
 {
 public:
-    explicit StringParser(const CliConfig &config) : configuration(config) {}
+    /// @brief Creates a new Parser instance with the given configuration.
+    /// @param config The configuration to use for the parser.
+    explicit Parser(const CliConfig &config) : configuration(config) {}
 
+    /// @brief Parse the given inputs according to the specified command and populate the context
+    /// builder with the parsed values.
+    /// @param command The command to parse the inputs for.
+    /// @param inputs The inputs to parse.
+    /// @param contextBuilder The context builder to populate with the parsed values.
     void parseArguments(const cli::commands::Command &command,
                         const std::vector<std::string> &inputs,
                         ContextBuilder &contextBuilder) const;

@@ -25,9 +25,14 @@
 
 namespace cli::commands
 {
+
+/// @brief Exception thrown when a command is not found in the command tree.
 class CommandNotFoundException : public std::runtime_error
 {
 public:
+    /// @brief Construct a new CommandNotFoundException.
+    /// @param missingId The ID of the missing command.
+    /// @param chain The chain of command IDs leading to the missing command.
     CommandNotFoundException(const std::string &missingId, const std::vector<std::string> &chain)
         : std::runtime_error(buildMessage(missingId, chain)), missing(missingId), path(chain)
     {
@@ -44,12 +49,21 @@ private:
     static std::string buildMessage(const std::string &id, const std::vector<std::string> &chain);
 };
 
+/// @brief Tree structure to manage commands and their subcommands.
+/// @details Each node in the tree is a Command, and commands can have multiple subcommands.
+/// The tree allows for insertion, lookup, and traversal of commands.
 class CommandTree
 {
 public:
+    /// @brief Construct a new CommandTree.
+    /// @param rootName The name of the root command.
     explicit CommandTree(std::string_view rootName);
 
-    // Insert as child under a chain of parent ids
+    /// @brief Insert a command into the tree.
+    /// @tparam ...Ids The types of the parent command IDs.
+    /// @param cmd The command to insert.
+    /// @param parentId The ID of the direct parent command (used to split first value of ...rest).
+    /// @param ...rest The IDs of any additional parent commands.
     template <typename... Ids>
     void insert(std::unique_ptr<Command> cmd, std::string_view parentId, Ids &&...rest)
     {
@@ -63,18 +77,25 @@ public:
         parentCommandPtr->withSubCommand(std::move(cmd));
     }
 
+    /// @brief Insert a command into the tree.
+    /// @param cmd The command to insert.
     void insert(std::unique_ptr<Command> cmd) // insert at root
     {
         root->withSubCommand(std::move(cmd));
     }
 
-    // Lookup via identifier chain
+    /// @brief Find a command in the tree by a path of identifiers leading to it.
+    /// @tparam ...Ids The types of the command IDs.
+    /// @param ...ids The command IDs.
+    /// @return A pointer to the found command, or nullptr if not found.
     template <typename... Ids> Command *find(Ids &&...ids) const
     {
         return findRecursive(root.get(), std::forward<Ids>(ids)...);
     }
 
-    // Iterate over all commands in the tree (DFS)
+    /// @brief Apply a function to each command in the tree.
+    /// @details The function is applied in a depth-first search (DFS) manner.
+    /// @param func The function to apply.
     void forEachCommand(const std::function<void(Command *)> &func) const
     {
         if (root)
@@ -83,6 +104,9 @@ public:
         }
     }
 
+    /// @brief Apply a function to each command in the tree.
+    /// @details The function is applied in a depth-first search (DFS) manner.
+    /// @param func The function to apply.
     void forEachCommand(const std::function<void(Command &)> &func) const
     {
         if (root)
@@ -91,14 +115,22 @@ public:
         }
     }
 
-    // Print tree
-    void print(std::ostream &os, int indent = 0) const;
-
+    /// @brief Get the root command of the tree.
+    /// @return A pointer to the root command.
     Command *getRootCommand() { return root.get(); }
 
+    /// @brief Get the root command of the tree.
+    /// @return A pointer to the root command.
     const Command *getRootCommand() const { return root.get(); }
 
+    /// @brief Get the path for a command in the tree.
+    /// @note Uses a pre-built map for O(1) lookup internally that maps needs to be constructed first using the buildCommandPathMap function.
+    /// @param cmd The command to find the path for.
+    /// @return The path to the command, or an empty string if not found.
     std::string_view getPathForCommand(Command *cmd) const;
+
+    /// @brief Build a map of command paths for quick lookup.
+    /// @param separator The separator to use between command names in the path (default is a space).
     void buildCommandPathMap(const std::string &separator = " ");
 
 private:

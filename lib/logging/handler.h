@@ -24,31 +24,47 @@
 
 namespace cli::logging
 {
-class IHandler
+
+
+/// @brief Interface for log record handlers.
+class AbstractHandler
 {
 public:
-    virtual ~IHandler() = default;
+    virtual ~AbstractHandler() = default;
+
+    /// @brief Emit a log record, using the handlers formatter and specified output.
+    /// @param record The log record to emit.
     virtual void emit(const LogRecord &record) const = 0;
 };
 
-class Handler : public IHandler
+/// @brief Basic log handler that writes to specified output streams.
+class BaseHandler : public AbstractHandler
 {
 public:
-    Handler(std::ostream &outStream, std::ostream &errStream, std::shared_ptr<IFormatter> f,
+    /// @brief Construct a new Base Handler using the given out and error streams.
+    /// @param outStream The output stream for log messages
+    /// @param errStream The error stream for log messages
+    /// @param formatter The formatter to use for log messages
+    /// @param minLevel The minimum log level for this handler
+    /// @param styles The styles to use for log messages
+    BaseHandler(std::ostream &outStream, std::ostream &errStream, std::shared_ptr<AbstractFormatter> formatter,
             LogLevel minLevel = LogLevel::DEBUG,
             std::shared_ptr<const LogStyleMap> styles = nullptr)
-        : out(outStream), err(errStream), formatterPtr(std::move(f)),
+        : out(outStream), err(errStream), formatterPtr(std::move(formatter)),
           styleMapPtr(std::move(styles)), minLevel(minLevel)
     {
     }
 
-    ~Handler() override;
+    ~BaseHandler() override;
 
     void emit(const LogRecord &record) const override;
 
+    /// @brief Enable or disable styling for log messages.
+    /// @param enabled Whether styling should be enabled.
     void setStylingEnabled(bool enabled) { stylingEnabled = enabled; }
 
-    // Attach a style map (for ANSI colors)
+    /// @brief Attach a style map (for ANSI colors).
+    /// @param styles The styles to use for log messages.
     void setStyleMap(std::shared_ptr<const LogStyleMap> styles);
 
 protected:
@@ -56,26 +72,37 @@ protected:
     std::ostream &err; // error stream
 private:
     bool stylingEnabled{true};
-    std::shared_ptr<IFormatter> formatterPtr;
+    std::shared_ptr<AbstractFormatter> formatterPtr;
     std::shared_ptr<const LogStyleMap> styleMapPtr;
     LogLevel minLevel;
 };
 
-class ConsoleHandler : public Handler
+/// @brief Console log handler.
+class ConsoleHandler : public BaseHandler
 {
 public:
+    /// @brief Construct a new Console Handler that uses std::cout and std::cerr.
+    /// @param formatter The formatter to use for log messages
+    /// @param minLevel The minimum log level for this handler
+    /// @param styles The styles to use for log messages
     explicit ConsoleHandler(
-        std::shared_ptr<IFormatter> f, LogLevel minLevel = LogLevel::DEBUG,
+        std::shared_ptr<AbstractFormatter> formatter, LogLevel minLevel = LogLevel::DEBUG,
         std::shared_ptr<const LogStyleMap> styles = std::make_shared<LogStyleMap>(defaultStyles()))
-        : Handler(std::cout, std::cerr, f, minLevel, std::move(styles))
+        : BaseHandler(std::cout, std::cerr, formatter, minLevel, std::move(styles))
     {
     }
 };
 
-class FileHandler : public Handler
+/// @brief File log handler.
+class FileHandler : public BaseHandler
 {
 public:
-    explicit FileHandler(const std::string &filename, std::shared_ptr<IFormatter> f,
+    /// @brief Construct a new File Handler that writes to the specified file.
+    /// @param filename The name of the file to write to
+    /// @param formatter The formatter to use for log messages
+    /// @param minLevel The minimum log level for this handler
+    /// @param styles The styles to use for log messages
+    explicit FileHandler(const std::string &filename, std::shared_ptr<AbstractFormatter> formatter,
                          LogLevel minLevel = LogLevel::DEBUG,
                          std::shared_ptr<const LogStyleMap> styles = nullptr);
     ~FileHandler() override;

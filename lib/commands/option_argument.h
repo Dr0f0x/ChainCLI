@@ -26,9 +26,20 @@
 
 namespace cli::commands
 {
+
+/// @brief Untemplated base class for option arguments in the CLI. Used to store all option arguments
+/// in a single container.
 class OptionArgumentBase : public TypedArgumentBase, public ArgumentBase, public FlaggedArgumentBase
 {
 public:
+    /// @brief Construct a new Option Argument object.
+    /// @param name The name of the argument (usually starts with "--").
+    /// @param optionsComment A comment describing this argument.
+    /// @param repeatable Whether the argument can be specified multiple times.
+    /// @param required Whether the argument is required.
+    /// @param t The type of the argument's value.
+    /// @param shortName The short name for the argument (usually starts with "-").
+    /// @param valueName The name of the value for the argument.
     OptionArgumentBase(std::string_view name, std::string_view optionsComment, bool repeatable,
                        bool required, std::type_index t, std::string_view shortName,
                        std::string_view valueName)
@@ -47,15 +58,20 @@ protected:
     const std::string valueName;
 };
 
+/// @brief Represents option arguments in the CLI.
+/// @tparam T The type of the argument's value.
 template <typename T> class OptionArgument : public OptionArgumentBase
 {
-    friend std::ostream &operator<<(std::ostream &out, const OptionArgument<T> &arg)
-    {
-        out << arg.name << " (" << arg.optionsComment << ")";
-        return out;
-    }
 
 public:
+    /// @brief Construct a new Option Argument object.
+    /// @tparam T The type of the argument's value.
+    /// @param name The name of the argument (usually starts with "--").
+    /// @param valueName The name of the value for the argument.
+    /// @param shortName The short name for the argument (usually starts with "-").
+    /// @param optionsComment A comment describing this argument.
+    /// @param required Whether the argument is required.
+    /// @param repeatable Whether the argument can be specified multiple times.
     explicit OptionArgument(std::string_view name, std::string_view valueName,
                             std::string_view shortName = "", std::string_view optionsComment = "",
                             bool required = false, bool repeatable = false)
@@ -66,24 +82,42 @@ public:
 
     [[nodiscard]] std::any parseToValue(const std::string &input) const override;
 
+#pragma region ChainingMethods
+
+    /// @brief Set the options comment for the argument.
+    /// @details The options comment is a brief description of the argument's purpose, used in
+    /// help messages and documentation.
+    /// @param comment The options comment to set.
+    /// @return A reference to this argument.
     OptionArgument<T> &withOptionsComment(std::string_view comment)
     {
         this->optionsComment = comment;
         return *this;
     }
 
+    /// @brief Set whether the argument is required.
+    /// @param req Whether the argument should be required.
+    /// @return A reference to this argument.
     OptionArgument<T> &withRequired(bool req)
     {
         required = req;
         return *this;
     }
 
+    /// @brief Set the short name for the argument.
+    /// @details The short name is a single-character alias for the argument, usually prefixed with
+    /// a single dash (e.g., "-h" for "--help").
+    /// @param name The short name to set.
+    /// @return A reference to this argument.
     OptionArgument<T> &withShortName(std::string_view name)
     {
         this->shortName = name;
         return *this;
     }
 
+    /// @brief Set whether the argument can be specified multiple times.
+    /// @param rep Whether the argument can be specified multiple times.
+    /// @return A reference to this argument.
     OptionArgument<T> &withRepeatable(bool rep)
     {
         repeatable = rep;

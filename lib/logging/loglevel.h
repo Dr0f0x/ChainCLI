@@ -20,6 +20,7 @@
 namespace cli::logging
 {
 
+/// @brief Enumeration of log levels.
 enum class LogLevel
 {
     TRACE = 0, // most detailed, prints internal logs of the library as well

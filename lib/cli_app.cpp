@@ -18,8 +18,8 @@
 
 #include "cli_context.h"
 #include "commands/command.h"
-#include "logging/logger.h"
 #include "context_builder.h"
+#include "logging/logger.h"
 
 namespace cli
 {
@@ -35,16 +35,6 @@ CliApp::CliApp(std::string_view executableName)
       parser(*configuration), docWriter(*configuration)
 {
     configuration->executableName = std::string(executableName);
-}
-
-commands::Command &CliApp::createNewCommand(
-    std::string_view id, std::unique_ptr<std::function<void(const CliContext &)>> actionPtr)
-{
-    auto cmd = std::make_unique<commands::Command>(id, "", "",
-                                                   std::move(actionPtr)); // default-constructed
-    commands::Command &ref = *cmd;
-    commandsTree.insert(std::move(cmd));
-    return ref;
 }
 
 CliApp &CliApp::withCommand(std::unique_ptr<commands::Command> subCommandPtr)
@@ -130,7 +120,7 @@ const commands::Command *CliApp::locateCommand(std::vector<std::string> &args) c
 }
 
 bool CliApp::rootShortCircuits(std::vector<std::string> &args,
-                                const cli::commands::Command &cmd) const
+                               const cli::commands::Command &cmd) const
 {
     if (args.empty() && !cmd.hasExecutionFunction())
     {
@@ -155,7 +145,7 @@ bool CliApp::rootShortCircuits(std::vector<std::string> &args,
 }
 
 bool CliApp::commandShortCircuits(std::vector<std::string> &args,
-                                   const cli::commands::Command &cmd) const
+                                  const cli::commands::Command &cmd) const
 {
     if (args.size() == 1 && (args.at(0) == "-h" || args.at(0) == "--help"))
     {
@@ -178,5 +168,10 @@ void CliApp::globalHelp() const
 
     logger->info() << "Use --help <command> to get more information about a specific command"
                    << std::endl;
+}
+
+CliApp &CliApp::withCommand(commands::Command &&subCommand)
+{
+    return withCommand(std::make_unique<commands::Command>(std::move(subCommand)));
 }
 } // namespace cli

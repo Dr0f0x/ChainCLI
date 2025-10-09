@@ -41,6 +41,7 @@
 
 namespace cli
 {
+/// @brief Main class representing a command-line application
 class CliApp
 {
 public:
@@ -52,34 +53,46 @@ public:
     explicit CliApp(CliConfig &&config);
     ~CliApp() = default;
 
-    commands::Command &createNewCommand(
-        std::string_view id, std::unique_ptr<std::function<void(const CliContext &)>> actionPtr);
-
-    commands::Command &createNewCommand(std::string_view id)
-    {
-        return createNewCommand(id, nullptr);
-    };
-
+    /// @brief Add a new command to the application
+    /// @param subCommandPtr the unique pointer to the command to add
+    /// @return a reference to this CliApp instance
     CliApp &withCommand(std::unique_ptr<commands::Command> subCommandPtr);
 
-    CliApp &withCommand(commands::Command &&subCommand)
-    {
-        return withCommand(std::make_unique<commands::Command>(std::move(subCommand)));
-    }
+    /// @brief Add a new command to the application
+    /// @param subCommand the command to add
+    /// @return a reference to this CliApp instance
+    CliApp &withCommand(commands::Command &&subCommand);
 
+    /// @brief Initialize the CLI application, preparing it for execution
+    /// This method sets up internal structures and should be called before `run()`
+    /// if any commands have been added. If not called explicitly, it will be called
+    /// automatically on the first invocation of `run()`.
     void init();
+
+    /// @brief Run the CLI application with the given arguments
+    /// @param argc the argument count
+    /// @param argv the argument vector
+    /// @return the exit code of the application
     int run(int argc, char *argv[]);
 
+    /// @brief Get the logger instance used by the CLI application
+    /// @return a reference to the logger instance
     [[nodiscard]] logging::Logger &Logger() { return *logger; }
 
+    /// @brief Get the command tree used by the CLI application
+    /// @return a reference to the command tree
     [[nodiscard]] const commands::CommandTree &getCommandTree() const { return commandsTree; };
 
+    /// @brief Get the configuration used by the CLI application
+    /// @return a reference to the configuration
     [[nodiscard]] CliConfig &getConfig() { return *configuration; };
 
+    /// @brief Get the documentation writer used by the CLI application
+    /// @return a reference to the documentation writer
     [[nodiscard]] commands::docwriting::DocWriter &getDocWriter() { return docWriter; }
 
-    void setLogger(std::unique_ptr<logging::Logger> &newLogger) { logger = std::move(newLogger); }
-
+    /// @brief Set the logger instance used by the CLI application
+    /// @param newLogger the new logger instance
     void setLogger(std::unique_ptr<logging::Logger> &&newLogger) { logger = std::move(newLogger); }
 
 private:
@@ -97,7 +110,7 @@ private:
         std::make_unique<logging::Logger>(logging::LogLevel::DEBUG);
 
     std::unique_ptr<CliConfig> configuration;
-    parsing::StringParser parser;
+    parsing::Parser parser;
     cli::commands::docwriting::DocWriter docWriter;
 };
 } // namespace cli

@@ -14,12 +14,12 @@ using ::testing::Ref;
 using ::testing::Return;
 
 // Test subclass to inject streams
-class TestHandler : public Handler
+class TestHandler : public BaseHandler
 {
 public:
-    TestHandler(std::unique_ptr<IFormatter> f, std::ostream &outStream, std::ostream &errStream,
+    TestHandler(std::unique_ptr<AbstractFormatter> f, std::ostream &outStream, std::ostream &errStream,
                 LogLevel minLevel = LogLevel::DEBUG)
-        : Handler(outStream, errStream, std::move(f), minLevel)
+        : BaseHandler(outStream, errStream, std::move(f), minLevel)
     {
     }
 };
@@ -42,7 +42,7 @@ public:
 
 TEST_F(HandlerTestSolitary, EmitCallsFormatter)
 {
-    Handler handler(out, err, std::move(mockFormatterPtr));
+    BaseHandler handler(out, err, std::move(mockFormatterPtr));
 
     LogRecord debugRecord(LogLevel::DEBUG, "debug-msg");
     LogRecord errorRecord(LogLevel::ERROR, "error-msg");
@@ -56,7 +56,7 @@ TEST_F(HandlerTestSolitary, EmitCallsFormatter)
 
 TEST_F(HandlerTestSolitary, EmitWritesToCorrectStream)
 {
-    Handler handler(out, err, std::move(mockFormatterPtr));
+    BaseHandler handler(out, err, std::move(mockFormatterPtr));
 
     LogRecord debugRecord(LogLevel::DEBUG, "debug-msg");
     LogRecord errorRecord(LogLevel::ERROR, "error-msg");
@@ -74,7 +74,7 @@ TEST_F(HandlerTestSolitary, EmitWritesToCorrectStream)
 
 TEST_F(HandlerTestSolitary, EmitIgnoresBelowMinLevel)
 {
-    Handler handler(out, err, std::move(mockFormatterPtr), LogLevel::ERROR);
+    BaseHandler handler(out, err, std::move(mockFormatterPtr), LogLevel::ERROR);
 
     LogRecord warningRecord(LogLevel::WARNING, "ignored-msg");
 
@@ -115,7 +115,7 @@ TEST_F(HandlerTestSolitary, ConsoleHandlerEmitsCorrectly)
 TEST_F(HandlerTestSolitary, StylingAppliedToFormattedMessage)
 {
     auto styles = defaultStyles();
-    Handler handler(out, err, std::move(mockFormatterPtr));
+    BaseHandler handler(out, err, std::move(mockFormatterPtr));
 
     handler.setStylingEnabled(true);
     handler.setStyleMap(std::make_shared<LogStyleMap>(styles));
@@ -132,7 +132,7 @@ TEST_F(HandlerTestSolitary, StylingAppliedToFormattedMessage)
 
 TEST_F(HandlerTestSolitary, StylingDisabledDoesNotModifyMessage)
 {
-    Handler handler(out, err, std::move(mockFormatterPtr));
+    BaseHandler handler(out, err, std::move(mockFormatterPtr));
 
     handler.setStylingEnabled(false);
     handler.setStyleMap(std::make_shared<LogStyleMap>(defaultStyles()));
@@ -149,7 +149,7 @@ TEST_F(HandlerTestSolitary, StylingDisabledDoesNotModifyMessage)
 
 TEST_F(HandlerTestSolitary, StylingAppliedOnlyIfLevelMatches)
 {
-    Handler handler(out, err, std::move(mockFormatterPtr));
+    BaseHandler handler(out, err, std::move(mockFormatterPtr));
 
     handler.setStylingEnabled(true);
 

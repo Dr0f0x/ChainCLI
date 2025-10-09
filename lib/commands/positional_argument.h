@@ -27,9 +27,18 @@
 namespace cli::commands
 {
 // untemplated base class for storing in same STL
+
+/// @brief Untemplated Base class for positional arguments in the CLI. Used to store all positional arguments
+/// in a single container.
 class PositionalArgumentBase : public TypedArgumentBase, public ArgumentBase
 {
 public:
+    /// @brief Construct a new Positional Argument object.
+    /// @param name The name of the argument.
+    /// @param optionsComment A comment describing this argument.
+    /// @param repeatable Whether the argument can be specified multiple times.
+    /// @param required Whether the argument is required.
+    /// @param t The type of the argument's value.
     PositionalArgumentBase(std::string_view name, std::string_view optionsComment, bool repeatable,
                            bool required, std::type_index t)
         : TypedArgumentBase(t),
@@ -42,15 +51,18 @@ public:
     [[nodiscard]] std::string getArgDocString(const docwriting::DocWriter &writer) const override;
 };
 
+/// @brief Represents positional arguments in the CLI.
+/// @tparam T The type of the argument's value.
 template <typename T> class PositionalArgument : public PositionalArgumentBase
 {
-    friend std::ostream &operator<<(std::ostream &out, const PositionalArgument<T> &arg)
-    {
-        out << arg.name << " (" << arg.optionsComment << ")";
-        return out;
-    }
 
 public:
+    /// @brief Construct a new Positional Argument object.
+    /// @tparam T The type of the argument's value.
+    /// @param name The name of the argument.
+    /// @param optionsComment A comment describing this argument.
+    /// @param required Whether the argument is required.
+    /// @param repeatable Whether the argument can be specified multiple times.
     explicit PositionalArgument(std::string_view name, std::string_view optionsComment = "",
                                 bool required = true, bool repeatable = false)
         : PositionalArgumentBase(name, optionsComment, repeatable, required, typeid(T))
@@ -59,24 +71,31 @@ public:
 
     [[nodiscard]] std::any parseToValue(const std::string &input) const override;
 
+#pragma region ChainingMethods
+
+    /// @brief Set the options comment for the argument.
+    /// @details The options comment is a brief description of the argument's purpose, used in
+    /// help messages and documentation.
+    /// @param comment The options comment to set.
+    /// @return A reference to this argument.
     PositionalArgument<T> &withOptionsComment(std::string_view comment)
     {
         optionsComment = comment;
         return *this;
     }
 
+    /// @brief Set whether the argument is required.
+    /// @param req Whether the argument should be required.
+    /// @return A reference to this argument.
     PositionalArgument<T> &withRequired(bool req)
     {
         required = req;
         return *this;
     }
 
-    PositionalArgument<T> &withShortName(std::string_view name)
-    {
-        this->shortName = name;
-        return *this;
-    }
-
+    /// @brief Set whether the argument can be specified multiple times.
+    /// @param rep Whether the argument can be specified multiple times.
+    /// @return A reference to this argument.
     PositionalArgument<T> &withRepeatable(bool rep)
     {
         repeatable = rep;

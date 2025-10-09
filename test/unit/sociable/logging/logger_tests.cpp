@@ -18,7 +18,7 @@ public:
 TEST_F(LoggerTestSociable, LoggerCallsHandlerWhichCallsFormatter)
 {
     Logger logger(LogLevel::TRACE);
-    logger.addHandler(std::make_unique<Handler>(out, err, std::make_unique<BasicFormatter>()));
+    logger.addHandler(std::make_unique<BaseHandler>(out, err, std::make_unique<BasicFormatter>()));
 
     logger.info("original message");
 
@@ -31,7 +31,7 @@ TEST_F(LoggerTestSociable, DoesNotCallHandlerBelowMinLevel)
 {
     Logger logger(LogLevel::ERROR);
     logger.addHandler(
-        std::make_unique<Handler>(out, err, std::make_unique<MessageOnlyFormatter>()));
+        std::make_unique<BaseHandler>(out, err, std::make_unique<MessageOnlyFormatter>()));
 
     logger.info("ignored message");
 
@@ -43,7 +43,7 @@ TEST_F(LoggerTestSociable, LoggerFormatsArgumentsBeforeEmit)
 {
     Logger logger(LogLevel::TRACE);
     logger.addHandler(
-        std::make_unique<Handler>(out, err, std::make_unique<MessageOnlyFormatter>()));
+        std::make_unique<BaseHandler>(out, err, std::make_unique<MessageOnlyFormatter>()));
 
     int val = 42;
     logger.info("Value={}", val);
@@ -54,7 +54,7 @@ TEST_F(LoggerTestSociable, LoggerFormatsArgumentsBeforeEmit)
 TEST_F(LoggerTestSociable, ConvenienceMethodsUsesCorrectLevel)
 {
     Logger logger(LogLevel::TRACE);
-    logger.addHandler(std::make_unique<Handler>(out, err, std::make_unique<BasicFormatter>()));
+    logger.addHandler(std::make_unique<BaseHandler>(out, err, std::make_unique<BasicFormatter>()));
 
     logger.warning("warning message");
 
@@ -67,7 +67,7 @@ TEST_F(LoggerTestSociable, CorrectLevelsPassedToHandler)
 {
     Logger logger(LogLevel::TRACE);
     logger.addHandler(
-        std::make_unique<Handler>(out, err, std::make_unique<BasicFormatter>(), LogLevel::TRACE));
+        std::make_unique<BaseHandler>(out, err, std::make_unique<BasicFormatter>(), LogLevel::TRACE));
 
     logger.trace("trace msg");
     std::string result = out.str() + err.str();
@@ -77,7 +77,7 @@ TEST_F(LoggerTestSociable, CorrectLevelsPassedToHandler)
 TEST_F(LoggerTestSociable, RemoveAllHandlersPreventsEmits)
 {
     Logger logger(LogLevel::TRACE);
-    logger.addHandler(std::make_unique<Handler>(out, err, std::make_unique<MessageOnlyFormatter>(),
+    logger.addHandler(std::make_unique<BaseHandler>(out, err, std::make_unique<MessageOnlyFormatter>(),
                                                 LogLevel::TRACE));
     logger.removeAllHandlers();
 
@@ -103,7 +103,7 @@ TEST_P(LoggerConvenienceParamTest, ConvenienceMethodCallsHandlerWithCorrectLevel
     std::ostringstream err;
     Logger logger(LogLevel::TRACE);
     logger.addHandler(
-        std::make_unique<Handler>(out, err, std::make_unique<BasicFormatter>(), LogLevel::TRACE));
+        std::make_unique<BaseHandler>(out, err, std::make_unique<BasicFormatter>(), LogLevel::TRACE));
 
     GetParam().method(logger, GetParam().msg);
 
@@ -141,7 +141,7 @@ TEST_P(LoggerLevelParamTest, CorrectLevelIsPassedToHandler)
     std::ostringstream err;
     Logger logger(LogLevel::TRACE);
     logger.addHandler(
-        std::make_unique<Handler>(out, err, std::make_unique<BasicFormatter>(), LogLevel::TRACE));
+        std::make_unique<BaseHandler>(out, err, std::make_unique<BasicFormatter>(), LogLevel::TRACE));
 
     logger.log(GetParam().level, GetParam().msg);
 

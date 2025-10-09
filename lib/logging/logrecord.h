@@ -23,13 +23,19 @@
 namespace cli::logging
 {
 
+/// @brief Data structure representing a log record.
 struct LogRecord
 {
+    /// @brief The log level of the record.
     const LogLevel level;
+    /// @brief The log message.
     const std::string message;
+    /// @brief The timestamp of the log record.
     const std::chrono::system_clock::time_point timestamp{std::chrono::system_clock::now()};
 
-    // Constructor initializes all fields; fields are immutable
+    /// @brief Construct a new LogRecord.
+    /// @param lvl The log level of the record.
+    /// @param msg The log message.
     LogRecord(LogLevel lvl, std::string msg) : level(lvl), message(std::move(msg)) {}
 };
 

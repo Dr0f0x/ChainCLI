@@ -50,7 +50,7 @@ std::string DefaultFlagFormatter::generateOptionsDocString(
     std::ostringstream builder;
     builder << argument.getName() << ' ' << argument.getShortName();
     return std::format("{:<{}}{:>{}}", builder.str(), configuration.optionsWidth,
-                       argument.getUsageComment(), argument.getUsageComment().size());
+                       argument.getOptionComment(), argument.getOptionComment().size());
 }
 
 std::string DefaultOptionFormatter::generateArgDocString(
@@ -75,7 +75,7 @@ std::string DefaultOptionFormatter::generateOptionsDocString(
     if (argument.isRepeatable())
         builder << "...";
     return std::format("{:<{}}{:>{}}", builder.str(), configuration.optionsWidth,
-                       argument.getUsageComment(), argument.getUsageComment().size());
+                       argument.getOptionComment(), argument.getOptionComment().size());
 }
 
 std::string DefaultPositionalFormatter::generateArgDocString(
@@ -102,7 +102,7 @@ std::string DefaultPositionalFormatter::generateOptionsDocString(
     if (argument.isRepeatable())
         builder << "...";
     return std::format("{:<{}}{:>{}}", builder.str(), configuration.optionsWidth,
-                       argument.getUsageComment(), argument.getUsageComment().size());
+                       argument.getOptionComment(), argument.getOptionComment().size());
 }
 
 inline_t void addGroupArgumentDocString(std::ostringstream &builder,

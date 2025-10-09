@@ -67,6 +67,18 @@ Command &Command::withLongDescription(std::string_view desc)
     return *this;
 }
 
+Command &Command::withFlagArgument(std::shared_ptr<FlagArgument> arg)
+{
+    safeAddToArgGroup(arg);
+    flagArguments.push_back(arg);
+    return *this;
+}
+
+Command &Command::withFlagArgument(FlagArgument &&arg)
+{
+    return withFlagArgument(std::make_shared<FlagArgument>(std::move(arg)));
+}
+
 Command &Command::withExecutionFunc(
     std::unique_ptr<std::function<void(const CliContext &)>> actionPtr)
 {
@@ -74,10 +86,21 @@ Command &Command::withExecutionFunc(
     return *this;
 }
 
+Command &Command::withExecutionFunc(std::function<void(const CliContext &)> &&action)
+{
+    return withExecutionFunc(
+        std::make_unique<std::function<void(const CliContext &)>>(std::move(action)));
+}
+
 Command &Command::withSubCommand(std::unique_ptr<Command> subCommandPtr)
 {
     subCommands.try_emplace(subCommandPtr->identifier, std::move(subCommandPtr));
     return *this;
+}
+
+Command &Command::withSubCommand(Command &&subCommand)
+{
+    return withSubCommand(std::make_unique<Command>(std::move(subCommand)));
 }
 
 void Command::safeAddToArgGroup(const std::shared_ptr<ArgumentBase> &arg)

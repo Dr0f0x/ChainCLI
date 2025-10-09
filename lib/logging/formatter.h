@@ -23,15 +23,21 @@
 namespace cli::logging
 {
 
-class IFormatter
+/// @brief Interface for log record formatters.
+class AbstractFormatter
 {
 public:
-    virtual ~IFormatter() = default;
+    virtual ~AbstractFormatter() = default;
+
+    /// @brief Formats a log record into a string.
+    /// @param record The log record to format.
+    /// @return The formatted log record as a string.
     virtual std::string format(const LogRecord &record) const = 0;
 };
 
-// A simple formatter with timestamp + level + message
-class BasicFormatter : public IFormatter
+
+/// @brief Basic implementation of a log record formatter that includes timestamp, log level, and message.
+class BasicFormatter : public AbstractFormatter
 {
 public:
     std::string format(const LogRecord &record) const override;
@@ -40,8 +46,9 @@ private:
     const std::chrono::time_zone *timezone = std::chrono::current_zone();
 };
 
-// A formatter that displays only the message
-class MessageOnlyFormatter : public IFormatter
+
+/// @brief Formatter that displays only the message of the log record.
+class MessageOnlyFormatter : public AbstractFormatter
 {
 public:
     std::string format(const LogRecord &record) const override;
