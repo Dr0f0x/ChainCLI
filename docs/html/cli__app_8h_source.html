@@ -126,71 +126,70 @@ $(function() { codefold.init(0); });
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span> </div>
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="keyword">namespace </span>cli</div>
 <div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>{</div>
-<div class="foldopen" id="foldopen00044" data-start="{" data-end="};">
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno"><a class="line" href="classcli_1_1_cli_app.html">   44</a></span><span class="keyword">class </span><a class="code hl_class" href="classcli_1_1_cli_app.html">CliApp</a></div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>{</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span><span class="keyword">public</span>:</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    <span class="comment">// Non-copyable</span></div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>    <a class="code hl_class" href="classcli_1_1_cli_app.html">CliApp</a>(<span class="keyword">const</span> <a class="code hl_class" href="classcli_1_1_cli_app.html">CliApp</a> &amp;) = <span class="keyword">delete</span>;</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    <a class="code hl_class" href="classcli_1_1_cli_app.html">CliApp</a> &amp;operator=(<span class="keyword">const</span> <a class="code hl_class" href="classcli_1_1_cli_app.html">CliApp</a> &amp;) = <span class="keyword">delete</span>;</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span> </div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>    <span class="keyword">explicit</span> <a class="code hl_class" href="classcli_1_1_cli_app.html">CliApp</a>(std::string_view executableName);</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    <span class="keyword">explicit</span> <a class="code hl_class" href="classcli_1_1_cli_app.html">CliApp</a>(<a class="code hl_struct" href="structcli_1_1_cli_config.html">CliConfig</a> &amp;&amp;config);</div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    <a class="code hl_class" href="classcli_1_1_cli_app.html">~CliApp</a>() = <span class="keywordflow">default</span>;</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span> </div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>    commands::Command &amp;createNewCommand(</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>        std::string_view <span class="keywordtype">id</span>, std::unique_ptr&lt;std::function&lt;<span class="keywordtype">void</span>(<span class="keyword">const</span> <a class="code hl_class" href="classcli_1_1_cli_context.html">CliContext</a> &amp;)&gt;&gt; actionPtr);</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span> </div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    commands::Command &amp;createNewCommand(std::string_view <span class="keywordtype">id</span>)</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    {</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>        <span class="keywordflow">return</span> createNewCommand(<span class="keywordtype">id</span>, <span class="keyword">nullptr</span>);</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    };</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span> </div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>    <a class="code hl_class" href="classcli_1_1_cli_app.html">CliApp</a> &amp;withCommand(std::unique_ptr&lt;commands::Command&gt; subCommandPtr);</div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span> </div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>    <a class="code hl_class" href="classcli_1_1_cli_app.html">CliApp</a> &amp;withCommand(commands::Command &amp;&amp;subCommand)</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>    {</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>        <span class="keywordflow">return</span> withCommand(std::make_unique&lt;commands::Command&gt;(std::move(subCommand)));</div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>    }</div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span> </div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>    <span class="keywordtype">void</span> init();</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    <span class="keywordtype">int</span> run(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> *argv[]);</div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span> </div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>    [[nodiscard]] logging::Logger &amp;Logger() { <span class="keywordflow">return</span> *logger; }</div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span> </div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>    [[nodiscard]] <span class="keyword">const</span> commands::CommandTree &amp;getCommandTree()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> commandsTree; };</div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span> </div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>    [[nodiscard]] <a class="code hl_struct" href="structcli_1_1_cli_config.html">CliConfig</a> &amp;getConfig() { <span class="keywordflow">return</span> *configuration; };</div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span> </div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>    [[nodiscard]] commands::docwriting::DocWriter &amp;getDocWriter() { <span class="keywordflow">return</span> docWriter; }</div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span> </div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>    <span class="keywordtype">void</span> setLogger(std::unique_ptr&lt;logging::Logger&gt; &amp;newLogger) { logger = std::move(newLogger); }</div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span> </div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>    <span class="keywordtype">void</span> setLogger(std::unique_ptr&lt;logging::Logger&gt; &amp;&amp;newLogger) { logger = std::move(newLogger); }</div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span> </div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span><span class="keyword">private</span>:</div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>    <span class="keywordtype">int</span> internalRun(std::span&lt;char *const&gt; args) <span class="keyword">const</span>;</div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>    <span class="keyword">const</span> commands::Command *locateCommand(std::vector&lt;std::string&gt; &amp;args) <span class="keyword">const</span>;</div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>    <span class="keywordtype">bool</span> rootShortCircuits(std::vector&lt;std::string&gt; &amp;args, <span class="keyword">const</span> cli::commands::Command &amp;cmd) <span class="keyword">const</span>;</div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>    <span class="keywordtype">bool</span> commandShortCircuits(std::vector&lt;std::string&gt; &amp;args,</div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>                              <span class="keyword">const</span> cli::commands::Command &amp;cmd) <span class="keyword">const</span>;</div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>    <span class="keywordtype">void</span> globalHelp() <span class="keyword">const</span>;</div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span> </div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>    commands::CommandTree commandsTree;</div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>    <span class="keywordtype">bool</span> initialized{<span class="keyword">false</span>};</div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span> </div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>    std::unique_ptr&lt;logging::Logger&gt; logger =</div>
-<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>        std::make_unique&lt;logging::Logger&gt;(logging::LogLevel::DEBUG);</div>
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span> </div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>    std::unique_ptr&lt;CliConfig&gt; configuration;</div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>    parsing::StringParser parser;</div>
-<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>    cli::commands::docwriting::DocWriter docWriter;</div>
-<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>};</div>
+<div class="foldopen" id="foldopen00045" data-start="{" data-end="};">
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno"><a class="line" href="classcli_1_1_cli_app.html">   45</a></span><span class="keyword">class </span><a class="code hl_class" href="classcli_1_1_cli_app.html">CliApp</a></div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>{</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span><span class="keyword">public</span>:</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>    <span class="comment">// Non-copyable</span></div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    <a class="code hl_class" href="classcli_1_1_cli_app.html">CliApp</a>(<span class="keyword">const</span> <a class="code hl_class" href="classcli_1_1_cli_app.html">CliApp</a> &amp;) = <span class="keyword">delete</span>;</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    <a class="code hl_class" href="classcli_1_1_cli_app.html">CliApp</a> &amp;operator=(<span class="keyword">const</span> <a class="code hl_class" href="classcli_1_1_cli_app.html">CliApp</a> &amp;) = <span class="keyword">delete</span>;</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span> </div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    <span class="keyword">explicit</span> <a class="code hl_class" href="classcli_1_1_cli_app.html">CliApp</a>(std::string_view executableName);</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    <span class="keyword">explicit</span> <a class="code hl_class" href="classcli_1_1_cli_app.html">CliApp</a>(<a class="code hl_struct" href="structcli_1_1_cli_config.html">CliConfig</a> &amp;&amp;config);</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    <a class="code hl_class" href="classcli_1_1_cli_app.html">~CliApp</a>() = <span class="keywordflow">default</span>;</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span> </div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    <a class="code hl_class" href="classcli_1_1_cli_app.html">CliApp</a> &amp;<a class="code hl_function" href="classcli_1_1_cli_app.html#a32c97b623d436bc008d72ea7d22a6e4a">withCommand</a>(std::unique_ptr&lt;commands::Command&gt; subCommandPtr);</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span> </div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>    <a class="code hl_class" href="classcli_1_1_cli_app.html">CliApp</a> &amp;<a class="code hl_function" href="classcli_1_1_cli_app.html#a32c97b623d436bc008d72ea7d22a6e4a">withCommand</a>(<a class="code hl_class" href="classcli_1_1commands_1_1_command.html">commands::Command</a> &amp;&amp;subCommand);</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span> </div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classcli_1_1_cli_app.html#a09a6799ced2d25e0846ff619a855655c">init</a>();</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span> </div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>    <span class="keywordtype">int</span> <a class="code hl_function" href="classcli_1_1_cli_app.html#a656d54ab24ca4e7b10784da5838d9557">run</a>(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span> *argv[]);</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span> </div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno"><a class="line" href="classcli_1_1_cli_app.html#ad05b7f58e015ff0760c42f85e6013421">   80</a></span>    [[nodiscard]] <a class="code hl_class" href="classcli_1_1logging_1_1_logger.html">logging::Logger</a> &amp;<a class="code hl_function" href="classcli_1_1_cli_app.html#ad05b7f58e015ff0760c42f85e6013421">Logger</a>() { <span class="keywordflow">return</span> *logger; }</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span> </div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno"><a class="line" href="classcli_1_1_cli_app.html#aa5e1f5948c7db316f53f436e251cc71c">   84</a></span>    [[nodiscard]] <span class="keyword">const</span> <a class="code hl_class" href="classcli_1_1commands_1_1_command_tree.html">commands::CommandTree</a> &amp;<a class="code hl_function" href="classcli_1_1_cli_app.html#aa5e1f5948c7db316f53f436e251cc71c">getCommandTree</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> commandsTree; };</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span> </div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno"><a class="line" href="classcli_1_1_cli_app.html#af972297ebe305273a52ff79f92925aae">   88</a></span>    [[nodiscard]] <a class="code hl_struct" href="structcli_1_1_cli_config.html">CliConfig</a> &amp;<a class="code hl_function" href="classcli_1_1_cli_app.html#af972297ebe305273a52ff79f92925aae">getConfig</a>() { <span class="keywordflow">return</span> *configuration; };</div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span> </div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno"><a class="line" href="classcli_1_1_cli_app.html#aa7f9f0f9356f49e96b538148da734419">   92</a></span>    [[nodiscard]] <a class="code hl_class" href="classcli_1_1commands_1_1docwriting_1_1_doc_writer.html">commands::docwriting::DocWriter</a> &amp;<a class="code hl_function" href="classcli_1_1_cli_app.html#aa7f9f0f9356f49e96b538148da734419">getDocWriter</a>() { <span class="keywordflow">return</span> docWriter; }</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span> </div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno"><a class="line" href="classcli_1_1_cli_app.html#a487b64555744f2f42181480e6a8a3910">   96</a></span>    <span class="keywordtype">void</span> <a class="code hl_function" href="classcli_1_1_cli_app.html#a487b64555744f2f42181480e6a8a3910">setLogger</a>(std::unique_ptr&lt;logging::Logger&gt; &amp;&amp;newLogger) { logger = std::move(newLogger); }</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span> </div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span><span class="keyword">private</span>:</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>    <span class="keywordtype">int</span> internalRun(std::span&lt;char *const&gt; args) <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>    <span class="keyword">const</span> <a class="code hl_class" href="classcli_1_1commands_1_1_command.html">commands::Command</a> *locateCommand(std::vector&lt;std::string&gt; &amp;args) <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>    <span class="keywordtype">bool</span> rootShortCircuits(std::vector&lt;std::string&gt; &amp;args, <span class="keyword">const</span> <a class="code hl_class" href="classcli_1_1commands_1_1_command.html">cli::commands::Command</a> &amp;cmd) <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>    <span class="keywordtype">bool</span> commandShortCircuits(std::vector&lt;std::string&gt; &amp;args,</div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>                              <span class="keyword">const</span> <a class="code hl_class" href="classcli_1_1commands_1_1_command.html">cli::commands::Command</a> &amp;cmd) <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>    <span class="keywordtype">void</span> globalHelp() <span class="keyword">const</span>;</div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span> </div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>    <a class="code hl_class" href="classcli_1_1commands_1_1_command_tree.html">commands::CommandTree</a> commandsTree;</div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>    <span class="keywordtype">bool</span> initialized{<span class="keyword">false</span>};</div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span> </div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>    std::unique_ptr&lt;logging::Logger&gt; logger =</div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>        std::make_unique&lt;logging::Logger&gt;(logging::LogLevel::DEBUG);</div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span> </div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>    std::unique_ptr&lt;CliConfig&gt; configuration;</div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>    parsing::Parser parser;</div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>    <a class="code hl_class" href="classcli_1_1commands_1_1docwriting_1_1_doc_writer.html">cli::commands::docwriting::DocWriter</a> docWriter;</div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>};</div>
 </div>
-<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>} <span class="comment">// namespace cli</span></div>
-<div class="ttc" id="aclasscli_1_1_cli_app_html"><div class="ttname"><a href="classcli_1_1_cli_app.html">cli::CliApp</a></div><div class="ttdef"><b>Definition</b> cli_app.h:45</div></div>
-<div class="ttc" id="aclasscli_1_1_cli_context_html"><div class="ttname"><a href="classcli_1_1_cli_context.html">cli::CliContext</a></div><div class="ttdoc">Represents the context of a command-line interface (CLI) invocation and as such contains the parsed v...</div><div class="ttdef"><b>Definition</b> cli_context.h:61</div></div>
-<div class="ttc" id="astructcli_1_1_cli_config_html"><div class="ttname"><a href="structcli_1_1_cli_config.html">cli::CliConfig</a></div><div class="ttdef"><b>Definition</b> cli_config.h:23</div></div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>} <span class="comment">// namespace cli</span></div>
+<div class="ttc" id="aclasscli_1_1_cli_app_html"><div class="ttname"><a href="classcli_1_1_cli_app.html">cli::CliApp</a></div><div class="ttdoc">Main class representing a command-line application.</div><div class="ttdef"><b>Definition</b> cli_app.h:46</div></div>
+<div class="ttc" id="aclasscli_1_1_cli_app_html_a09a6799ced2d25e0846ff619a855655c"><div class="ttname"><a href="classcli_1_1_cli_app.html#a09a6799ced2d25e0846ff619a855655c">cli::CliApp::init</a></div><div class="ttdeci">void init()</div><div class="ttdoc">Initialize the CLI application, preparing it for execution This method sets up internal structures an...</div><div class="ttdef"><b>Definition</b> cli_app.cpp:46</div></div>
+<div class="ttc" id="aclasscli_1_1_cli_app_html_a32c97b623d436bc008d72ea7d22a6e4a"><div class="ttname"><a href="classcli_1_1_cli_app.html#a32c97b623d436bc008d72ea7d22a6e4a">cli::CliApp::withCommand</a></div><div class="ttdeci">CliApp &amp; withCommand(std::unique_ptr&lt; commands::Command &gt; subCommandPtr)</div><div class="ttdoc">Add a new command to the application.</div><div class="ttdef"><b>Definition</b> cli_app.cpp:40</div></div>
+<div class="ttc" id="aclasscli_1_1_cli_app_html_a487b64555744f2f42181480e6a8a3910"><div class="ttname"><a href="classcli_1_1_cli_app.html#a487b64555744f2f42181480e6a8a3910">cli::CliApp::setLogger</a></div><div class="ttdeci">void setLogger(std::unique_ptr&lt; logging::Logger &gt; &amp;&amp;newLogger)</div><div class="ttdoc">Set the logger instance used by the CLI application.</div><div class="ttdef"><b>Definition</b> cli_app.h:96</div></div>
+<div class="ttc" id="aclasscli_1_1_cli_app_html_a656d54ab24ca4e7b10784da5838d9557"><div class="ttname"><a href="classcli_1_1_cli_app.html#a656d54ab24ca4e7b10784da5838d9557">cli::CliApp::run</a></div><div class="ttdeci">int run(int argc, char *argv[])</div><div class="ttdoc">Run the CLI application with the given arguments.</div><div class="ttdef"><b>Definition</b> cli_app.cpp:58</div></div>
+<div class="ttc" id="aclasscli_1_1_cli_app_html_aa5e1f5948c7db316f53f436e251cc71c"><div class="ttname"><a href="classcli_1_1_cli_app.html#aa5e1f5948c7db316f53f436e251cc71c">cli::CliApp::getCommandTree</a></div><div class="ttdeci">const commands::CommandTree &amp; getCommandTree() const</div><div class="ttdoc">Get the command tree used by the CLI application.</div><div class="ttdef"><b>Definition</b> cli_app.h:84</div></div>
+<div class="ttc" id="aclasscli_1_1_cli_app_html_aa7f9f0f9356f49e96b538148da734419"><div class="ttname"><a href="classcli_1_1_cli_app.html#aa7f9f0f9356f49e96b538148da734419">cli::CliApp::getDocWriter</a></div><div class="ttdeci">commands::docwriting::DocWriter &amp; getDocWriter()</div><div class="ttdoc">Get the documentation writer used by the CLI application.</div><div class="ttdef"><b>Definition</b> cli_app.h:92</div></div>
+<div class="ttc" id="aclasscli_1_1_cli_app_html_ad05b7f58e015ff0760c42f85e6013421"><div class="ttname"><a href="classcli_1_1_cli_app.html#ad05b7f58e015ff0760c42f85e6013421">cli::CliApp::Logger</a></div><div class="ttdeci">logging::Logger &amp; Logger()</div><div class="ttdoc">Get the logger instance used by the CLI application.</div><div class="ttdef"><b>Definition</b> cli_app.h:80</div></div>
+<div class="ttc" id="aclasscli_1_1_cli_app_html_af972297ebe305273a52ff79f92925aae"><div class="ttname"><a href="classcli_1_1_cli_app.html#af972297ebe305273a52ff79f92925aae">cli::CliApp::getConfig</a></div><div class="ttdeci">CliConfig &amp; getConfig()</div><div class="ttdoc">Get the configuration used by the CLI application.</div><div class="ttdef"><b>Definition</b> cli_app.h:88</div></div>
+<div class="ttc" id="aclasscli_1_1commands_1_1_command_html"><div class="ttname"><a href="classcli_1_1commands_1_1_command.html">cli::commands::Command</a></div><div class="ttdoc">Represents a command in the CLI application.</div><div class="ttdef"><b>Definition</b> command.h:36</div></div>
+<div class="ttc" id="aclasscli_1_1commands_1_1_command_tree_html"><div class="ttname"><a href="classcli_1_1commands_1_1_command_tree.html">cli::commands::CommandTree</a></div><div class="ttdoc">Tree structure to manage commands and their subcommands.</div><div class="ttdef"><b>Definition</b> command_tree.h:56</div></div>
+<div class="ttc" id="aclasscli_1_1commands_1_1docwriting_1_1_doc_writer_html"><div class="ttname"><a href="classcli_1_1commands_1_1docwriting_1_1_doc_writer.html">cli::commands::docwriting::DocWriter</a></div><div class="ttdoc">Documentation writer for CLI commands. Consists of formatters for commands and arguments.</div><div class="ttdef"><b>Definition</b> docwriting.h:41</div></div>
+<div class="ttc" id="aclasscli_1_1logging_1_1_logger_html"><div class="ttname"><a href="classcli_1_1logging_1_1_logger.html">cli::logging::Logger</a></div><div class="ttdoc">Logger class for handling log messages.</div><div class="ttdef"><b>Definition</b> logger.h:58</div></div>
+<div class="ttc" id="astructcli_1_1_cli_config_html"><div class="ttname"><a href="structcli_1_1_cli_config.html">cli::CliConfig</a></div><div class="ttdoc">Holds the configuration for the CLI application.</div><div class="ttdef"><b>Definition</b> cli_config.h:24</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

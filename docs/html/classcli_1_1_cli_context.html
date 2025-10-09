@@ -90,7 +90,7 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a9f1a2e1c52edfef0db82043db306b802" id="r_a9f1a2e1c52edfef0db82043db306b802"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9f1a2e1c52edfef0db82043db306b802">CliContext</a> (std::unique_ptr&lt; std::unordered_map&lt; std::string, std::any &gt; &gt; posArgs, std::unique_ptr&lt; std::unordered_map&lt; std::string, std::any &gt; &gt; optArgs, std::unique_ptr&lt; std::unordered_set&lt; std::string &gt; &gt; flagArgs, cli::logging::Logger &amp;logger)</td></tr>
+<tr class="memitem:a9f1a2e1c52edfef0db82043db306b802" id="r_a9f1a2e1c52edfef0db82043db306b802"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9f1a2e1c52edfef0db82043db306b802">CliContext</a> (std::unique_ptr&lt; std::unordered_map&lt; std::string, std::any &gt; &gt; posArgs, std::unique_ptr&lt; std::unordered_map&lt; std::string, std::any &gt; &gt; optArgs, std::unique_ptr&lt; std::unordered_set&lt; std::string &gt; &gt; flagArgs, <a class="el" href="classcli_1_1logging_1_1_logger.html">cli::logging::Logger</a> &amp;logger)</td></tr>
 <tr class="memdesc:a9f1a2e1c52edfef0db82043db306b802"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a new <a class="el" href="classcli_1_1_cli_context.html" title="Represents the context of a command-line interface (CLI) invocation and as such contains the parsed v...">CliContext</a> object from the passed argument maps.  <br /></td></tr>
 <tr class="separator:a9f1a2e1c52edfef0db82043db306b802"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad4b0612e48cf820e19196a2504969ca3" id="r_ad4b0612e48cf820e19196a2504969ca3"><td class="memItemLeft" align="right" valign="top"><a id="ad4b0612e48cf820e19196a2504969ca3" name="ad4b0612e48cf820e19196a2504969ca3"></a>
@@ -99,55 +99,55 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aa8f9a81f59fb9fa9345f512dbfb7d3a6" id="r_aa8f9a81f59fb9fa9345f512dbfb7d3a6"><td class="memItemLeft" align="right" valign="top"><a id="aa8f9a81f59fb9fa9345f512dbfb7d3a6" name="aa8f9a81f59fb9fa9345f512dbfb7d3a6"></a>
 <a class="el" href="classcli_1_1_cli_context.html">CliContext</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="classcli_1_1_cli_context.html">CliContext</a> &amp;)=delete</td></tr>
 <tr class="separator:aa8f9a81f59fb9fa9345f512dbfb7d3a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a947ceaff2ff5c07dcc09d7637874e7c6" id="r_a947ceaff2ff5c07dcc09d7637874e7c6"><td class="memItemLeft" align="right" valign="top"><a id="a947ceaff2ff5c07dcc09d7637874e7c6" name="a947ceaff2ff5c07dcc09d7637874e7c6"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>isArgPresent</b> (const std::string &amp;argName) const</td></tr>
+<tr class="memitem:a947ceaff2ff5c07dcc09d7637874e7c6" id="r_a947ceaff2ff5c07dcc09d7637874e7c6"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a947ceaff2ff5c07dcc09d7637874e7c6">isArgPresent</a> (const std::string &amp;argName) const</td></tr>
+<tr class="memdesc:a947ceaff2ff5c07dcc09d7637874e7c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if an argument with the given name is present in the context.  <br /></td></tr>
 <tr class="separator:a947ceaff2ff5c07dcc09d7637874e7c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7f23be3d2006d0859a94f14cdd03b043" id="r_a7f23be3d2006d0859a94f14cdd03b043"><td class="memItemLeft" align="right" valign="top"><a id="a7f23be3d2006d0859a94f14cdd03b043" name="a7f23be3d2006d0859a94f14cdd03b043"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>isOptionArgPresent</b> (const std::string &amp;argName) const</td></tr>
+<tr class="memitem:a7f23be3d2006d0859a94f14cdd03b043" id="r_a7f23be3d2006d0859a94f14cdd03b043"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7f23be3d2006d0859a94f14cdd03b043">isOptionArgPresent</a> (const std::string &amp;argName) const</td></tr>
+<tr class="memdesc:a7f23be3d2006d0859a94f14cdd03b043"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if an optional argument with the given name is present in the context.  <br /></td></tr>
 <tr class="separator:a7f23be3d2006d0859a94f14cdd03b043"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a505a6be070a63463a7fc1ba911bcb459" id="r_a505a6be070a63463a7fc1ba911bcb459"><td class="memItemLeft" align="right" valign="top"><a id="a505a6be070a63463a7fc1ba911bcb459" name="a505a6be070a63463a7fc1ba911bcb459"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>isPositionalArgPresent</b> (const std::string &amp;argName) const</td></tr>
+<tr class="memitem:a505a6be070a63463a7fc1ba911bcb459" id="r_a505a6be070a63463a7fc1ba911bcb459"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a505a6be070a63463a7fc1ba911bcb459">isPositionalArgPresent</a> (const std::string &amp;argName) const</td></tr>
+<tr class="memdesc:a505a6be070a63463a7fc1ba911bcb459"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if a positional argument with the given name is present in the context.  <br /></td></tr>
 <tr class="separator:a505a6be070a63463a7fc1ba911bcb459"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adbbd178cf76769939bd17454d97453b2" id="r_adbbd178cf76769939bd17454d97453b2"><td class="memItemLeft" align="right" valign="top"><a id="adbbd178cf76769939bd17454d97453b2" name="adbbd178cf76769939bd17454d97453b2"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>isFlagPresent</b> (const std::string &amp;argName) const</td></tr>
+<tr class="memitem:adbbd178cf76769939bd17454d97453b2" id="r_adbbd178cf76769939bd17454d97453b2"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adbbd178cf76769939bd17454d97453b2">isFlagPresent</a> (const std::string &amp;argName) const</td></tr>
+<tr class="memdesc:adbbd178cf76769939bd17454d97453b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if a flag with the given name is present in the context.  <br /></td></tr>
 <tr class="separator:adbbd178cf76769939bd17454d97453b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a91e4bb8e5c75cb8dd9963daf3065098f" id="r_a91e4bb8e5c75cb8dd9963daf3065098f"><td class="memTemplParams" colspan="2"><a id="a91e4bb8e5c75cb8dd9963daf3065098f" name="a91e4bb8e5c75cb8dd9963daf3065098f"></a>
-template&lt;typename T &gt; </td></tr>
-<tr class="memitem:a91e4bb8e5c75cb8dd9963daf3065098f"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><b>getPositionalArg</b> (const std::string &amp;argName) const</td></tr>
+<tr class="memitem:a91e4bb8e5c75cb8dd9963daf3065098f" id="r_a91e4bb8e5c75cb8dd9963daf3065098f"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a91e4bb8e5c75cb8dd9963daf3065098f"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a91e4bb8e5c75cb8dd9963daf3065098f">getPositionalArg</a> (const std::string &amp;argName) const</td></tr>
+<tr class="memdesc:a91e4bb8e5c75cb8dd9963daf3065098f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the value of a positional argument.  <br /></td></tr>
 <tr class="separator:a91e4bb8e5c75cb8dd9963daf3065098f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adc6681591420250677bf96253a285dfe" id="r_adc6681591420250677bf96253a285dfe"><td class="memTemplParams" colspan="2"><a id="adc6681591420250677bf96253a285dfe" name="adc6681591420250677bf96253a285dfe"></a>
-template&lt;typename T &gt; </td></tr>
-<tr class="memitem:adc6681591420250677bf96253a285dfe"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>getPositionalArg</b> (const std::string &amp;argName, T &amp;out) const</td></tr>
+<tr class="memitem:adc6681591420250677bf96253a285dfe" id="r_adc6681591420250677bf96253a285dfe"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:adc6681591420250677bf96253a285dfe"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#adc6681591420250677bf96253a285dfe">getPositionalArg</a> (const std::string &amp;argName, T &amp;out) const</td></tr>
+<tr class="memdesc:adc6681591420250677bf96253a285dfe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the value of a positional argument and stores it in the provided output variable.  <br /></td></tr>
 <tr class="separator:adc6681591420250677bf96253a285dfe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aea9969aeb2236c7dd9f9d50d6846dd08" id="r_aea9969aeb2236c7dd9f9d50d6846dd08"><td class="memTemplParams" colspan="2"><a id="aea9969aeb2236c7dd9f9d50d6846dd08" name="aea9969aeb2236c7dd9f9d50d6846dd08"></a>
-template&lt;typename T &gt; </td></tr>
-<tr class="memitem:aea9969aeb2236c7dd9f9d50d6846dd08"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><b>getOptionArg</b> (const std::string &amp;argName) const</td></tr>
+<tr class="memitem:aea9969aeb2236c7dd9f9d50d6846dd08" id="r_aea9969aeb2236c7dd9f9d50d6846dd08"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:aea9969aeb2236c7dd9f9d50d6846dd08"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#aea9969aeb2236c7dd9f9d50d6846dd08">getOptionArg</a> (const std::string &amp;argName) const</td></tr>
+<tr class="memdesc:aea9969aeb2236c7dd9f9d50d6846dd08"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the value of an optional argument.  <br /></td></tr>
 <tr class="separator:aea9969aeb2236c7dd9f9d50d6846dd08"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4dc984ad7c39a540a3d54236d3116d5e" id="r_a4dc984ad7c39a540a3d54236d3116d5e"><td class="memTemplParams" colspan="2"><a id="a4dc984ad7c39a540a3d54236d3116d5e" name="a4dc984ad7c39a540a3d54236d3116d5e"></a>
-template&lt;typename T &gt; </td></tr>
-<tr class="memitem:a4dc984ad7c39a540a3d54236d3116d5e"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>getOptionArg</b> (const std::string &amp;argName, T &amp;out) const</td></tr>
+<tr class="memitem:a4dc984ad7c39a540a3d54236d3116d5e" id="r_a4dc984ad7c39a540a3d54236d3116d5e"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a4dc984ad7c39a540a3d54236d3116d5e"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a4dc984ad7c39a540a3d54236d3116d5e">getOptionArg</a> (const std::string &amp;argName, T &amp;out) const</td></tr>
+<tr class="memdesc:a4dc984ad7c39a540a3d54236d3116d5e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the value of an optional argument and stores it in the provided output variable.  <br /></td></tr>
 <tr class="separator:a4dc984ad7c39a540a3d54236d3116d5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a531db312d9c881a81e6060e4d8236193" id="r_a531db312d9c881a81e6060e4d8236193"><td class="memTemplParams" colspan="2"><a id="a531db312d9c881a81e6060e4d8236193" name="a531db312d9c881a81e6060e4d8236193"></a>
-template&lt;typename T &gt; </td></tr>
-<tr class="memitem:a531db312d9c881a81e6060e4d8236193"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; T &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>getRepeatableOptionArg</b> (const std::string &amp;argName) const</td></tr>
+<tr class="memitem:a531db312d9c881a81e6060e4d8236193" id="r_a531db312d9c881a81e6060e4d8236193"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a531db312d9c881a81e6060e4d8236193"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; T &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a531db312d9c881a81e6060e4d8236193">getRepeatableOptionArg</a> (const std::string &amp;argName) const</td></tr>
+<tr class="memdesc:a531db312d9c881a81e6060e4d8236193"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets all values of a repeatable option argument.  <br /></td></tr>
 <tr class="separator:a531db312d9c881a81e6060e4d8236193"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6f03bdacc83ae91efa317ce0534199e7" id="r_a6f03bdacc83ae91efa317ce0534199e7"><td class="memTemplParams" colspan="2"><a id="a6f03bdacc83ae91efa317ce0534199e7" name="a6f03bdacc83ae91efa317ce0534199e7"></a>
-template&lt;typename T &gt; </td></tr>
-<tr class="memitem:a6f03bdacc83ae91efa317ce0534199e7"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; T &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>getRepeatablePositionalArg</b> (const std::string &amp;argName) const</td></tr>
+<tr class="memitem:a6f03bdacc83ae91efa317ce0534199e7" id="r_a6f03bdacc83ae91efa317ce0534199e7"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a6f03bdacc83ae91efa317ce0534199e7"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; T &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a6f03bdacc83ae91efa317ce0534199e7">getRepeatablePositionalArg</a> (const std::string &amp;argName) const</td></tr>
+<tr class="memdesc:a6f03bdacc83ae91efa317ce0534199e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets all values of a repeatable positional argument.  <br /></td></tr>
 <tr class="separator:a6f03bdacc83ae91efa317ce0534199e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a096bcf3a89d4da7c02b834e1e51645af" id="r_a096bcf3a89d4da7c02b834e1e51645af"><td class="memTemplParams" colspan="2"><a id="a096bcf3a89d4da7c02b834e1e51645af" name="a096bcf3a89d4da7c02b834e1e51645af"></a>
-template&lt;typename T &gt; </td></tr>
-<tr class="memitem:a096bcf3a89d4da7c02b834e1e51645af"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><b>getArg</b> (const std::string &amp;argName) const</td></tr>
+<tr class="memitem:a096bcf3a89d4da7c02b834e1e51645af" id="r_a096bcf3a89d4da7c02b834e1e51645af"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a096bcf3a89d4da7c02b834e1e51645af"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a096bcf3a89d4da7c02b834e1e51645af">getArg</a> (const std::string &amp;argName) const</td></tr>
+<tr class="memdesc:a096bcf3a89d4da7c02b834e1e51645af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the value of an argument.  <br /></td></tr>
 <tr class="separator:a096bcf3a89d4da7c02b834e1e51645af"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afaedf7b19404f4523d35e71b4489c723" id="r_afaedf7b19404f4523d35e71b4489c723"><td class="memTemplParams" colspan="2"><a id="afaedf7b19404f4523d35e71b4489c723" name="afaedf7b19404f4523d35e71b4489c723"></a>
-template&lt;typename T &gt; </td></tr>
-<tr class="memitem:afaedf7b19404f4523d35e71b4489c723"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><b>getRepeatableArg</b> (const std::string &amp;argName) const</td></tr>
+<tr class="memitem:afaedf7b19404f4523d35e71b4489c723" id="r_afaedf7b19404f4523d35e71b4489c723"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:afaedf7b19404f4523d35e71b4489c723"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#afaedf7b19404f4523d35e71b4489c723">getRepeatableArg</a> (const std::string &amp;argName) const</td></tr>
+<tr class="memdesc:afaedf7b19404f4523d35e71b4489c723"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets all values of a repeatable argument.  <br /></td></tr>
 <tr class="separator:afaedf7b19404f4523d35e71b4489c723"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:abd6fefb44ce1c7fec8409fecb556076e" id="r_abd6fefb44ce1c7fec8409fecb556076e"><td class="memItemLeft" align="right" valign="top"><a id="abd6fefb44ce1c7fec8409fecb556076e" name="abd6fefb44ce1c7fec8409fecb556076e"></a>
-cli::logging::Logger &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>Logger</b></td></tr>
+<a class="el" href="classcli_1_1logging_1_1_logger.html">cli::logging::Logger</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>Logger</b></td></tr>
 <tr class="separator:abd6fefb44ce1c7fec8409fecb556076e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -180,7 +180,7 @@ cli::logging::Logger &amp;&#160;</td><td class="memItemRight" valign="bottom"><b
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">cli::logging::Logger &amp;</td>          <td class="paramname"><span class="paramname"><em>logger</em></span>&#160;)</td>
+          <td class="paramtype"><a class="el" href="classcli_1_1logging_1_1_logger.html">cli::logging::Logger</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>logger</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -200,6 +200,455 @@ cli::logging::Logger &amp;&#160;</td><td class="memItemRight" valign="bottom"><b
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a096bcf3a89d4da7c02b834e1e51645af" name="a096bcf3a89d4da7c02b834e1e51645af"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a096bcf3a89d4da7c02b834e1e51645af">&#9670;&#160;</a></span>getArg()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">T cli::CliContext::getArg </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>argName</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the value of an argument. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">T</td><td>the type to cast the argument value to (should be the same as the one used in defining the Argument) </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">argName</td><td>the name of the argument to retrieve </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>the value of the argument cast to the specified type </dd></dl>
+
+</div>
+</div>
+<a id="aea9969aeb2236c7dd9f9d50d6846dd08" name="aea9969aeb2236c7dd9f9d50d6846dd08"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aea9969aeb2236c7dd9f9d50d6846dd08">&#9670;&#160;</a></span>getOptionArg() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">T cli::CliContext::getOptionArg </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>argName</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the value of an optional argument. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">T</td><td>the type to cast the argument value to (should be the same as the one used in defining the Argument) </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">argName</td><td>the name of the optional argument to retrieve </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>the value of the optional argument cast to the specified type </dd></dl>
+
+</div>
+</div>
+<a id="a4dc984ad7c39a540a3d54236d3116d5e" name="a4dc984ad7c39a540a3d54236d3116d5e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4dc984ad7c39a540a3d54236d3116d5e">&#9670;&#160;</a></span>getOptionArg() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void cli::CliContext::getOptionArg </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>argName</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">T &amp;</td>          <td class="paramname"><span class="paramname"><em>out</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the value of an optional argument and stores it in the provided output variable. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">T</td><td>the type to cast the argument value to (should be the same as the one used in defining the Argument) </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">argName</td><td>the name of the optional argument to retrieve </td></tr>
+    <tr><td class="paramname">out</td><td>the output variable to store the argument value in </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a91e4bb8e5c75cb8dd9963daf3065098f" name="a91e4bb8e5c75cb8dd9963daf3065098f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a91e4bb8e5c75cb8dd9963daf3065098f">&#9670;&#160;</a></span>getPositionalArg() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">T cli::CliContext::getPositionalArg </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>argName</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the value of a positional argument. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">T</td><td>the type to cast the argument value to (should be the same as the one used in defining the Argument) </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">argName</td><td>the name of the positional argument to retrieve </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>the value of the positional argument cast to the specified type </dd></dl>
+
+</div>
+</div>
+<a id="adc6681591420250677bf96253a285dfe" name="adc6681591420250677bf96253a285dfe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adc6681591420250677bf96253a285dfe">&#9670;&#160;</a></span>getPositionalArg() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void cli::CliContext::getPositionalArg </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>argName</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">T &amp;</td>          <td class="paramname"><span class="paramname"><em>out</em></span>&#160;) const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the value of a positional argument and stores it in the provided output variable. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">T</td><td>the type to cast the argument value to (should be the same as the one used in defining the Argument) </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">argName</td><td>the name of the positional argument to retrieve </td></tr>
+    <tr><td class="paramname">out</td><td>the output variable to store the argument value in </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="afaedf7b19404f4523d35e71b4489c723" name="afaedf7b19404f4523d35e71b4489c723"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afaedf7b19404f4523d35e71b4489c723">&#9670;&#160;</a></span>getRepeatableArg()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">auto cli::CliContext::getRepeatableArg </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>argName</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets all values of a repeatable argument. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">T</td><td>the type to cast the argument values to (should be the same as the one used in defining the Argument) </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">argName</td><td>the name of the repeatable argument to retrieve </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>a vector of all values of the repeatable argument cast to the specified type </dd></dl>
+
+</div>
+</div>
+<a id="a531db312d9c881a81e6060e4d8236193" name="a531db312d9c881a81e6060e4d8236193"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a531db312d9c881a81e6060e4d8236193">&#9670;&#160;</a></span>getRepeatableOptionArg()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; T &gt; cli::CliContext::getRepeatableOptionArg </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>argName</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets all values of a repeatable option argument. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">T</td><td>the type to cast the single argument values to (should be the same as the one used in defining the Argument) </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">argName</td><td>the name of the repeatable option argument to retrieve </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>a vector of all values of the repeatable option argument cast to the specified type </dd></dl>
+
+</div>
+</div>
+<a id="a6f03bdacc83ae91efa317ce0534199e7" name="a6f03bdacc83ae91efa317ce0534199e7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6f03bdacc83ae91efa317ce0534199e7">&#9670;&#160;</a></span>getRepeatablePositionalArg()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; T &gt; cli::CliContext::getRepeatablePositionalArg </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>argName</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets all values of a repeatable positional argument. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">T</td><td>the type to cast the single argument values to (should be the same as the one used in defining the Argument) </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">argName</td><td>the name of the repeatable positional argument to retrieve </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>a vector of all values of the repeatable positional argument cast to the specified type </dd></dl>
+
+</div>
+</div>
+<a id="a947ceaff2ff5c07dcc09d7637874e7c6" name="a947ceaff2ff5c07dcc09d7637874e7c6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a947ceaff2ff5c07dcc09d7637874e7c6">&#9670;&#160;</a></span>isArgPresent()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool cli::CliContext::isArgPresent </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>argName</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Checks if an argument with the given name is present in the context. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">argName</td><td>the name of the argument to check </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the argument is present, false otherwise </dd></dl>
+
+</div>
+</div>
+<a id="adbbd178cf76769939bd17454d97453b2" name="adbbd178cf76769939bd17454d97453b2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adbbd178cf76769939bd17454d97453b2">&#9670;&#160;</a></span>isFlagPresent()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool cli::CliContext::isFlagPresent </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>argName</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Checks if a flag with the given name is present in the context. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">argName</td><td>the name of the argument to check </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the argument is present, false otherwise </dd></dl>
+
+</div>
+</div>
+<a id="a7f23be3d2006d0859a94f14cdd03b043" name="a7f23be3d2006d0859a94f14cdd03b043"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7f23be3d2006d0859a94f14cdd03b043">&#9670;&#160;</a></span>isOptionArgPresent()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool cli::CliContext::isOptionArgPresent </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>argName</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Checks if an optional argument with the given name is present in the context. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">argName</td><td>the name of the argument to check </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the argument is present, false otherwise </dd></dl>
+
+</div>
+</div>
+<a id="a505a6be070a63463a7fc1ba911bcb459" name="a505a6be070a63463a7fc1ba911bcb459"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a505a6be070a63463a7fc1ba911bcb459">&#9670;&#160;</a></span>isPositionalArgPresent()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool cli::CliContext::isPositionalArgPresent </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>argName</em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Checks if a positional argument with the given name is present in the context. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">argName</td><td>the name of the argument to check </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the argument is present, false otherwise </dd></dl>
 
 </div>
 </div>
