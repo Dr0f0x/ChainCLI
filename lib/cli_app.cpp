@@ -19,6 +19,7 @@
 #include "cli_context.h"
 #include "commands/command.h"
 #include "logging/logger.h"
+#include "context_builder.h"
 
 namespace cli
 {

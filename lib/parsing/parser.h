@@ -22,6 +22,7 @@
 #include "cli_config.h"
 #include "cli_context.h"
 #include "commands/command.h"
+#include "context_builder.h"
 
 namespace cli::parsing
 {
