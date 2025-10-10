@@ -124,14 +124,26 @@ public:
     const Command *getRootCommand() const { return root.get(); }
 
     /// @brief Get the path for a command in the tree.
-    /// @note Uses a pre-built map for O(1) lookup internally that maps needs to be constructed first using the buildCommandPathMap function.
+    /// @note Uses a pre-built map for O(1) lookup internally that maps needs to be constructed
+    /// first using the buildCommandPathMap function.
     /// @param cmd The command to find the path for.
     /// @return The path to the command, or an empty string if not found.
     std::string_view getPathForCommand(Command *cmd) const;
 
     /// @brief Build a map of command paths for quick lookup.
-    /// @param separator The separator to use between command names in the path (default is a space).
+    /// @param separator The separator to use between command names in the path (default is a
+    /// space).
     void buildCommandPathMap(const std::string &separator = " ");
+
+    /// @brief Get a vector of all commands in the tree.
+    /// @details Commands are collected in a depth-first search (DFS) manner.
+    /// @return A vector containing pointers to all commands in the tree.
+    std::vector<Command *> getAllCommands() const;
+
+    /// @brief Get a vector of all commands in the tree (const version).
+    /// @details Commands are collected in a depth-first search (DFS) manner.
+    /// @return A vector containing pointers to all commands in the tree.
+    std::vector<const Command *> getAllCommandsConst() const;
 
 private:
     std::unique_ptr<Command> root;
@@ -182,6 +194,32 @@ private:
             for (const auto &[key, subCommandPtr] : cmdPtr->getSubCommands())
             {
                 forEachCommandRecursive(subCommandPtr.get(), func);
+            }
+        }
+    }
+
+    // Helper function to collect all commands into a vector
+    static void getAllCommandsRecursive(Command *cmdPtr, std::vector<Command *> &commands)
+    {
+        if (cmdPtr)
+        {
+            commands.push_back(cmdPtr);
+            for (const auto &[key, subCommandPtr] : cmdPtr->getSubCommands())
+            {
+                getAllCommandsRecursive(subCommandPtr.get(), commands);
+            }
+        }
+    }
+
+    // Helper function to collect all commands into a vector (const version)
+    static void getAllCommandsRecursive(const Command *cmdPtr, std::vector<const Command *> &commands)
+    {
+        if (cmdPtr)
+        {
+            commands.push_back(cmdPtr);
+            for (const auto &[key, subCommandPtr] : cmdPtr->getSubCommands())
+            {
+                getAllCommandsRecursive(subCommandPtr.get(), commands);
             }
         }
     }

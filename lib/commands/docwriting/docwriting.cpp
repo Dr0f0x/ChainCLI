@@ -55,14 +55,15 @@ void DocWriter::setDocStrings(Command &command, std::string_view fullCommandPath
 std::string DocWriter::generateShortDocString(const Command &command,
                                               std::string_view fullCommandPath) const
 {
-    return commandFormatterPtr->generateShortDocString(command, fullCommandPath, *this, configuration);
+    return commandFormatterPtr->generateShortDocString(command, fullCommandPath, *this,
+                                                       configuration);
 }
-
 
 std::string DocWriter::generateLongDocString(const Command &command,
                                              std::string_view fullCommandPath) const
 {
-    return commandFormatterPtr->generateLongDocString(command, fullCommandPath, *this, configuration);
+    return commandFormatterPtr->generateLongDocString(command, fullCommandPath, *this,
+                                                      configuration);
 }
 
 std::string DocWriter::generateOptionsDocString(const FlagArgument &argument) const
@@ -93,6 +94,26 @@ std::string DocWriter::generateOptionsDocString(const PositionalArgumentBase &ar
 std::string DocWriter::generateArgDocString(const PositionalArgumentBase &argument) const
 {
     return positionalFormatterPtr->generateArgDocString(argument, configuration);
+}
+
+std::string DocWriter::generateAppDocString(const std::vector<const cli::commands::Command*> &commands) const
+{
+    return appFormatterPtr->generateAppDocString(configuration, commands);
+}
+
+std::string DocWriter::generateCommandDocString(const Command &command) const
+{
+    return appFormatterPtr->generateCommandDocString(command, configuration);
+}
+
+std::string DocWriter::generateAppVersionString() const
+{
+    return appFormatterPtr->generateAppVersionString(configuration);
+}
+
+void DocWriter::setAppFormatter(std::unique_ptr<AbstractCliAppDocFormatter> formatter)
+{
+    appFormatterPtr = std::move(formatter);
 }
 
 } // namespace cli::commands::docwriting

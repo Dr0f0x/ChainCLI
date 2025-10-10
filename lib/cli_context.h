@@ -82,7 +82,7 @@ public:
     /// @param argName the name of the argument to check
     /// @return true if the argument is present, false otherwise
     bool isArgPresent(const std::string &argName) const;
-    
+
     /// @brief Checks if an optional argument with the given name is present in the context.
     /// @param argName the name of the argument to check
     /// @return true if the argument is present, false otherwise
@@ -99,7 +99,8 @@ public:
     bool isFlagPresent(const std::string &argName) const;
 
     /// @brief Gets the value of a positional argument
-    /// @tparam T the type to cast the argument value to (should be the same as the one used in defining the Argument)
+    /// @tparam T the type to cast the argument value to (should be the same as the one used in
+    /// defining the Argument)
     /// @param argName the name of the positional argument to retrieve
     /// @return the value of the positional argument cast to the specified type
     template <typename T> T getPositionalArg(const std::string &argName) const
@@ -108,7 +109,8 @@ public:
     }
 
     /// @brief Gets the value of a positional argument and stores it in the provided output variable
-    /// @tparam T the type to cast the argument value to (should be the same as the one used in defining the Argument)
+    /// @tparam T the type to cast the argument value to (should be the same as the one used in
+    /// defining the Argument)
     /// @param argName the name of the positional argument to retrieve
     /// @param out the output variable to store the argument value in
     template <typename T> void getPositionalArg(const std::string &argName, T &out) const
@@ -117,7 +119,8 @@ public:
     }
 
     /// @brief Gets the value of an optional argument
-    /// @tparam T the type to cast the argument value to (should be the same as the one used in defining the Argument)
+    /// @tparam T the type to cast the argument value to (should be the same as the one used in
+    /// defining the Argument)
     /// @param argName the name of the optional argument to retrieve
     /// @return the value of the optional argument cast to the specified type
     template <typename T> T getOptionArg(const std::string &argName) const
@@ -125,9 +128,9 @@ public:
         return getAnyCast<T>(argName, *optionArgs);
     }
 
-
     /// @brief Gets the value of an optional argument and stores it in the provided output variable
-    /// @tparam T the type to cast the argument value to (should be the same as the one used in defining the Argument)
+    /// @tparam T the type to cast the argument value to (should be the same as the one used in
+    /// defining the Argument)
     /// @param argName the name of the optional argument to retrieve
     /// @param out the output variable to store the argument value in
     template <typename T> void getOptionArg(const std::string &argName, T &out) const
@@ -136,7 +139,8 @@ public:
     }
 
     /// @brief Gets all values of a repeatable option argument
-    /// @tparam T the type to cast the single argument values to (should be the same as the one used in defining the Argument)
+    /// @tparam T the type to cast the single argument values to (should be the same as the one used
+    /// in defining the Argument)
     /// @param argName the name of the repeatable option argument to retrieve
     /// @return a vector of all values of the repeatable option argument cast to the specified type
     template <typename T> std::vector<T> getRepeatableOptionArg(const std::string &argName) const
@@ -165,9 +169,11 @@ public:
     }
 
     /// @brief Gets all values of a repeatable positional argument
-    /// @tparam T the type to cast the single argument values to (should be the same as the one used in defining the Argument)
+    /// @tparam T the type to cast the single argument values to (should be the same as the one used
+    /// in defining the Argument)
     /// @param argName the name of the repeatable positional argument to retrieve
-    /// @return a vector of all values of the repeatable positional argument cast to the specified type
+    /// @return a vector of all values of the repeatable positional argument cast to the specified
+    /// type
     template <typename T>
     std::vector<T> getRepeatablePositionalArg(const std::string &argName) const
     {
@@ -194,9 +200,9 @@ public:
         }
     }
 
-
     /// @brief Gets the value of an argument
-    /// @tparam T the type to cast the argument value to (should be the same as the one used in defining the Argument)
+    /// @tparam T the type to cast the argument value to (should be the same as the one used in
+    /// defining the Argument)
     /// @param argName the name of the argument to retrieve
     /// @return the value of the argument cast to the specified type
     template <typename T> T getArg(const std::string &argName) const
@@ -216,7 +222,8 @@ public:
     }
 
     /// @brief Gets all values of a repeatable argument
-    /// @tparam T the type to cast the argument values to (should be the same as the one used in defining the Argument)
+    /// @tparam T the type to cast the argument values to (should be the same as the one used in
+    /// defining the Argument)
     /// @param argName the name of the repeatable argument to retrieve
     /// @return a vector of all values of the repeatable argument cast to the specified type
     template <typename T> auto getRepeatableArg(const std::string &argName) const

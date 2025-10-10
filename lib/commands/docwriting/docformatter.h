@@ -35,7 +35,8 @@ public:
     virtual ~AbstractArgDocFormatter() = default;
 
     /// @brief Generate the argument documentation string.
-    /// @details the argument doc string is the textual representation of the argument and its attributes
+    /// @details the argument doc string is the textual representation of the argument and its
+    /// attributes
     /// @param argument The argument to document.
     /// @param configuration The CLI configuration.
     /// @return The generated documentation string.
@@ -121,6 +122,50 @@ public:
     std::string generateShortDocString(const Command &command, std::string_view fullCommandPath,
                                        const DocWriter &writer,
                                        const cli::CliConfig &configuration) override;
+};
+
+/// @brief Abstract base class for CLI application documentation formatters.
+class AbstractCliAppDocFormatter
+{
+public:
+    virtual ~AbstractCliAppDocFormatter() = default;
+
+    /// @brief Generate the application documentation string that shows all the available commands.
+    /// @param writer The documentation writer.
+    /// @param configuration The CLI configuration.
+    /// @param commands The list of commands to document.
+    /// @return The generated documentation string.
+    virtual std::string generateAppDocString(
+        const cli::CliConfig &configuration,
+        const std::vector<const cli::commands::Command *> &commands) = 0;
+
+    /// @brief Generate the application version string that is shown with the --version flag.
+    /// @param configuration The CLI configuration.
+    /// @return The generated version string.
+    virtual std::string generateAppVersionString(const cli::CliConfig &configuration) = 0;
+
+    /// @brief Generate the documentation string for a specific command.
+    /// @param command The command to document.
+    /// @param fullCommandPath The full path of the command.
+    /// @param writer The documentation writer.
+    /// @param configuration The CLI configuration.
+    /// @return The generated documentation string.
+    virtual std::string generateCommandDocString(const Command &command,
+                                                 const cli::CliConfig &configuration) = 0;
+};
+
+class DefaultCliAppDocFormatter : public AbstractCliAppDocFormatter
+{
+public:
+    std::string generateAppDocString(
+        const cli::CliConfig &configuration,
+        const std::vector<const cli::commands::Command *> &commands) override;
+
+    std::string generateCommandDocString(
+        const Command &command,
+        [[maybe_unused]] const cli::CliConfig &configuration) override;
+
+    std::string generateAppVersionString(const cli::CliConfig &configuration) override;
 };
 
 } // namespace cli::commands::docwriting

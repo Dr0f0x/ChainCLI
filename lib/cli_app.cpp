@@ -21,6 +21,8 @@
 #include "context_builder.h"
 #include "logging/logger.h"
 
+#define inline_t
+
 namespace cli
 {
 CliApp::CliApp(CliConfig &&config)
@@ -64,7 +66,31 @@ int CliApp::run(int argc, char *argv[])
     return internalRun(std::span<char *const>(argv + 1, argc - 1));
 }
 
-int CliApp::internalRun(std::span<char *const> args) const
+// returns the found command and modifies args to only contain the values that
+// werent consumed in the tree traversal
+inline_t commands::Command *locateCommand(commands::CommandTree &commandsTree, std::vector<std::string> &args)
+{
+    commands::Command *commandPtr = commandsTree.getRootCommand();
+
+    int consumed = 0;
+
+    for (const auto &arg : args)
+    {
+        // Move one level down if child exists
+        commands::Command *subCommandPtr = commandPtr->getSubCommand(arg);
+        if (!subCommandPtr)
+        {
+            break;
+        }
+
+        commandPtr = subCommandPtr;
+        ++consumed;
+    }
+    args.erase(args.begin(), args.begin() + consumed);
+    return commandPtr;
+}
+
+int CliApp::internalRun(std::span<char *const> args)
 {
     std::vector<std::string> argVec(args.begin(), args.end());
 
@@ -73,9 +99,10 @@ int CliApp::internalRun(std::span<char *const> args) const
         return 0;
     }
 
-    if (const auto *cmd = locateCommand(argVec))
+    if (commands::Command *cmd = locateCommand(commandsTree, argVec);
+        cmd && cmd->hasExecutionFunction())
     {
-        if (commandShortCircuits(argVec, *cmd))
+        if (commandShortCircuits(argVec, cmd))
         {
             return 0;
         }
@@ -90,33 +117,10 @@ int CliApp::internalRun(std::span<char *const> args) const
     else
     {
         std::cout << "Unknown command: " << args[0] << "\n";
-        globalHelp();
+        auto allCommands = commandsTree.getAllCommandsConst();
+        logger->info(docWriter.generateAppDocString(allCommands));
     }
     return 0;
-}
-
-// returns the found command and modifies args to only contain the values that
-// werent consumed in the tree traversal
-const commands::Command *CliApp::locateCommand(std::vector<std::string> &args) const
-{
-    const commands::Command *commandPtr = commandsTree.getRootCommand();
-
-    int consumed = 0;
-
-    for (const auto &arg : args)
-    {
-        // Move one level down if child exists
-        const auto *subCommandPtr = commandPtr->getSubCommand(arg);
-        if (!subCommandPtr)
-        {
-            break;
-        }
-
-        commandPtr = subCommandPtr;
-        ++consumed;
-    }
-    args.erase(args.begin(), args.begin() + consumed);
-    return commandPtr;
 }
 
 bool CliApp::rootShortCircuits(std::vector<std::string> &args,
@@ -124,7 +128,8 @@ bool CliApp::rootShortCircuits(std::vector<std::string> &args,
 {
     if (args.empty() && !cmd.hasExecutionFunction())
     {
-        globalHelp();
+        auto allCommands = commandsTree.getAllCommandsConst();
+        logger->info(docWriter.generateAppDocString(allCommands));
         return true;
     }
 
@@ -132,12 +137,13 @@ bool CliApp::rootShortCircuits(std::vector<std::string> &args,
     {
         if (args.at(0) == "-h" || args.at(0) == "--help")
         {
-            globalHelp();
+            auto allCommands = commandsTree.getAllCommandsConst();
+            logger->info(docWriter.generateAppDocString(allCommands));
             return true;
         }
         else if (args.at(0) == "-v" || args.at(0) == "--version")
         {
-            logger->info("Version: {}", configuration->version);
+            logger->info(docWriter.generateAppVersionString());
             return true;
         }
     }
@@ -145,33 +151,19 @@ bool CliApp::rootShortCircuits(std::vector<std::string> &args,
 }
 
 bool CliApp::commandShortCircuits(std::vector<std::string> &args,
-                                  const cli::commands::Command &cmd) const
+                                  cli::commands::Command *cmd) const
 {
     if (args.size() == 1 && (args.at(0) == "-h" || args.at(0) == "--help"))
     {
-        logger->info(std::string(cmd.getDocStringLong()));
+        logger->info(std::string(docWriter.generateCommandDocString(*cmd)));
         return true;
     }
     return false;
-}
-
-void CliApp::globalHelp() const
-{
-    logger->info() << configuration->description << "\n\n";
-
-    auto printCmd = [this](const commands::Command *cmd) {
-        if (cmd->hasExecutionFunction())
-            logger->info() << cmd->getDocStringShort() << "\n\n";
-    };
-
-    commandsTree.forEachCommand(printCmd);
-
-    logger->info() << "Use --help <command> to get more information about a specific command"
-                   << std::endl;
 }
 
 CliApp &CliApp::withCommand(commands::Command &&subCommand)
 {
     return withCommand(std::make_unique<commands::Command>(std::move(subCommand)));
 }
+
 } // namespace cli

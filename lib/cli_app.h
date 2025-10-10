@@ -33,9 +33,7 @@
     }                                                                                              \
     catch (const std::exception &e)                                                                \
     {                                                                                              \
-        cliInstance.Logger().error()                                                               \
-            << "terminate called after throwing an instance of '" << typeid(e).name() << "'\n"     \
-            << "  what(): " << e.what() << std::endl;                                              \
+        cliInstance.Logger().error() << e.what() << std::endl;                                     \
         std::abort();                                                                              \
     }
 
@@ -83,6 +81,10 @@ public:
     /// @return a reference to the command tree
     [[nodiscard]] const commands::CommandTree &getCommandTree() const { return commandsTree; };
 
+    /// @brief Get the command tree used by the CLI application
+    /// @return a reference to the command tree
+    [[nodiscard]] commands::Command *getMainCommand() { return commandsTree.getRootCommand(); };
+
     /// @brief Get the configuration used by the CLI application
     /// @return a reference to the configuration
     [[nodiscard]] CliConfig &getConfig() { return *configuration; };
@@ -96,12 +98,9 @@ public:
     void setLogger(std::unique_ptr<logging::Logger> &&newLogger) { logger = std::move(newLogger); }
 
 private:
-    int internalRun(std::span<char *const> args) const;
-    const commands::Command *locateCommand(std::vector<std::string> &args) const;
+    int internalRun(std::span<char *const> args);
     bool rootShortCircuits(std::vector<std::string> &args, const cli::commands::Command &cmd) const;
-    bool commandShortCircuits(std::vector<std::string> &args,
-                              const cli::commands::Command &cmd) const;
-    void globalHelp() const;
+    bool commandShortCircuits(std::vector<std::string> &args, cli::commands::Command *cmd) const;
 
     commands::CommandTree commandsTree;
     bool initialized{false};

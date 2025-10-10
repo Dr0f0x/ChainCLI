@@ -45,6 +45,10 @@ public:
     /// @param config The CLI configuration.
     explicit DocWriter(const CliConfig &config) : configuration(config) {}
 
+    /// @brief Set the formatter for the application documentation.
+    /// @param formatter The formatter to use for the application documentation.
+    void setAppFormatter(std::unique_ptr<AbstractCliAppDocFormatter> formatter);
+
     /// @brief Set the formatter for option arguments.
     /// @param formatter The formatter to use for option arguments.
     void setOptionFormatter(std::unique_ptr<AbstractArgDocFormatter<OptionArgumentBase>> formatter);
@@ -111,13 +115,33 @@ public:
     /// @return The argument documentation string for the positional argument.
     std::string generateArgDocString(const PositionalArgumentBase &argument) const;
 
+    /// @brief Generate the documentation string for the application.
+    /// @param commands The commands to generate the documentation string for.
+    /// @return The documentation string for the application.
+    std::string generateAppDocString(const std::vector<const cli::commands::Command *> &commands) const;
+
+    /// @brief Generate the documentation string for a command.
+    /// @param command The command to generate the documentation string for.
+    /// @param fullCommandPath The full path of the command.
+    /// @return The documentation string for the command.
+    std::string generateCommandDocString(const Command &command) const;
+
+    /// @brief Generate the version string for the application.
+    /// @return The version string for the application.
+    std::string generateAppVersionString() const;
+
 private:
     const CliConfig &configuration;
 
-    std::unique_ptr<AbstractCommandFormatter> commandFormatterPtr = std::make_unique<DefaultCommandFormatter>();
-    std::unique_ptr<AbstractArgDocFormatter<FlagArgument>> flagFormatterPtr  = std::make_unique<DefaultFlagFormatter>();
-    std::unique_ptr<AbstractArgDocFormatter<OptionArgumentBase>> optionFormatterPtr  = std::make_unique<DefaultOptionFormatter>();
-    std::unique_ptr<AbstractArgDocFormatter<PositionalArgumentBase>> positionalFormatterPtr = std::make_unique<DefaultPositionalFormatter>();
+    std::unique_ptr<AbstractCommandFormatter> commandFormatterPtr =
+        std::make_unique<DefaultCommandFormatter>();
+    std::unique_ptr<AbstractArgDocFormatter<FlagArgument>> flagFormatterPtr =
+        std::make_unique<DefaultFlagFormatter>();
+    std::unique_ptr<AbstractArgDocFormatter<OptionArgumentBase>> optionFormatterPtr =
+        std::make_unique<DefaultOptionFormatter>();
+    std::unique_ptr<AbstractArgDocFormatter<PositionalArgumentBase>> positionalFormatterPtr =
+        std::make_unique<DefaultPositionalFormatter>();
+    std::unique_ptr<AbstractCliAppDocFormatter> appFormatterPtr = std::make_unique<DefaultCliAppDocFormatter>();
 };
 
 } // namespace cli::commands::docwriting

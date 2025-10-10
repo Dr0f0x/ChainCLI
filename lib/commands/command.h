@@ -30,8 +30,8 @@ namespace cli::commands
 {
 
 /// @brief Represents a command in the CLI application.
-/// @details A command can have subcommands, arguments (positional, option, flag), and an execution function.
-/// Commands can be nested to create a hierarchy of commands and subcommands.
+/// @details A command can have subcommands, arguments (positional, option, flag), and an execution
+/// function. Commands can be nested to create a hierarchy of commands and subcommands.
 class Command
 {
     friend std::ostream &operator<<(std::ostream &out, const Command &cmd);
@@ -48,6 +48,18 @@ public:
             std::unique_ptr<std::function<void(const CliContext &)>> actionPtr)
         : identifier(id), shortDescription(short_desc), longDescription(long_desc),
           executePtr(std::move(actionPtr))
+    {
+    }
+
+    /// @brief Construct a new Command object.
+    /// @param id The unique identifier for the command.
+    /// @param short_desc A short description of the command.
+    /// @param long_desc A long description of the command.
+    /// @param action A function to execute when the command is called.
+    Command(std::string_view id, std::string_view short_desc, std::string_view long_desc,
+            std::function<void(const CliContext &)> action)
+        : identifier(id), shortDescription(short_desc), longDescription(long_desc),
+          executePtr(std::make_unique<std::function<void(const CliContext &)>>(std::move(action)))
     {
     }
 
@@ -90,7 +102,7 @@ public:
 
     /// @brief Check if the command has an execution function.
     /// @return True if the command has an execution function, false otherwise.
-    [[nodiscard]] constexpr bool hasExecutionFunction() const noexcept { return executePtr.get(); }
+    [[nodiscard]] bool hasExecutionFunction() const noexcept { return executePtr.get(); }
 
     /// @brief Get the positional arguments for the command.
     /// @return The positional arguments for the command.
@@ -101,7 +113,8 @@ public:
     }
 
     /// @brief Get the option arguments for the command.
-    /// @note Arguments appear on the command line help messages in the order they were added to the command.
+    /// @note Arguments appear on the command line help messages in the order they were added to the
+    /// command.
     /// @return The option arguments for the command.
     [[nodiscard]] const std::vector<std::shared_ptr<OptionArgumentBase>> &getOptionArguments()
         const noexcept
@@ -110,7 +123,8 @@ public:
     }
 
     /// @brief Get the flag arguments for the command.
-    /// @note Arguments appear on the command line help messages in the order they were added to the command.
+    /// @note Arguments appear on the command line help messages in the order they were added to the
+    /// command.
     /// @return The flag arguments for the command.
     [[nodiscard]] const std::vector<std::shared_ptr<FlagArgument>> &getFlagArguments()
         const noexcept
@@ -128,14 +142,15 @@ public:
     }
 
     /// @brief Get the short documentation string for the command.
-    /// @details This description only contains the textual representation of the command and its arguments as well as the short description.
+    /// @details This description only contains the textual representation of the command and its
+    /// arguments as well as the short description.
     /// @note the doc strings are cached internally and need to be built before being accessed
     /// @return The short documentation string for the command.
     [[nodiscard]] std::string_view getDocStringShort() const;
 
-
     /// @brief Get the long documentation string for the command.
-    /// @details This description contains the textual representation of the command and its arguments as well as the long description and the Options segment.
+    /// @details This description contains the textual representation of the command and its
+    /// arguments as well as the long description and the Options segment.
     /// @note the doc strings are cached internally and need to be built before being accessed
     /// @return The long documentation string for the command.
     [[nodiscard]] std::string_view getDocStringLong() const;
@@ -170,14 +185,14 @@ public:
     /// @return A reference to this command.
     Command &withShortDescription(std::string_view desc);
 
-
     /// @brief Set the long description for the command.
     /// @param desc The long description to set.
     /// @return A reference to this command.
     Command &withLongDescription(std::string_view desc);
 
     /// @brief Add a positional argument to the command.
-    /// @note Arguments appear on the command line help messages in the order they were added to the command.
+    /// @note Arguments appear on the command line help messages in the order they were added to the
+    /// command.
     /// @tparam T The type of the positional argument.
     /// @param arg The positional argument to set.
     /// @return A reference to this command.
@@ -190,13 +205,25 @@ public:
     }
 
     /// @brief Add a positional argument to the command.
-    /// @note Arguments appear on the command line help messages in the order they were added to the command.
+    /// @note Arguments appear on the command line help messages in the order they were added to the
+    /// command.
     /// @tparam T The type of the positional argument.
     /// @param arg The positional argument to set.
     /// @return A reference to this command.
     template <typename T> Command &withPositionalArgument(PositionalArgument<T> &&arg)
     {
         return withPositionalArgument(std::make_shared<PositionalArgument<T>>(std::move(arg)));
+    }
+
+    /// @brief Add a positional argument to the command.
+    /// @note Arguments appear on the command line help messages in the order they were added to the
+    /// command.
+    /// @tparam T The type of the positional argument.
+    /// @param arg The positional argument to set.
+    /// @return A reference to this command.
+    template <typename T> Command &withPositionalArgument(PositionalArgument<T> &arg)
+    {
+        return withPositionalArgument(std::make_shared<PositionalArgument<T>>(arg));
     }
 
     /// @brief Add an option argument to the command.
@@ -222,6 +249,17 @@ public:
         return withOptionArgument(std::make_shared<OptionArgument<T>>(std::move(arg)));
     }
 
+    /// @brief Add an option argument to the command.
+    /// @note Arguments appear on the command line help messages in the order they were added to
+    /// the command.
+    /// @tparam T The type of the option argument.
+    /// @param arg The option argument to set.
+    /// @return A reference to this command.
+    template <typename T> Command &withOptionArgument(OptionArgument<T> &arg)
+    {
+        return withOptionArgument(std::make_shared<OptionArgument<T>>(arg));
+    }
+
     /// @brief Add a flag argument to the command.
     /// @note Arguments appear on the command line help messages in the order they were added to
     /// the command.
@@ -235,6 +273,13 @@ public:
     /// @param arg The flag argument to set.
     /// @return A reference to this command.
     Command &withFlagArgument(FlagArgument &&arg);
+
+    /// @brief Add a flag argument to the command.
+    /// @note Arguments appear on the command line help messages in the order they were added to
+    /// the command.
+    /// @param arg The flag argument to set.
+    /// @return A reference to this command.
+    Command &withFlagArgument(FlagArgument &arg);
 
     /// @brief Set the execution function for the command.
     /// @param action The function to execute when the command is called.

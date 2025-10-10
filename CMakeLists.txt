@@ -6,14 +6,13 @@ project(
     LANGUAGES C CXX
 )
 
-set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # project specific vars
 set(LIBRARY_NAME_STATIC cli_lib_static)
 set(LIBRARY_NAME_SHARED cli_lib)
-set(DEMO_OUTPUT_NAME cli_demo)
 
 set(RUN_CLANG_TIDY OFF)
 
@@ -48,8 +47,8 @@ if (RUN_CLANG_TIDY)
             set(CLANG_TIDY_CONFIG_FILE "")
         endif()
 
-        # Apply clang-tidy checks automatically during build
-        set(CMAKE_CXX_CLANG_TIDY
+        # Store clang-tidy configuration for our targets only (don't apply globally)
+        set(CLANG_TIDY_COMMAND
             "${CLANG_TIDY_EXE};--config-file=${CLANG_TIDY_CONFIG_FILE};-p=${CMAKE_SOURCE_DIR}/build;${EXTRA_CLANG_TIDY_ARGS_STR}"
         )
     else()
@@ -108,11 +107,15 @@ endif()
 
 option(BUILD_TOOLS "Build tools folder" ON)
 option(BUILD_LIB "Build library folder" ON)
-option(BUILD_DEMO "Build demo folder" OFF)
+option(BUILD_DEMO "Build demo folder" ON)
 option(BUILD_TESTS "Build tests folder" ON)
+
+# Set the generated header path for demo projects
+set(GENERATED_HEADER "${CMAKE_SOURCE_DIR}/demo/chain_cli.hpp")
 
 enable_testing()
 add_subdirectory(tools)
+add_subdirectory(demo)
 
 # Build the library
 if(BUILD_LIB)
@@ -122,9 +125,4 @@ endif()
 # Include tests
 if(BUILD_TESTS)
     add_subdirectory(test)
-endif()
-
-# Build the demo app
-if(BUILD_DEMO)
-    add_subdirectory(demo)
 endif()

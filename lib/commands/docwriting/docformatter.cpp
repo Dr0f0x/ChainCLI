@@ -40,7 +40,11 @@ std::string DefaultFlagFormatter::generateArgDocString(
 {
     std::ostringstream builder;
     auto [inBracket, outBracket] = getOptionArgumentBrackets(argument.isRequired());
-    builder << inBracket << argument.getName() << ',' << argument.getShortName() << outBracket;
+    builder << inBracket << argument.getName();
+    if (!argument.getShortName().empty()) {
+        builder << ',' << argument.getShortName();
+    }
+    builder << outBracket;
     return builder.str();
 }
 
@@ -48,7 +52,10 @@ std::string DefaultFlagFormatter::generateOptionsDocString(
     const FlagArgument &argument, [[maybe_unused]] const cli::CliConfig &configuration)
 {
     std::ostringstream builder;
-    builder << argument.getName() << ' ' << argument.getShortName();
+    builder << argument.getName();
+    if (!argument.getShortName().empty()) {
+        builder << ' ' << argument.getShortName();
+    }
     return std::format("{:<{}}{:>{}}", builder.str(), configuration.optionsWidth,
                        argument.getOptionComment(), argument.getOptionComment().size());
 }
@@ -58,8 +65,11 @@ std::string DefaultOptionFormatter::generateArgDocString(
 {
     std::ostringstream builder;
     auto [inBracket, outBracket] = getOptionArgumentBrackets(argument.isRequired());
-    builder << inBracket << argument.getName() << ' ' << argument.getShortName() << ' ';
-    builder << '<' << argument.getValueName() << '>' << outBracket;
+    builder << inBracket << argument.getName();
+    if (!argument.getShortName().empty()) {
+        builder << ',' << argument.getShortName();
+    }
+    builder << ' ' << '<' << argument.getValueName() << '>' << outBracket;
 
     if (argument.isRepeatable())
         builder << "...";
@@ -70,8 +80,11 @@ std::string DefaultOptionFormatter::generateOptionsDocString(
     const OptionArgumentBase &argument, [[maybe_unused]] const cli::CliConfig &configuration)
 {
     std::ostringstream builder;
-    builder << argument.getName() << ',' << argument.getShortName() << ' ' << '<'
-            << argument.getValueName() << '>';
+    builder << argument.getName();
+    if (!argument.getShortName().empty()) {
+        builder << ',' << argument.getShortName();
+    }
+    builder << ' ' << '<' << argument.getValueName() << '>';
     if (argument.isRepeatable())
         builder << "...";
     return std::format("{:<{}}{:>{}}", builder.str(), configuration.optionsWidth,
@@ -136,10 +149,9 @@ inline_t void addGroupArgumentDocString(std::ostringstream &builder,
     }
 }
 
-std::string DefaultCommandFormatter::generateLongDocString(const Command &command,
-                                                           std::string_view fullCommandPath,
-                                                           const DocWriter &writer,
-                                                           [[maybe_unused]] const cli::CliConfig &configuration)
+std::string DefaultCommandFormatter::generateLongDocString(
+    const Command &command, std::string_view fullCommandPath, const DocWriter &writer,
+    [[maybe_unused]] const cli::CliConfig &configuration)
 {
     std::ostringstream builder;
     builder << fullCommandPath << " ";
@@ -162,10 +174,9 @@ std::string DefaultCommandFormatter::generateLongDocString(const Command &comman
     return builder.str();
 }
 
-std::string DefaultCommandFormatter::generateShortDocString(const Command &command,
-                                                            std::string_view fullCommandPath,
-                                                            const DocWriter &writer,
-                                                            [[maybe_unused]] const cli::CliConfig &configuration)
+std::string DefaultCommandFormatter::generateShortDocString(
+    const Command &command, std::string_view fullCommandPath, const DocWriter &writer,
+    [[maybe_unused]] const cli::CliConfig &configuration)
 {
     std::ostringstream builder;
     builder << fullCommandPath << " ";
@@ -177,6 +188,34 @@ std::string DefaultCommandFormatter::generateShortDocString(const Command &comma
     }
     builder << "\n" << command.getShortDescription();
     return builder.str();
+}
+
+std::string DefaultCliAppDocFormatter::generateAppDocString(
+    const cli::CliConfig &configuration,
+    const std::vector<const cli::commands::Command *> &commands)
+{
+    std::ostringstream builder;
+    builder << configuration.description << "\n";
+
+    for (const auto &cmd : commands)
+    {
+        if (cmd->hasExecutionFunction())
+            builder << cmd->getDocStringShort() << "\n\n";
+    }
+
+    builder << "Use <command> --help|-h to get more information about a specific command";
+    return builder.str();
+}
+
+std::string DefaultCliAppDocFormatter::generateCommandDocString(const Command &command,
+                                                                [[maybe_unused]] const cli::CliConfig &configuration)
+{
+    return std::string(command.getDocStringLong());
+}
+
+std::string DefaultCliAppDocFormatter::generateAppVersionString(const cli::CliConfig &configuration)
+{
+    return std::format("{} version: {}", configuration.executableName, configuration.version);
 }
 
 } // namespace cli::commands::docwriting

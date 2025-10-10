@@ -22,6 +22,7 @@
 
 namespace cli::commands
 {
+
 std::string_view Command::getDocStringShort() const
 {
     if (docStringShort.empty())
@@ -77,6 +78,11 @@ Command &Command::withFlagArgument(std::shared_ptr<FlagArgument> arg)
 Command &Command::withFlagArgument(FlagArgument &&arg)
 {
     return withFlagArgument(std::make_shared<FlagArgument>(std::move(arg)));
+}
+
+Command &Command::withFlagArgument(FlagArgument &arg)
+{
+    return withFlagArgument(std::make_shared<FlagArgument>(arg));
 }
 
 Command &Command::withExecutionFunc(

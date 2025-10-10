@@ -25,7 +25,6 @@
 namespace cli::logging
 {
 
-
 /// @brief Interface for log record handlers.
 class AbstractHandler
 {
@@ -47,9 +46,9 @@ public:
     /// @param formatter The formatter to use for log messages
     /// @param minLevel The minimum log level for this handler
     /// @param styles The styles to use for log messages
-    BaseHandler(std::ostream &outStream, std::ostream &errStream, std::shared_ptr<AbstractFormatter> formatter,
-            LogLevel minLevel = LogLevel::DEBUG,
-            std::shared_ptr<const LogStyleMap> styles = nullptr)
+    BaseHandler(std::ostream &outStream, std::ostream &errStream,
+                std::shared_ptr<AbstractFormatter> formatter, LogLevel minLevel = LogLevel::DEBUG,
+                std::shared_ptr<const LogStyleMap> styles = nullptr)
         : out(outStream), err(errStream), formatterPtr(std::move(formatter)),
           styleMapPtr(std::move(styles)), minLevel(minLevel)
     {

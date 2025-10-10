@@ -66,8 +66,8 @@ TEST_F(LoggerTestSociable, ConvenienceMethodsUsesCorrectLevel)
 TEST_F(LoggerTestSociable, CorrectLevelsPassedToHandler)
 {
     Logger logger(LogLevel::TRACE);
-    logger.addHandler(
-        std::make_unique<BaseHandler>(out, err, std::make_unique<BasicFormatter>(), LogLevel::TRACE));
+    logger.addHandler(std::make_unique<BaseHandler>(out, err, std::make_unique<BasicFormatter>(),
+                                                    LogLevel::TRACE));
 
     logger.trace("trace msg");
     std::string result = out.str() + err.str();
@@ -77,8 +77,8 @@ TEST_F(LoggerTestSociable, CorrectLevelsPassedToHandler)
 TEST_F(LoggerTestSociable, RemoveAllHandlersPreventsEmits)
 {
     Logger logger(LogLevel::TRACE);
-    logger.addHandler(std::make_unique<BaseHandler>(out, err, std::make_unique<MessageOnlyFormatter>(),
-                                                LogLevel::TRACE));
+    logger.addHandler(std::make_unique<BaseHandler>(
+        out, err, std::make_unique<MessageOnlyFormatter>(), LogLevel::TRACE));
     logger.removeAllHandlers();
 
     EXPECT_NO_THROW(logger.info("any message"));
@@ -102,8 +102,8 @@ TEST_P(LoggerConvenienceParamTest, ConvenienceMethodCallsHandlerWithCorrectLevel
     std::ostringstream out;
     std::ostringstream err;
     Logger logger(LogLevel::TRACE);
-    logger.addHandler(
-        std::make_unique<BaseHandler>(out, err, std::make_unique<BasicFormatter>(), LogLevel::TRACE));
+    logger.addHandler(std::make_unique<BaseHandler>(out, err, std::make_unique<BasicFormatter>(),
+                                                    LogLevel::TRACE));
 
     GetParam().method(logger, GetParam().msg);
 
@@ -140,8 +140,8 @@ TEST_P(LoggerLevelParamTest, CorrectLevelIsPassedToHandler)
     std::ostringstream out;
     std::ostringstream err;
     Logger logger(LogLevel::TRACE);
-    logger.addHandler(
-        std::make_unique<BaseHandler>(out, err, std::make_unique<BasicFormatter>(), LogLevel::TRACE));
+    logger.addHandler(std::make_unique<BaseHandler>(out, err, std::make_unique<BasicFormatter>(),
+                                                    LogLevel::TRACE));
 
     logger.log(GetParam().level, GetParam().msg);
 

@@ -77,4 +77,24 @@ std::string CommandNotFoundException::buildMessage(const std::string &id,
     oss << "]";
     return oss.str();
 }
+
+std::vector<Command *> CommandTree::getAllCommands() const
+{
+    std::vector<Command *> commands;
+    if (root)
+    {
+        getAllCommandsRecursive(root.get(), commands);
+    }
+    return commands;
+}
+
+std::vector<const Command *> CommandTree::getAllCommandsConst() const
+{
+    std::vector<const Command *> commands;
+    if (root)
+    {
+        getAllCommandsRecursive(root.get(), commands);
+    }
+    return commands;
+}
 } // namespace cli::commands

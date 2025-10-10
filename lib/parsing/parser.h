@@ -54,7 +54,7 @@ private:
     void parseRepeatable(const cli::commands::PositionalArgumentBase &arg, const std::string &input,
                          ContextBuilder &ContextBuilder) const;
 
-    void checkGroups(const cli::commands::Command &command,
+    void checkGroupsAndRequired(const cli::commands::Command &command,
                      const ContextBuilder &contextBuilder) const;
 
     bool tryOptionArg(

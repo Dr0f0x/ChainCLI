@@ -4,7 +4,8 @@ add_executable(
 
 target_link_libraries(
   ${INTEGRATION_TEST_EXE_NAME}
-  PUBLIC ${LIBRARY_NAME_STATIC}
+  PRIVATE
+  ${LIBRARY_NAME_STATIC}
   GTest::gtest_main
   GTest::gmock
   GTest::gmock_main

@@ -191,9 +191,9 @@ inline_t void GenerateHeader(const Params &params)
 
     // Remove excluded files from fileEntries
     dirEntries.remove_if([&excludedFilenames](const auto &entry) {
-        return std::ranges::contains(excludedFilenames, entry.path().filename().string());
+        return std::ranges::find(excludedFilenames, entry.path().filename().string()) != excludedFilenames.end();
     });
-
+    
     std::cout << "Registered files in source folder '" << params.sourceFolder << "':\n";
     for (const auto &entry : dirEntries)
     {

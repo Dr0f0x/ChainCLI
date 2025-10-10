@@ -27,8 +27,8 @@
 namespace cli::commands
 {
 
-/// @brief Untemplated base class for option arguments in the CLI. Used to store all option arguments
-/// in a single container.
+/// @brief Untemplated base class for option arguments in the CLI. Used to store all option
+/// arguments in a single container.
 class OptionArgumentBase : public TypedArgumentBase, public ArgumentBase, public FlaggedArgumentBase
 {
 public:

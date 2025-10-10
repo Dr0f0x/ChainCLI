@@ -10,5 +10,6 @@ var searchData=
   ['setpositionalformatter_7',['setPositionalFormatter',['../classcli_1_1commands_1_1docwriting_1_1_doc_writer.html#aa81889fdcf3e5d24cfb8d90cfbc083f4',1,'cli::commands::docwriting::DocWriter']]],
   ['setstylemap_8',['setStyleMap',['../classcli_1_1logging_1_1_base_handler.html#aa1a7e3b789947189c1e30ebd8ef3e9f3',1,'cli::logging::BaseHandler']]],
   ['setstylingenabled_9',['setStylingEnabled',['../classcli_1_1logging_1_1_base_handler.html#a9d1a3991781494db109fb7cd2d52c046',1,'cli::logging::BaseHandler']]],
-  ['success_10',['success',['../classcli_1_1logging_1_1_logger.html#a27348d975270f3b731b0736c41154ad8',1,'cli::logging::Logger::success(const std::string &amp;fmt, Args &amp;&amp;...args)'],['../classcli_1_1logging_1_1_logger.html#a7977c849c53c434293dc12b3421fed9b',1,'cli::logging::Logger::success()']]]
+  ['started_10',['📚 Getting Started',['../C:/Users/dczek/Desktop/C_C++/CliLib/docs/mainpage.md#autotoc_md2',1,'']]],
+  ['success_11',['success',['../classcli_1_1logging_1_1_logger.html#a27348d975270f3b731b0736c41154ad8',1,'cli::logging::Logger::success(const std::string &amp;fmt, Args &amp;&amp;...args)'],['../classcli_1_1logging_1_1_logger.html#a7977c849c53c434293dc12b3421fed9b',1,'cli::logging::Logger::success()']]]
 ];

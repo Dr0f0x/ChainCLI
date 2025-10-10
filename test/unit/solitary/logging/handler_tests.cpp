@@ -17,8 +17,8 @@ using ::testing::Return;
 class TestHandler : public BaseHandler
 {
 public:
-    TestHandler(std::unique_ptr<AbstractFormatter> f, std::ostream &outStream, std::ostream &errStream,
-                LogLevel minLevel = LogLevel::DEBUG)
+    TestHandler(std::unique_ptr<AbstractFormatter> f, std::ostream &outStream,
+                std::ostream &errStream, LogLevel minLevel = LogLevel::DEBUG)
         : BaseHandler(outStream, errStream, std::move(f), minLevel)
     {
     }
@@ -126,7 +126,7 @@ TEST_F(HandlerTestSolitary, StylingAppliedToFormattedMessage)
 
     handler.emit(detailRecord);
 
-    std::string expected = styles[LogLevel::SUCCESS] + "FORMATTED" + "\o{33}[0m";
+    std::string expected = styles[LogLevel::SUCCESS] + "FORMATTED" + "\033[0m";
     EXPECT_EQ(out.str(), expected);
 }
 
@@ -154,7 +154,7 @@ TEST_F(HandlerTestSolitary, StylingAppliedOnlyIfLevelMatches)
     handler.setStylingEnabled(true);
 
     auto styleMap = std::make_shared<LogStyleMap>();
-    (*styleMap)[LogLevel::ERROR] = "\o{33}[31m"; // red
+    (*styleMap)[LogLevel::ERROR] = "\033[31m"; // red
     handler.setStyleMap(styleMap);
 
     LogRecord infoRecord(LogLevel::INFO, "info-msg");
@@ -167,6 +167,6 @@ TEST_F(HandlerTestSolitary, StylingAppliedOnlyIfLevelMatches)
     handler.emit(errorRecord); // ERROR has style
 
     EXPECT_EQ(out.str(), "INFOFORMATTED"); // INFO unstyled
-    EXPECT_NE(err.str().find("\o{33}[31mERRORFORMATTED\o{33}[0m"),
+    EXPECT_NE(err.str().find("\033[31mERRORFORMATTED\033[0m"),
               std::string::npos); // ERROR styled
 }

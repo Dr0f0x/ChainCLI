@@ -9,128 +9,389 @@
 [![codecov](https://codecov.io/gh/Dr0f0x/CliLib/graph/badge.svg?token=Q62QP5D61I)](https://codecov.io/gh/Dr0f0x/CliLib)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/7672ce67e13e4ca184b10fbfb4805a94)](https://app.codacy.com?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 
-### Folder Structure: ###
+> **Quick Disclaimer at the start:** This is both my first real Cpp project as well as the first project I actually made public and I probably committed numerous mistakes in both cases, so if you notice anything please create an issue about so I can attempt to fix it. Thanks!
 
+For a more detailed overview than this README can give definitely check out the demo folder or have a look at the API-Reference.
+
+## Table of Contents
+
+- [Quick Start](#quick-start)
+- [Commands](#commands)
+- [Arguments](#arguments)
+- [Argument Groups](#argument-groups)
+- [Cli Context](#cli-context)
+- [Command Docstrings](#command-docstrings)
+- [CliApp Configuration](#cliapp-configuration)
+- [Logging](#logging)
+- [Docformatters](#docformatters)
+- [Custom Types](#custom-types)
+
+## Quick Start
+
+The idea behind this library was to provide a very verbose and easy to understand way to create CLI-Applications, where everything that has to do with the command line interaction is done for you (create help documentation/route commands/logging), so you only have to write the actual logic of your application (e.g the interesting part). To achieve this it heavily relies on the name giving method chaining. To use it simply include the single header file ```chain_cli.hpp``` in your project.
+
+In general, the procedure is as follows (see the demos for more specific examples):
+
+#### 1) Create a new CliApp instance from a CliConfiguration that carries your application-specific settings
+
+```cpp
+auto config = cli::CliConfig();
+config.title = "Calculator Demo";
+config.executableName = "calculator_demo";
+config.description = "Calculator Demo to test the CLI Library";
+config.version = "1.0.0";
+
+auto cliApp = cli::CliApp(std::move(config));
 ```
-CliLib/
-├── lib/
-│   ├── parsing/            # parsing for entered command
-│   │   ├── CMakeLists.txt
-│   │   ├── ...
-│   ├── commands/           # command structure
-│   │   ├── CMakeLists.txt
-│   │   ├── ...
-│   ├── logging/            # output to console and optionally to file
-│   │   ├── CMakeLists.txt
-│   │   ├── ...
-│   ├── CMakeLists.txt
-│   ├── clibase.h           #base for cli app
-│   └── clibase.cpp
-└── demo/                   # demo project
-    ├── CMakeLists.txt
-    └── main.cpp
+
+#### 2) Customize behaviour by adding your own/default handlers/formatters to the logger or docwriter
+```cpp
+auto &logger = cliApp.Logger();
+logger.setLevel(LogLevel::TRACE); //the default would be info
+
+// Attach a file handler (logs everything to one file) - by default only a console handler is added
+logger.addHandler(std::make_unique<FileHandler>("app.log", std::make_shared<BasicFormatter>(), LogLevel::TRACE));
 ```
 
-### Idea ###
+#### 3) Define your commands with the desired arguments and add them to the application
+```cpp
+auto addCommand = std::move(cli::commands::Command("add")
+    .withShortDescription("Add the provided numbers")
+    .withLongDescription("Adds all numbers given with the <summand> parameter and prints "
+                         "the result to the console.")
+    .withPositionalArgument(cli::commands::createPositionalArgument<double>("summand")
+                                .withOptionsComment("All the numbers to add")
+                                .withRequired(true)
+                                .withRepeatable(true))
+    .withExecutionFunc(add));
+cliApp.withCommand(std::move(addCommand));
+```
 
-Library with a modular build system for creating CLI applications, where one can create commands, attach flags and parameters to them etc. and launch it with a single method.
+The command defined above can then be run via `<executable_name> add` and produces the help documentation:
+```
+calculator_demo add <summand>...
 
-### Class Structure ###
-
-``CLIBase`` - MainObject; offers methods for registering new commands and for starting the actual actual cli (maybe the option to add functions that should be called on startup = init as well)
-
-``Command`` - basic structure for commands, has an identifier (the command text) and arguments that can be passed with it`
-
-Command sshould contain a descirption and automatically generated information from their parameters to be used with the -- help flag as well.
-
-***Arguments***
-
-**``StandardArgument``** Argument that needs to be passed with a command per se (eg. ``main.exe add 1 2`` : 1 and 2 would be the StandardArgument) a command can only have one of these.
-
-**``OptionalArgument``** Optional Argument that could be passed with an additional flag (e.g ``main.exe run --context options.txt``). Should have a long and short form (--context and -c)
-
-**``FlagArgument``** Optional flag that can be passed with a command (e.g ``main.exe run --fast``), basically corresponds to a bool value or the slection of an value from an enum (loglevel for example). Should have a long and short form (--context and -c)
-
-These arguments should somehow contain help text/ a description for the CLI to automatically display when the --help or -h flag is used. Except for the StandardArgument which must always come first the order of these should be irrelevant.
-
-***Parameter***
-
-The values being passed with an argument should be abstracted using Parameter classes, for example in ``main.exe add 1 2`` 1 and 2 are parameters so is options.txt in ``main.exe run --context options.txt`.
-
-Parameters specify a type they expect (e.g number or string) and are generally order dependent as without that verifying correct types would be quite impossible. Additionally a parameter should be able to be repeated (infinitely) to pass a list of sorts, however in that case he must be the last param of the argument for similar reason as above (one couldnt differentiate the end from a wrong type).
-
-**Style For Documentation**
-
-Optional arguments are wrapped in [    ], same with optional paramters to these arguments or to the command itself (if a parameter for an arguemnt is optional u get the nested structure [--arg [param]])
-
-Required arguments are wrapped in <    >, same with optional paramters to these arguments or to the command itself (if a parameter for an arguemnt is optional u get the nested structure <--arg <param>>)
-
-if an argument or parameter can be repeated it is suffixed with ... (like the params notation in many programming languages), e.g <--arg>... or [param]... or for sargs with params [--arg [param]]...
-
-if there are multiple ways to call an arg like -h and --help they are seperated by commata, e.g [-h,--help]
-
-args or params can have default values that are displayed in the Options section
-
-command should have short descirption and long description (to be used with general help and command specific help)
-for each arg a usage comment that is to be used in Options section, like 
+Adds all numbers given with the <summand> parameter and prints the result to the console.
 
 Options:
-    -h --help Usage comment here
+<summand>...           All the numbers to add
+```
 
-TODO properly define dll api with
-#pragma once
+#### 4) Use the generated CliContext with the parsed arguments in your own logic
+```cpp
+void add(const cli::CliContext &ctx)
+{
+    double res = 0;
+    for (const auto &val : ctx.getRepeatableArg<double>("summand"))
+    {
+        res += val;
+    }
+    ctx.Logger.info("Result: {}", res);
+}
+```
 
-// Define EXPORTED for any platform
-#if defined _WIN32 || defined __CYGWIN__
-  #ifdef WIN_EXPORT
-    // Exporting...
-    #ifdef __GNUC__
-      #define EXPORTED __attribute__ ((dllexport))
-    #else
-      #define EXPORTED __declspec(dllexport) // Note: actually gcc seems to also supports this syntax.
-    #endif
-  #else
-    #ifdef __GNUC__
-      #define EXPORTED __attribute__ ((dllimport))
-    #else
-      #define EXPORTED __declspec(dllimport) // Note: actually gcc seems to also supports this syntax.
-    #endif
-  #endif
-  #define NOT_EXPORTED
-#else
-  #if __GNUC__ >= 4
-    #define EXPORTED __attribute__ ((visibility ("default")))
-    #define NOT_EXPORTED  __attribute__ ((visibility ("hidden")))
-  #else
-    #define EXPORTED
-    #define NOT_EXPORTED
-  #endif
-#endif
+#### 5) Call the run method of your CliApp with the passed command line arguments
 
-if(MSVC)
-    # Microsoft Visual C++
-    target_compile_definitions(${LIBRARY_NAME_SHARED} PRIVATE WIN_EXPORT)
-elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    # Clang and AppleClang
-    add_compile_options(-fvisibility=hidden)
-elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-    # GCC
-    message("setting default vis to hidden")
-    set_target_properties(${LIBRARY_NAME_SHARED} PROPERTIES CXX_VISIBILITY_PRESET hidden)
-    set_target_properties(${LIBRARY_NAME_SHARED} PROPERTIES VISIBILITY_INLINES_HIDDEN YES)
-endif()
+Either using the predefined macro
+```cpp
+int main(int argc, char *argv[])
+{
+    RUN_CLI_APP(cliApp, argc, argv);
+}
+```
+which expands to 
+```cpp
+try
+{
+    return cliInstance.run(argc_, argv_);
+}
+catch ()
+{
+    cliInstance.Logger().error() << e.what() << std::endl;
+    std::abort();
+}
+```
 
-install(TARGETS ${LIBRARY_NAME_SHARED}
-        EXPORT CliLibTargets
-        LIBRARY DESTINATION lib
-        ARCHIVE DESTINATION lib
-        RUNTIME DESTINATION bin
-        INCLUDES DESTINATION include)
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/lib/include/ DESTINATION include)
+or with your own way of calling CliApp::run.
 
-**current Group restrictions**
+## Commands
 
-- if two positional arguments are in a a mutually exclusive group and one is optional, the parser still always attempts to parse it (it isnt skipped), this may be fixable or not
+Commands are created with a unique identifier (=the name of the command to invoke it from the command line) and each command can have its own subcommands that can be added with the ```withSubcommand``` method. That means overall the commands are structured in a tree that can be traversed via the identifiers.
 
-cmake -DCMAKE_INSTALL_PREFIX="C:/Users/dczek/Desktop/C_C++/CliLib/install" ..
->> cmake --build . --target install
+Below is an example of what the structure of a CliApp could look like
+
+```
+myapp
+├── math
+│   ├── add <numbers>...
+│   ├── subtract <a> <b>
+│   └── calc
+│       ├── sqrt <number>
+│       └── pow <base> <exponent>
+└── file
+    ├── read <filename>
+    ├── write <filename> <content>
+    └── compress
+       ├── zip <files>...
+       └── gzip <file>
+```
+
+This structure would allow commands like:
+- `myapp math add 1,2,3,4`
+- `myapp math calc sqrt 16`
+- `myapp file compress zip file1.txt,file2.txt`
+
+Each command in the tree can have its own arguments, options, and execution logic, while sharing the common CLI infrastructure provided by the library. The root command (fittingly called myapp here, basically corresponds to the executable itself) can be configured through
+```cpp
+CliApp::getMainCommand(); //returns a pointer to the root command
+```
+
+## Arguments
+
+Each command can have different arguments added to it that can be configured in itself. There are three types of arguments provided that can be added to a command with the corresponding methods
+
+**PositionalArguments** - ```Command::withPositionalArgument```
+
+Arguments that are parsed based on the order they were passed to the application and require at least a name (-> constructor argument)
+
+```cpp
+command.withPositionalArgument(cli::commands::createPositionalArgument<double>("add")
+                                .withOptionsComment("All the numbers to add")
+                                .withRequired(true)
+                                .withRepeatable(true))
+``` 
+Displayed in the help messages like ```<positional_name>```
+
+**OptionArguments** - ```Command::withOptionArgument```
+
+Arguments that are parsed based on a preceding flag (usually a long one like ```--type``` and a short one like ```-t```) and require at least a (long) name and a value name (-> the constructor arguments)
+
+```cpp
+command.withOptionArgument(cli::commands::OptionArgument<double>("--bound", "lowest")
+                            .withShortName("-b")
+                            .withOptionsComment("specify a lower bound to display a message if the subtraction process crosses it"))
+``` 
+Displayed in the help messages like ```[--option_name,-short_option_name <value_name>]```
+
+**FlagArguments** - ```Command::withFlagArgument```
+
+Arguments that only check if the specified flag is present or not (can be used like a toggle) and require at least a (long) name and a short name (-> constructor arguments)
+
+```cpp
+.withFlagArgument(cli::commands::FlagArgument("--verbose", "-v")
+                    .withOptionsComment("Enable verbose output for the division process")
+                    .withRequired(false))
+``` 
+
+
+The first two of these also immediately parse corresponding input parts to a value of the type that was provided when creating the argument. All of the arguments can be required, repeatable and can have a options comment that is displayed in the OPTIONS section of the help command for the corresponding command. Repeatable arguments can be provided in a ','-separated list and are then parsed as a vector instead of a single instance.
+
+> Instead of using the chaining methods to create the arguments you can also provide the values to the constructor directly like it is done in the following example:
+
+```cpp
+.withPositionalArgument(cli::commands::PositionalArgument<double>(
+    "dividend", "The number that is divided", true, false))
+.withPositionalArgument(cli::commands::PositionalArgument<double>(
+    "divisor", "The numbers to divide by", true, true))
+.withFlagArgument(cli::commands::FlagArgument(
+    "--remainder", "-r", "Divide using remainders instead of precise", false))
+```
+
+In my opinion this is a lot less verbose but it depends on your preferences. 
+
+## Argument Groups
+
+Arguments can be put into groups, specifically into mutually exclusive or mutually inclusive ones. This can be done by using the corresponding chaining methods ```Command::withExclusiveGroup``` or ```Command::withInclusiveGroup``` and passing the arguments you want to have in the group.
+Inclusive groups require all the arguments in the group to be present if one of them is, while exclusive groups allow only one of the arguments to be present.
+
+```cpp
+.withExclusiveGroup(cli::commands::OptionArgument<int>("--value", "number")
+                                .withShortName("-v")
+                                .withOptionsComment("First argument in exclusive group")
+                                .withRequired(false),
+                            cli::commands::OptionArgument<std::string>("--name", "text")
+                                .withShortName("-n")
+                                .withOptionsComment("Second argument in exclusive group")
+                                .withRequired(false))
+```
+
+```cpp
+.withInclusiveGroup(cli::commands::OptionArgument<int>("--value", "number")
+                                .withShortName("-v")
+                                .withOptionsComment("First argument in inclusive group")
+                                .withRequired(false),
+                            cli::commands::OptionArgument<std::string>("--name", "text")
+                                .withShortName("-n")
+                                .withOptionsComment("Second argument in inclusive group")
+                                .withRequired(false))
+```
+
+> Using this, one can quite easily create uncallable commands, for example creating a mutually exclusive group where two of the arguments in it are required. The library doesn't check for this and so will not provide any warnings or something similar.
+
+## Cli Context
+
+To pass the parsed Arguments to the implemented logic the library uses ```CliContext``` instances. These provide access to them using the corresponding methods like ```CliContext::getPositionArg``` or ```CliContext::getArg``` (internally this one searches through flag, positional and option args). Note that you have to provide the argument name that was specified when creating the argument to retrieve its value. As arguments that are not required don't have to be present, there are methods to check if they were provided, namely ```CliContext::isOptionArgPresent``` and equivalents for the other argument types.
+
+```cpp
+// Example: Accessing different argument types in your command function
+void subtract(const cli::CliContext &ctx)
+{
+    auto minuend = ctx.getPositionalArg<double>("minuend");
+    double bound = minuend + 1; // just to have an initial value
+    bool boundPresent = ctx.isOptionArgPresent("--bound");
+
+    for (const auto &val : ctx.getRepeatableArg<double>("subtrahend"))
+    {
+        minuend -= val;
+        if (boundPresent && minuend < bound)
+        {
+            ctx.Logger.info("Subtraction crossed the bound of {}: current value is {}", bound,
+                            minuend);
+        }
+    }
+    ctx.Logger.info("Result: {}", minuend);
+}
+```
+
+Additionally the ```CliContext``` objects carry a reference to the CliApps Logger instance which can be accessed through ```CliContext::Logger``` so you can use the configured Logger in your own logic.
+
+## Command Docstrings
+
+Internally the text that is printed for help messages is called a docstring and commands have both a short and a long docstring. The first one is used in help message for the whole app (printed when the executable is invoked without a valid command to call or with <executable> --help) and the second one in the help message for each single command (printed via <executable> <command_name> --help).
+
+**example of an app help message**
+```
+Calculator Demo to test the CLI Library
+
+calculator_demo add <summand>... 
+Add the provided numbers
+
+calculator_demo div <dividend> <divisor>... [--remainder,-r] 
+Divide the first argument by all args after it
+
+calculator_demo mult <factor>... 
+Multiply the provided numbers
+
+calculator_demo sub <minuend> <subtrahend>... [--bound,-b <lowest>] 
+Subtracts all the numbers after the first one from it
+
+Use <command> --help|-h to get more information about a specific command
+```
+
+**example of a command help message**
+```
+calculator_demo sub <minuend> <subtrahend>... [--bound,-b <lowest>] 
+
+Subtracts all numbers given with the <subtrahend> parameter from the number given with the <minuend> parameter and prints the result to the console.
+
+Options:
+<minuend>              The number that is subtracted from
+<subtrahend>...        All the numbers to subtract
+--bound,-b <lowest>    specify a lower bound to display a message if the subtraction process crosses it
+```
+
+The text in the middle is the short or long description of the command (can be specified for each command with the chaining methods).
+The display in the first line and the textual representation of the arguments is modeled after [docopt](http://docopt.org/) meaning:
+
+- required positional arguments are enclosed in ```<>``` and optional positional arguments in ```[]```. They display their name in the brackets: ```<minuend>```
+
+- required option arguments are enclosed in ```()``` and optional positional arguments in ```[]```. They display their name followed by a semicolon and the short name (if one was specified) as well as the value_name enclosed in ```<>```: ```[--bound,-b <lowest>]```
+
+- flag arguments are always optional and enclosed in ```[]```.  They display their name and short name (if specified) in the same fashion that option arguments do: ```[--remainder,-r]```
+
+- repeatable arguments are differentiated by adding ```...``` after the argument itself : ```<summand>...```
+
+- like option arguments, argument groups are enclosed by ```()``` if required and ```[]``` otherwise. Additionally exclusive groups separate their arguments by ```|``` whereas inclusive groups simply use spaces. Inclusive groups are required as soon as one of their arguments is required and exclusive groups if every one of their arguments is required : ```[[--value,-v <number>] | [--name,-n <text>]]```
+
+> The order of the arguments in the display is determined by the order the arguments were added to the command!
+
+## CliApp Configuration
+
+The ```CliConfig``` struct is used to configure the CliApplication and change default presets. You can either pass your own instance when creating the CliApp or later edit the configuration via ```CliApp::getConfig```. Examples of settings that can be changed this way are the optionsWidth the help messages use for the line length in the Options section and the alignment there or the repeatableDelimiter used to split repeatable arguments (default ","), as well as the executable name or similar project specific details.
+
+## Logging
+
+The library uses a simple logging module that works by using a single logger instance and attaching handlers with their own formatters to it. Each Handler is responsible for outputting a message that was formatted by its formatter (the default formatters provided are the message only formatter and one that includes timestamp and loglevel) to a different target (the default handlers provided target either the console or a file).
+
+Both the logger itself and all the handlers have a minimum level and ignore all logs that are below it. The one of the logger can be set with ```Logger::setLevel``` for the handlers they have to be specified before adding them to the logger, e.g in the constructor (the default console handler has Trace as its level).
+
+Moreover a simple LogStyle struct (basically a map of LogLevel to strings) is used to style each loglevel with ANSI-escape-sequences. By default this is only used to color the output for the different levels, like so
+
+<span style="color: gray">This is a TRACE message</span>  
+<span style="color: gray">This is a VERBOSE message</span>  
+<span style="color: blue">This is a DEBUG message</span>  
+This is an INFO message  
+<span style="color: orange">This is a WARNING message</span>  
+<span style="color: green">This is a SUCCESS message</span>  
+<span style="color: red">This is an ERROR message</span>
+
+You can easily write your own handler or formatter by extending the corresponding abstract base class (```AbstractHandler``` or ```AbstractFormatter```).
+
+## Docformatters
+
+To generate its help messages the library uses one central class the ```Docwriter``` which has references to different types of docformatters: One for each argument type (positional/option/flag), one for a single command and one for the application as a whole.
+
+At the start of the program both the short and long docstring for each command is built by first retrieving the docstrings (called ArgumentDocString for the display with the brackets in the first line and OptionsDocString for the line in the OPTIONS section) for the arguments which results in calls to the docwriter and their regarding formatters. These are then used by a the commandFormatter to build and set the long/short docstring per command.
+
+If a help message then needs to be printed (either the one for the app or for a single command) the already built docstrings of the commands are used by the AppFormatter to produce the final output.
+
+All of these steps can be fully customized by replacing the default formatters with your own implementation of the abstract base classes (```AbstractCliAppDocFormatter```, ```AbstractCommandFormatter``` and ```AbstractArgDocFormatter```) like below:
+
+```cpp
+class CustomOptionFormatter : public cli::commands::docwriting::DefaultOptionFormatter
+{
+public:
+    std::string generateArgDocString(const cli::commands::OptionArgumentBase &argument,
+                                     const cli::CliConfig &configuration) override
+    {
+        std::ostringstream builder;
+        builder << "[Option: " << argument.getName();
+        if (argument.isRequired())
+            builder << ", Required";
+        if (argument.isRepeatable())
+            builder << ", Repeatable";
+        builder << "]";
+        return builder.str();
+    }
+
+    std::string generateOptionsDocString(const cli::commands::OptionArgumentBase &argument,
+                                         const cli::CliConfig &configuration) override
+    {
+        std::ostringstream builder;
+        builder << DefaultOptionFormatter::generateOptionsDocString(argument, configuration);
+
+        if (argument.isRequired())
+            builder << " (Required)";
+        if (argument.isRepeatable())
+            builder << " (Repeatable)";
+        return builder.str();
+    }
+};
+
+int main(int argc, char *argv[])
+{
+    auto cliApp = cli::CliApp("DocFormatterDemo");
+    
+    initCommands(cliApp);
+
+    cliApp.getDocWriter().setAppFormatter(std::make_unique<CustomAppDocFormatter>());
+    cliApp.getDocWriter().setOptionFormatter(std::make_unique<CustomOptionFormatter>());
+}
+```
+
+## Custom Types
+
+To parse the input string to actual values the library simply uses the ```>>``` operator, therefore you simply have to provide an appropriate overload of that operator for the parsing module to use.
+
+```cpp
+struct CustomType
+{
+    friend std::istream &operator>>(std::istream &is, CustomType &ct)
+    {
+        //Custom parse implementation
+    }
+};
+```
+
+
+Thats it! If some things are not fully clear yet, try having a look at the demo projects or check out the detailed API-Reference.

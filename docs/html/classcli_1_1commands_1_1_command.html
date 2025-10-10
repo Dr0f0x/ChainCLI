@@ -93,6 +93,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a39ab6dace402c441139db6a38e68f219" id="r_a39ab6dace402c441139db6a38e68f219"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a39ab6dace402c441139db6a38e68f219">Command</a> (std::string_view id, std::string_view short_desc, std::string_view long_desc, std::unique_ptr&lt; std::function&lt; void(const <a class="el" href="classcli_1_1_cli_context.html">CliContext</a> &amp;)&gt; &gt; actionPtr)</td></tr>
 <tr class="memdesc:a39ab6dace402c441139db6a38e68f219"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new <a class="el" href="classcli_1_1commands_1_1_command.html" title="Represents a command in the CLI application.">Command</a> object.  <br /></td></tr>
 <tr class="separator:a39ab6dace402c441139db6a38e68f219"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6826245f0465f1678d9101cd1a35c865" id="r_a6826245f0465f1678d9101cd1a35c865"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6826245f0465f1678d9101cd1a35c865">Command</a> (std::string_view id, std::string_view short_desc, std::string_view long_desc, std::function&lt; void(const <a class="el" href="classcli_1_1_cli_context.html">CliContext</a> &amp;)&gt; action)</td></tr>
+<tr class="memdesc:a6826245f0465f1678d9101cd1a35c865"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new <a class="el" href="classcli_1_1commands_1_1_command.html" title="Represents a command in the CLI application.">Command</a> object.  <br /></td></tr>
+<tr class="separator:a6826245f0465f1678d9101cd1a35c865"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a86aaa63d75fea520f71b0189372523ad" id="r_a86aaa63d75fea520f71b0189372523ad"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a86aaa63d75fea520f71b0189372523ad">Command</a> (std::string_view id)</td></tr>
 <tr class="memdesc:a86aaa63d75fea520f71b0189372523ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new <a class="el" href="classcli_1_1commands_1_1_command.html" title="Represents a command in the CLI application.">Command</a> object.  <br /></td></tr>
 <tr class="separator:a86aaa63d75fea520f71b0189372523ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -167,6 +170,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a4ea81a06cc5c61cab0fa16ccefb2cb31"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classcli_1_1commands_1_1_command.html">Command</a> &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a4ea81a06cc5c61cab0fa16ccefb2cb31">withPositionalArgument</a> (<a class="el" href="classcli_1_1commands_1_1_positional_argument.html">PositionalArgument</a>&lt; T &gt; &amp;&amp;arg)</td></tr>
 <tr class="memdesc:a4ea81a06cc5c61cab0fa16ccefb2cb31"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a positional argument to the command.  <br /></td></tr>
 <tr class="separator:a4ea81a06cc5c61cab0fa16ccefb2cb31"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad42b3992e6d822433a0f93836a85ea2f" id="r_ad42b3992e6d822433a0f93836a85ea2f"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:ad42b3992e6d822433a0f93836a85ea2f"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classcli_1_1commands_1_1_command.html">Command</a> &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ad42b3992e6d822433a0f93836a85ea2f">withPositionalArgument</a> (<a class="el" href="classcli_1_1commands_1_1_positional_argument.html">PositionalArgument</a>&lt; T &gt; &amp;arg)</td></tr>
+<tr class="memdesc:ad42b3992e6d822433a0f93836a85ea2f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a positional argument to the command.  <br /></td></tr>
+<tr class="separator:ad42b3992e6d822433a0f93836a85ea2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a53392e47cf57dc2285896a4dac23b869" id="r_a53392e47cf57dc2285896a4dac23b869"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:a53392e47cf57dc2285896a4dac23b869"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classcli_1_1commands_1_1_command.html">Command</a> &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a53392e47cf57dc2285896a4dac23b869">withOptionArgument</a> (std::shared_ptr&lt; <a class="el" href="classcli_1_1commands_1_1_option_argument.html">OptionArgument</a>&lt; T &gt; &gt; arg)</td></tr>
 <tr class="memdesc:a53392e47cf57dc2285896a4dac23b869"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add an option argument to the command.  <br /></td></tr>
@@ -175,12 +182,19 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a83be9d2f01bf907268473b0d5942cd4f"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classcli_1_1commands_1_1_command.html">Command</a> &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a83be9d2f01bf907268473b0d5942cd4f">withOptionArgument</a> (<a class="el" href="classcli_1_1commands_1_1_option_argument.html">OptionArgument</a>&lt; T &gt; &amp;&amp;arg)</td></tr>
 <tr class="memdesc:a83be9d2f01bf907268473b0d5942cd4f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add an option argument to the command.  <br /></td></tr>
 <tr class="separator:a83be9d2f01bf907268473b0d5942cd4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a99ffa96bfb906a9a490a611084061ec3" id="r_a99ffa96bfb906a9a490a611084061ec3"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a99ffa96bfb906a9a490a611084061ec3"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classcli_1_1commands_1_1_command.html">Command</a> &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a99ffa96bfb906a9a490a611084061ec3">withOptionArgument</a> (<a class="el" href="classcli_1_1commands_1_1_option_argument.html">OptionArgument</a>&lt; T &gt; &amp;arg)</td></tr>
+<tr class="memdesc:a99ffa96bfb906a9a490a611084061ec3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add an option argument to the command.  <br /></td></tr>
+<tr class="separator:a99ffa96bfb906a9a490a611084061ec3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad5ab79a16872b5e95e896dc619055a16" id="r_ad5ab79a16872b5e95e896dc619055a16"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcli_1_1commands_1_1_command.html">Command</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad5ab79a16872b5e95e896dc619055a16">withFlagArgument</a> (std::shared_ptr&lt; <a class="el" href="classcli_1_1commands_1_1_flag_argument.html">FlagArgument</a> &gt; arg)</td></tr>
 <tr class="memdesc:ad5ab79a16872b5e95e896dc619055a16"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a flag argument to the command.  <br /></td></tr>
 <tr class="separator:ad5ab79a16872b5e95e896dc619055a16"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a195dd2201b3114f05f1aaa1a8ccbd190" id="r_a195dd2201b3114f05f1aaa1a8ccbd190"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcli_1_1commands_1_1_command.html">Command</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a195dd2201b3114f05f1aaa1a8ccbd190">withFlagArgument</a> (<a class="el" href="classcli_1_1commands_1_1_flag_argument.html">FlagArgument</a> &amp;&amp;arg)</td></tr>
 <tr class="memdesc:a195dd2201b3114f05f1aaa1a8ccbd190"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a flag argument to the command.  <br /></td></tr>
 <tr class="separator:a195dd2201b3114f05f1aaa1a8ccbd190"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a82b0eaa62edbf9c488e791abd7137d90" id="r_a82b0eaa62edbf9c488e791abd7137d90"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcli_1_1commands_1_1_command.html">Command</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a82b0eaa62edbf9c488e791abd7137d90">withFlagArgument</a> (<a class="el" href="classcli_1_1commands_1_1_flag_argument.html">FlagArgument</a> &amp;arg)</td></tr>
+<tr class="memdesc:a82b0eaa62edbf9c488e791abd7137d90"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a flag argument to the command.  <br /></td></tr>
+<tr class="separator:a82b0eaa62edbf9c488e791abd7137d90"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a111b97d392aa02d6b6c6e9141658dff8" id="r_a111b97d392aa02d6b6c6e9141658dff8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcli_1_1commands_1_1_command.html">Command</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a111b97d392aa02d6b6c6e9141658dff8">withExecutionFunc</a> (std::unique_ptr&lt; std::function&lt; void(const <a class="el" href="classcli_1_1_cli_context.html">CliContext</a> &amp;)&gt; &gt; actionPtr)</td></tr>
 <tr class="memdesc:a111b97d392aa02d6b6c6e9141658dff8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the execution function for the command.  <br /></td></tr>
 <tr class="separator:a111b97d392aa02d6b6c6e9141658dff8"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -218,7 +232,7 @@ std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operato
 <p>A command can have subcommands, arguments (positional, option, flag), and an execution function. Commands can be nested to create a hierarchy of commands and subcommands. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a39ab6dace402c441139db6a38e68f219" name="a39ab6dace402c441139db6a38e68f219"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a39ab6dace402c441139db6a38e68f219">&#9670;&#160;</a></span>Command() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a39ab6dace402c441139db6a38e68f219">&#9670;&#160;</a></span>Command() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -267,8 +281,58 @@ std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operato
 
 </div>
 </div>
+<a id="a6826245f0465f1678d9101cd1a35c865" name="a6826245f0465f1678d9101cd1a35c865"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6826245f0465f1678d9101cd1a35c865">&#9670;&#160;</a></span>Command() <span class="overload">[2/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">cli::commands::Command::Command </td>
+          <td>(</td>
+          <td class="paramtype">std::string_view</td>          <td class="paramname"><span class="paramname"><em>id</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string_view</td>          <td class="paramname"><span class="paramname"><em>short_desc</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string_view</td>          <td class="paramname"><span class="paramname"><em>long_desc</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::function&lt; void(const <a class="el" href="classcli_1_1_cli_context.html">CliContext</a> &amp;)&gt;</td>          <td class="paramname"><span class="paramname"><em>action</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Construct a new <a class="el" href="classcli_1_1commands_1_1_command.html" title="Represents a command in the CLI application.">Command</a> object. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">id</td><td>The unique identifier for the command. </td></tr>
+    <tr><td class="paramname">short_desc</td><td>A short description of the command. </td></tr>
+    <tr><td class="paramname">long_desc</td><td>A long description of the command. </td></tr>
+    <tr><td class="paramname">action</td><td>A function to execute when the command is called. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="a86aaa63d75fea520f71b0189372523ad" name="a86aaa63d75fea520f71b0189372523ad"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a86aaa63d75fea520f71b0189372523ad">&#9670;&#160;</a></span>Command() <span class="overload">[2/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a86aaa63d75fea520f71b0189372523ad">&#9670;&#160;</a></span>Command() <span class="overload">[3/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -799,7 +863,7 @@ requires ((sizeof...(Args) &gt; 0) &amp;&amp; (std::derived_from&lt;std::remove_
 </div>
 </div>
 <a id="a195dd2201b3114f05f1aaa1a8ccbd190" name="a195dd2201b3114f05f1aaa1a8ccbd190"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a195dd2201b3114f05f1aaa1a8ccbd190">&#9670;&#160;</a></span>withFlagArgument() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a195dd2201b3114f05f1aaa1a8ccbd190">&#9670;&#160;</a></span>withFlagArgument() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -825,8 +889,35 @@ requires ((sizeof...(Args) &gt; 0) &amp;&amp; (std::derived_from&lt;std::remove_
 
 </div>
 </div>
+<a id="a82b0eaa62edbf9c488e791abd7137d90" name="a82b0eaa62edbf9c488e791abd7137d90"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a82b0eaa62edbf9c488e791abd7137d90">&#9670;&#160;</a></span>withFlagArgument() <span class="overload">[2/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcli_1_1commands_1_1_command.html">Command</a> &amp; cli::commands::Command::withFlagArgument </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classcli_1_1commands_1_1_flag_argument.html">FlagArgument</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>arg</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Add a flag argument to the command. </p>
+<dl class="section note"><dt>Note</dt><dd>Arguments appear on the command line help messages in the order they were added to the command. </dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">arg</td><td>The flag argument to set. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A reference to this command. </dd></dl>
+
+</div>
+</div>
 <a id="ad5ab79a16872b5e95e896dc619055a16" name="ad5ab79a16872b5e95e896dc619055a16"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad5ab79a16872b5e95e896dc619055a16">&#9670;&#160;</a></span>withFlagArgument() <span class="overload">[2/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ad5ab79a16872b5e95e896dc619055a16">&#9670;&#160;</a></span>withFlagArgument() <span class="overload">[3/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -922,7 +1013,7 @@ requires ((sizeof...(Args) &gt; 0) &amp;&amp; (std::derived_from&lt;std::remove_
 </div>
 </div>
 <a id="a83be9d2f01bf907268473b0d5942cd4f" name="a83be9d2f01bf907268473b0d5942cd4f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a83be9d2f01bf907268473b0d5942cd4f">&#9670;&#160;</a></span>withOptionArgument() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a83be9d2f01bf907268473b0d5942cd4f">&#9670;&#160;</a></span>withOptionArgument() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -964,8 +1055,51 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
+<a id="a99ffa96bfb906a9a490a611084061ec3" name="a99ffa96bfb906a9a490a611084061ec3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a99ffa96bfb906a9a490a611084061ec3">&#9670;&#160;</a></span>withOptionArgument() <span class="overload">[2/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcli_1_1commands_1_1_command.html">Command</a> &amp; cli::commands::Command::withOptionArgument </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classcli_1_1commands_1_1_option_argument.html">OptionArgument</a>&lt; T &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>arg</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Add an option argument to the command. </p>
+<dl class="section note"><dt>Note</dt><dd>Arguments appear on the command line help messages in the order they were added to the command. </dd></dl>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">T</td><td>The type of the option argument. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">arg</td><td>The option argument to set. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A reference to this command. </dd></dl>
+
+</div>
+</div>
 <a id="a53392e47cf57dc2285896a4dac23b869" name="a53392e47cf57dc2285896a4dac23b869"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a53392e47cf57dc2285896a4dac23b869">&#9670;&#160;</a></span>withOptionArgument() <span class="overload">[2/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a53392e47cf57dc2285896a4dac23b869">&#9670;&#160;</a></span>withOptionArgument() <span class="overload">[3/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1008,7 +1142,7 @@ template&lt;typename T &gt; </div>
 </div>
 </div>
 <a id="a4ea81a06cc5c61cab0fa16ccefb2cb31" name="a4ea81a06cc5c61cab0fa16ccefb2cb31"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4ea81a06cc5c61cab0fa16ccefb2cb31">&#9670;&#160;</a></span>withPositionalArgument() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a4ea81a06cc5c61cab0fa16ccefb2cb31">&#9670;&#160;</a></span>withPositionalArgument() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1050,8 +1184,51 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
+<a id="ad42b3992e6d822433a0f93836a85ea2f" name="ad42b3992e6d822433a0f93836a85ea2f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad42b3992e6d822433a0f93836a85ea2f">&#9670;&#160;</a></span>withPositionalArgument() <span class="overload">[2/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcli_1_1commands_1_1_command.html">Command</a> &amp; cli::commands::Command::withPositionalArgument </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classcli_1_1commands_1_1_positional_argument.html">PositionalArgument</a>&lt; T &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>arg</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Add a positional argument to the command. </p>
+<dl class="section note"><dt>Note</dt><dd>Arguments appear on the command line help messages in the order they were added to the command. </dd></dl>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">T</td><td>The type of the positional argument. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">arg</td><td>The positional argument to set. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A reference to this command. </dd></dl>
+
+</div>
+</div>
 <a id="aa66976acd7b2a1e83dfa09dbe794cbd0" name="aa66976acd7b2a1e83dfa09dbe794cbd0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa66976acd7b2a1e83dfa09dbe794cbd0">&#9670;&#160;</a></span>withPositionalArgument() <span class="overload">[2/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aa66976acd7b2a1e83dfa09dbe794cbd0">&#9670;&#160;</a></span>withPositionalArgument() <span class="overload">[3/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">

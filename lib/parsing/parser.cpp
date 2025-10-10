@@ -28,7 +28,7 @@
 namespace cli::parsing
 {
 std::any Parser::parseRepeatableList(const cli::commands::TypedArgumentBase &arg,
-                                           const std::string &input) const
+                                     const std::string &input) const
 {
     std::stringstream ss(input);
     std::string token;
@@ -55,8 +55,8 @@ std::any Parser::parseRepeatableList(const cli::commands::TypedArgumentBase &arg
     return parsedValues;
 }
 
-void Parser::parseRepeatable(const cli::commands::OptionArgumentBase &arg,
-                                   const std::string &input, ContextBuilder &contextBuilder) const
+void Parser::parseRepeatable(const cli::commands::OptionArgumentBase &arg, const std::string &input,
+                             ContextBuilder &contextBuilder) const
 {
     auto values = parseRepeatableList(arg, input);
     contextBuilder.addOptionArgument(arg.getShortName(), values);
@@ -64,7 +64,7 @@ void Parser::parseRepeatable(const cli::commands::OptionArgumentBase &arg,
 }
 
 void Parser::parseRepeatable(const cli::commands::PositionalArgumentBase &arg,
-                                   const std::string &input, ContextBuilder &contextBuilder) const
+                             const std::string &input, ContextBuilder &contextBuilder) const
 {
     auto values = parseRepeatableList(arg, input);
     contextBuilder.addPositionalArgument(arg.getName(), values);
@@ -131,8 +131,8 @@ bool Parser::tryFlagArg(
 }
 
 void cli::parsing::Parser::parseArguments(const cli::commands::Command &command,
-                                                const std::vector<std::string> &inputs,
-                                                ContextBuilder &contextBuilder) const
+                                          const std::vector<std::string> &inputs,
+                                          ContextBuilder &contextBuilder) const
 {
     const auto &posArguments = command.getPositionalArguments();
     const auto &optArguments = command.getOptionArguments();
@@ -175,7 +175,7 @@ void cli::parsing::Parser::parseArguments(const cli::commands::Command &command,
 
         ++posArgsIndex;
     }
-    checkGroups(command, contextBuilder);
+    checkGroupsAndRequired(command, contextBuilder);
 }
 
 inline_t void exclusiveCheck(const commands::ArgumentGroup *argGroup,
@@ -214,8 +214,19 @@ inline_t void inclusiveCheck(const commands::ArgumentGroup *argGroup,
     }
 }
 
-void Parser::checkGroups(const cli::commands::Command &command,
-                               const ContextBuilder &contextBuilder) const
+inline_t void checkRequired(const commands::ArgumentGroup *argGroup, const ContextBuilder &contextBuilder)
+{
+    for (const auto &argPtr : argGroup->getArguments())
+    {
+        if (argPtr->isRequired() && !contextBuilder.isArgPresent(std::string(argPtr->getName())))
+        {
+            throw ParseException("A required argument was not present");
+        }
+    }
+}
+
+void Parser::checkGroupsAndRequired(const cli::commands::Command &command,
+                         const ContextBuilder &contextBuilder) const
 {
     for (const auto &argGroup : command.getArgumentGroups())
     {
@@ -227,6 +238,8 @@ void Parser::checkGroups(const cli::commands::Command &command,
         {
             inclusiveCheck(argGroup.get(), contextBuilder);
         }
+        checkRequired(argGroup.get(), contextBuilder);
     }
 }
+
 } // namespace cli::parsing

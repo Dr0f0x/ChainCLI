@@ -28,8 +28,8 @@ namespace cli::commands
 {
 // untemplated base class for storing in same STL
 
-/// @brief Untemplated Base class for positional arguments in the CLI. Used to store all positional arguments
-/// in a single container.
+/// @brief Untemplated Base class for positional arguments in the CLI. Used to store all positional
+/// arguments in a single container.
 class PositionalArgumentBase : public TypedArgumentBase, public ArgumentBase
 {
 public:
@@ -101,6 +101,10 @@ public:
         repeatable = rep;
         return *this;
     }
+
+    PositionalArgument<T> &&create() { return std::move(*this); }
+
+#pragma endregion ChainingMethods
 };
 
 template <typename T>
@@ -108,4 +112,20 @@ inline std::any PositionalArgument<T>::parseToValue(const std::string &input) co
 {
     return cli::parsing::ParseHelper::parse<T>(input);
 }
+
+template <typename T> PositionalArgument<T> &createPositionalArgument(std::string_view id)
+{
+    static thread_local PositionalArgument<T> instance(id);
+    return instance;
+}
+
+template <typename T>
+PositionalArgument<T> &createPositionalArgument(std::string_view id,
+                                                std::string_view optionsComment, bool required,
+                                                bool repeatable)
+{
+    static thread_local PositionalArgument<T> instance(id, optionsComment, required, repeatable);
+    return instance;
+}
+
 } // namespace cli::commands

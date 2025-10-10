@@ -34,6 +34,7 @@ var searchData=
   ['getstream_31',['getStream',['../classcli_1_1logging_1_1_logger.html#acc755c7d87d6bd2d53723654a35ca656',1,'cli::logging::Logger']]],
   ['getsubcommand_32',['getSubCommand',['../classcli_1_1commands_1_1_command.html#a76a595e6e56bb93cadb54864a4eb5d69',1,'cli::commands::Command::getSubCommand(std::string_view id)'],['../classcli_1_1commands_1_1_command.html#a95ecc220cf78568825c02583d40bb8d1',1,'cli::commands::Command::getSubCommand(std::string_view id) const']]],
   ['getsubcommands_33',['getSubCommands',['../classcli_1_1commands_1_1_command.html#ac4f3182d35a7f220bc042fc7866a984a',1,'cli::commands::Command::getSubCommands()'],['../classcli_1_1commands_1_1_command.html#afb0ab060c3c01b31d024554de9a20ba1',1,'cli::commands::Command::getSubCommands() const']]],
-  ['gettype_34',['getType',['../classcli_1_1commands_1_1_typed_argument_base.html#ac459f5f9a155348801be2b95daf9e676',1,'cli::commands::TypedArgumentBase']]],
-  ['groupparseexception_35',['GroupParseException',['../classcli_1_1parsing_1_1_group_parse_exception.html',1,'cli::parsing']]]
+  ['getting_20started_34',['📚 Getting Started',['../C:/Users/dczek/Desktop/C_C++/CliLib/docs/mainpage.md#autotoc_md2',1,'']]],
+  ['gettype_35',['getType',['../classcli_1_1commands_1_1_typed_argument_base.html#ac459f5f9a155348801be2b95daf9e676',1,'cli::commands::TypedArgumentBase']]],
+  ['groupparseexception_36',['GroupParseException',['../classcli_1_1parsing_1_1_group_parse_exception.html',1,'cli::parsing']]]
 ];

@@ -34,7 +34,7 @@ void BaseHandler::emit(const LogRecord &record) const
         auto it = styleMapPtr->find(record.level);
         if (it != styleMapPtr->end())
         {
-            formatted = it->second + formatted + "\o{33}[0m"; // reset style
+            formatted = it->second + formatted + "\033[0m"; // reset style
         }
     }
 

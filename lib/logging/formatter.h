@@ -35,8 +35,8 @@ public:
     virtual std::string format(const LogRecord &record) const = 0;
 };
 
-
-/// @brief Basic implementation of a log record formatter that includes timestamp, log level, and message.
+/// @brief Basic implementation of a log record formatter that includes timestamp, log level, and
+/// message.
 class BasicFormatter : public AbstractFormatter
 {
 public:
@@ -45,7 +45,6 @@ public:
 private:
     const std::chrono::time_zone *timezone = std::chrono::current_zone();
 };
-
 
 /// @brief Formatter that displays only the message of the log record.
 class MessageOnlyFormatter : public AbstractFormatter

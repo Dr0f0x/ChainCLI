@@ -8,7 +8,8 @@ add_executable(
 
 target_link_libraries(
   ${UNIT_TEST_SOLITARY_EXE_NAME}
-  PUBLIC ${LIBRARY_NAME_STATIC}
+  PRIVATE
+  ${LIBRARY_NAME_STATIC}
   GTest::gtest_main
   GTest::gmock
   GTest::gmock_main
@@ -16,7 +17,8 @@ target_link_libraries(
 
 target_link_libraries(
   ${UNIT_TEST_SOCIABLE_EXE_NAME}
-  PUBLIC ${LIBRARY_NAME_STATIC}
+  PRIVATE
+  ${LIBRARY_NAME_STATIC}
   GTest::gtest_main
   GTest::gmock
   GTest::gmock_main

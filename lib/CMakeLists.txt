@@ -57,3 +57,13 @@ target_include_directories(${LIBRARY_NAME_STATIC}
 target_include_directories(${LIBRARY_NAME_SHARED}
     PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
 )
+
+# Apply clang-tidy only to our library targets (not external dependencies)
+if(DEFINED CLANG_TIDY_COMMAND)
+    set_target_properties(${LIBRARY_NAME_STATIC} PROPERTIES
+        CXX_CLANG_TIDY "${CLANG_TIDY_COMMAND}"
+    )
+    set_target_properties(${LIBRARY_NAME_SHARED} PROPERTIES
+        CXX_CLANG_TIDY "${CLANG_TIDY_COMMAND}"
+    )
+endif()

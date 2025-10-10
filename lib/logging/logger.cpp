@@ -24,12 +24,15 @@ Logger::Logger(LogLevel lvl) : minLevel(lvl)
     auto logFuncPtr = std::make_shared<std::function<void(LogLevel, const std::string &)>>(
         [this](LogLevel level, const std::string &msg) { this->logInternal(level, msg); });
 
-    for (int i = std::to_underlying(LogLevel::TRACE); i <= std::to_underlying(LogLevel::ERROR); ++i)
+    for (int i = static_cast<int>(LogLevel::TRACE); i <= static_cast<int>(LogLevel::ERROR); ++i)
     {
         auto level = static_cast<LogLevel>(i);
         buffers[level] = std::make_unique<LogStreamBuf>(logFuncPtr, level, minLevel);
         streams[level] = std::make_unique<std::ostream>(buffers[level].get());
     }
+
+    // add default console handler
+    addHandler(std::make_unique<ConsoleHandler>(std::make_shared<MessageOnlyFormatter>(), LogLevel::TRACE));
 }
 
 void Logger::setLevel(LogLevel lvl)

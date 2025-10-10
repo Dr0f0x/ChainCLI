@@ -24,6 +24,7 @@ jobs:
         cmake -B ${{ steps.strings.outputs.build-output-dir }}
         -DBUILD_TOOLS=OFF
         -DBUILD_DEMO=OFF
+        -DRUN_CLANG_TIDY=ON
         -DBUILD_TESTS=ON
         -DBUILD_LIB=ON
         -DCMAKE_CXX_COMPILER=clang++

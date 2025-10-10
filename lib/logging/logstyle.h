@@ -21,9 +21,9 @@
 #include "loglevel.h"
 
 #if defined(_MSC_VER)
-  #define ESC "\x1B"
+#define ESC "\x1B"
 #else
-  #define ESC "\o{33}"
+#define ESC "\033"
 #endif
 
 namespace cli::logging
