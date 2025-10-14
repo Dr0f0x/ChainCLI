@@ -4,6 +4,7 @@ target_sources(${LIBRARY_NAME_STATIC}
         docwriting.cpp
         docformatter.h
         docformatter.cpp
+        docs_exception.h
 )
 
 target_sources(${LIBRARY_NAME_SHARED}
@@ -12,4 +13,5 @@ target_sources(${LIBRARY_NAME_SHARED}
         docwriting.cpp
         docformatter.h
         docformatter.cpp
+        docs_exception.h
 )

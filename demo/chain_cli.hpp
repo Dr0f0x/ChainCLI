@@ -993,9 +993,17 @@ private:
 
 
 
+// begin --- context_exception.h --- 
+
+#pragma once
+#include <stdexcept>
+#include <string>
+#include <unordered_map>
+#include <any>
+
 namespace cli
 {
-class MissingArgumentException : public std::runtime_error
+    class MissingArgumentException : public std::runtime_error
 {
 public:
     MissingArgumentException(const std::string &name,
@@ -1022,6 +1030,15 @@ private:
     static std::string makeMessage(const std::string &name, const std::type_info &requested,
                                    const std::type_info &actual);
 };
+} // namespace cli
+
+
+// end --- context_exception.h --- 
+
+
+
+namespace cli
+{
 
 /// @brief Represents the context of a command-line interface (CLI) invocation and as such contains
 /// the parsed values (if present for all Arguments)
@@ -1288,6 +1305,7 @@ private:
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <format>
 
 // begin --- parse_exception.h --- 
 
@@ -1309,22 +1327,104 @@ private:
 
 #pragma once
 #include <stdexcept>
+#include <typeinfo>
+#include <format>
 
 namespace cli::parsing
 {
-
-/// @brief Exception thrown when parsing fails.
+/// @brief Exception thrown when parsing for an argument fails.
 class ParseException : public std::runtime_error
 {
 public:
-    using runtime_error::runtime_error;
+    /// @brief Construct a ParseException with a message, input string, and argument
+    /// @param message The error message
+    /// @param input The input string that failed to parse
+    /// @param argument The argument that failed to parse
+    ParseException(const std::string &message, const std::string &input, const cli::commands::ArgumentBase &argument)
+        : std::runtime_error(message), input(input), argument(argument)
+    {
+    }
+
+    /// @brief Construct a ParseException with default message, input string, and argument
+    /// @param input The input string that failed to parse
+    /// @param argument The argument that failed to parse
+    ParseException(const std::string &input, const cli::commands::ArgumentBase &argument)
+        : ParseException(std::format("Failed to parse input '{}' for argument: {}", input, argument.getName()), input, argument)
+    {
+    }
+
+    /// @brief Gets the input string that failed to parse
+    /// @return the input string
+    const std::string &getInput() const noexcept { return input; }
+
+    /// @brief Gets the argument that failed to parse
+    /// @return reference to the argument
+    const cli::commands::ArgumentBase &getArgument() const noexcept { return argument; }
+
+private:
+    std::string input;
+    const cli::commands::ArgumentBase &argument;
+};
+
+/// @brief Exception thrown when the input string cannot be parsed to the needed type for an argument.
+class TypeParseException : public std::runtime_error
+{
+public:
+    /// @brief Construct a TypeParseException with a message, input string, and target type
+    /// @param message The error message
+    /// @param input The input string that couldn't be parsed
+    /// @param targetType The type it couldn't be parsed to
+    TypeParseException(const std::string &message, const std::string &input, const std::type_info &targetType)
+        : std::runtime_error(message), input(input), targetType(targetType)
+    {
+    }
+
+    /// @brief Construct a TypeParseException with default message, input string, and target type
+    /// @param input The input string that couldn't be parsed
+    /// @param targetType The type it couldn't be parsed to
+    TypeParseException(const std::string &input, const std::type_info &targetType)
+        : TypeParseException(std::format("Could not parse '{}' to type '{}'", input, targetType.name()), input, targetType)
+    {
+    }
+
+    /// @brief Gets the input string that failed to parse
+    /// @return the input string
+    const std::string &getInput() const noexcept { return input; }
+
+    /// @brief Gets the target type that the input couldn't be parsed to
+    /// @return reference to the target type info
+    const std::type_info &getTargetType() const noexcept { return targetType; }
+
+private:
+    std::string input;
+    const std::type_info &targetType;
 };
 
 /// @brief Exception thrown when parsing a group of arguments fails.
 class GroupParseException : public std::runtime_error
 {
 public:
-    using runtime_error::runtime_error;
+    /// @brief Construct a GroupParseException with a message and argument group
+    /// @param message The error message
+    /// @param argumentGroup The argument group that failed to parse
+    GroupParseException(const std::string &message, const cli::commands::ArgumentGroup &argumentGroup)
+        : std::runtime_error(message), argumentGroup(argumentGroup)
+    {
+    }
+
+    /// @brief Construct a GroupParseException with default message and argument group
+    /// @param argumentGroup The argument group that failed to parse
+    explicit GroupParseException(const cli::commands::ArgumentGroup &argumentGroup)
+        : GroupParseException(std::format("Failed to parse argument group"), argumentGroup)
+    {
+    }
+
+    /// @brief Gets the argument group that failed to parse
+    /// @return reference to the argument group
+    const cli::commands::ArgumentGroup &getArgumentGroup() const noexcept { return argumentGroup; }
+
+private:
+    const cli::commands::ArgumentGroup &argumentGroup;
 };
 
 } // namespace cli::parsing
@@ -1357,7 +1457,7 @@ struct ParseHelper
             iss >> value;
             if (iss.fail() || !iss.eof())
             {
-                throw ParseException("Failed to parse value from input: " + input);
+                throw TypeParseException(std::format("Failed to parse value of type {} from input: {}", typeid(T).name(), input), input, typeid(T));
             }
         }
 
@@ -2484,13 +2584,6 @@ public:
 namespace cli::commands::docwriting
 {
 
-/// @brief Exception thrown when documentation strings of a command are not built.
-class DocsNotBuildException : public std::runtime_error
-{
-public:
-    using runtime_error::runtime_error;
-};
-
 /// @brief Documentation writer for CLI commands. Consists of formatters for commands and arguments.
 class DocWriter
 {
@@ -3014,8 +3107,6 @@ CliApp &CliApp::withCommand(commands::Command &&subCommand)
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <sstream>
-
 namespace cli
 {
 
@@ -3039,40 +3130,6 @@ bool CliContext::isArgPresent(const std::string &argName) const
     return isOptionArgPresent(argName) || isFlagPresent(argName) || isPositionalArgPresent(argName);
 }
 
-std::string MissingArgumentException::makeMessage(
-    const std::string &name, const std::unordered_map<std::string, std::any> &args)
-{
-    std::ostringstream oss;
-    oss << "Missing argument: \"" << name << "\" was not passed in this context.\n";
-    oss << "Available arguments: ";
-    if (args.empty())
-    {
-        oss << "<none>";
-    }
-    else
-    {
-        bool first = true;
-        for (auto &[k, _] : args)
-        {
-            if (!first)
-                oss << ", ";
-            oss << k;
-            first = false;
-        }
-    }
-    return oss.str();
-}
-
-std::string InvalidArgumentTypeException::makeMessage(const std::string &name,
-                                                      const std::type_info &requested,
-                                                      const std::type_info &actual)
-{
-    std::ostringstream oss;
-    oss << "Invalid type for argument: \"" << name << "\"\n"
-        << "Requested type: " << requested.name() << "\n"
-        << "Actual type: " << actual.name();
-    return oss.str();
-}
 } // namespace cli
 
 // end --- cli_context.cpp --- 
@@ -3136,6 +3193,41 @@ bool ArgumentGroup::isRequired() const
 #include <format>
 #include <iostream>
 
+// begin --- docs_exception.h --- 
+
+#pragma once
+#include <stdexcept>
+#include <string>
+#include <format>
+
+namespace cli::commands::docwriting
+{
+    /// @brief Exception thrown when documentation strings of a command are not built.
+class DocsNotBuildException : public std::runtime_error
+{
+public:
+    /// @brief Construct a DocsNotBuildException with a message and command
+    /// @param message The error message
+    /// @param command The command whose docs weren't built
+    DocsNotBuildException(const std::string &message, const Command &command)
+        : std::runtime_error(message), command(command)
+    {
+    }
+
+    /// @brief Gets the command whose documentation wasn't built
+    /// @return reference to the command
+    const Command &getCommand() const noexcept { return command; }
+
+private:
+    const Command &command;
+};
+} // namespace cli::commands::docwriting
+
+
+// end --- docs_exception.h --- 
+
+
+
 namespace cli::commands
 {
 
@@ -3144,7 +3236,7 @@ std::string_view Command::getDocStringShort() const
     if (docStringShort.empty())
     {
         throw docwriting::DocsNotBuildException(
-            std::format("Short documentation string not built for command '{}'.", identifier));
+            std::format("Short documentation string not built for command '{}'.", identifier), *this);
     }
     return docStringShort;
 }
@@ -3154,7 +3246,7 @@ std::string_view Command::getDocStringLong() const
     if (docStringLong.empty())
     {
         throw docwriting::DocsNotBuildException(
-            std::format("Long documentation string not built for command '{}'.", identifier));
+            std::format("Long documentation string not built for command '{}'.", identifier), *this);
     }
     return docStringLong;
 }
@@ -3920,6 +4012,53 @@ std::unique_ptr<CliContext> ContextBuilder::build(cli::logging::Logger &logger)
 
 
 
+// begin --- context_exception.cpp --- 
+
+
+#include <sstream>
+
+namespace cli
+{
+    std::string MissingArgumentException::makeMessage(
+    const std::string &name, const std::unordered_map<std::string, std::any> &args)
+{
+    std::ostringstream oss;
+    oss << "Missing argument: \"" << name << "\" was not passed in this context.\n";
+    oss << "Available arguments: ";
+    if (args.empty())
+    {
+        oss << "<none>";
+    }
+    else
+    {
+        bool first = true;
+        for (auto &[k, _] : args)
+        {
+            if (!first)
+                oss << ", ";
+            oss << k;
+            first = false;
+        }
+    }
+    return oss.str();
+}
+
+std::string InvalidArgumentTypeException::makeMessage(const std::string &name,
+                                                      const std::type_info &requested,
+                                                      const std::type_info &actual)
+{
+    std::ostringstream oss;
+    oss << "Invalid type for argument: \"" << name << "\"\n"
+        << "Requested type: " << requested.name() << "\n"
+        << "Actual type: " << actual.name();
+    return oss.str();
+}
+} //namespace cli
+
+// end --- context_exception.cpp --- 
+
+
+
 // begin --- formatter.cpp --- 
 
 // Copyright 2025 Dominik Czekai
@@ -4216,7 +4355,7 @@ bool Parser::tryOptionArg(
             if (!matchedOpt->isRepeatable() &&
                 contextBuilder.isArgPresent(std::string(matchedOpt->getName())))
             {
-                throw ParseException("Non Repeatable Argument was repeated");
+                throw ParseException(std::format("Non Repeatable Argument {} was repeated", matchedOpt->getName()), inputs[index + 1], *matchedOpt);
             }
 
             auto val = matchedOpt->parseToValue(inputs[index + 1]);
@@ -4276,7 +4415,7 @@ void cli::parsing::Parser::parseArguments(const cli::commands::Command &command,
 
         if (posArgsIndex >= posArguments.size())
         {
-            throw ParseException("More positional arguments provided than command accepts");
+            throw ParseException("More positional arguments were provided than the command accepts", input, *(posArguments.back()));
         }
 
         if (const auto &posArg = *posArguments.at(posArgsIndex); posArg.isRepeatable())
@@ -4288,7 +4427,7 @@ void cli::parsing::Parser::parseArguments(const cli::commands::Command &command,
             if (!posArg.isRepeatable() &&
                 contextBuilder.isArgPresent(std::string(posArg.getName())))
             {
-                throw ParseException("Non Repeatable Argument was repeated");
+                throw ParseException(std::format("Non Repeatable Argument {} was repeated", posArg.getName()), input, posArg);
             }
             auto val = posArg.parseToValue(input);
             contextBuilder.addPositionalArgument(posArg.getName(), val);
@@ -4312,7 +4451,7 @@ inline void exclusiveCheck(const commands::ArgumentGroup *argGroup,
         }
         else if (contextBuilder.isArgPresent(std::string(argPtr->getName())))
         {
-            throw GroupParseException("Two arguments of mutually exclusive group were present");
+            throw GroupParseException(std::format("Two arguments of mutually exclusive group were present: {} and {}", firstProvided->getName(), argPtr->getName()), *argGroup);
         }
     }
 }
@@ -4330,7 +4469,7 @@ inline void inclusiveCheck(const commands::ArgumentGroup *argGroup,
         }
         else if (!contextBuilder.isArgPresent(std::string(argPtr->getName())))
         {
-            throw GroupParseException("Not all arguments of mutually inclusive group were present");
+            throw GroupParseException(std::format("Missing argument in mutually exclusive group: {}", argPtr->getName()), *argGroup);
         }
     }
 }
@@ -4341,7 +4480,7 @@ inline void checkRequired(const commands::ArgumentGroup *argGroup, const Context
     {
         if (argPtr->isRequired() && !contextBuilder.isArgPresent(std::string(argPtr->getName())))
         {
-            throw ParseException("A required argument was not present");
+            throw ParseException(std::format("Required argument {} is missing", argPtr->getName()),"", *argPtr);
         }
     }
 }

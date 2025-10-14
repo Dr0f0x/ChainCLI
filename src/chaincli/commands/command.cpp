@@ -18,6 +18,7 @@
 #include <iostream>
 
 #include "cli_app.h"
+#include "docwriting/docs_exception.h"
 #include "docwriting/docwriting.h"
 
 namespace cli::commands
@@ -28,7 +29,7 @@ std::string_view Command::getDocStringShort() const
     if (docStringShort.empty())
     {
         throw docwriting::DocsNotBuildException(
-            std::format("Short documentation string not built for command '{}'.", identifier));
+            std::format("Short documentation string not built for command '{}'.", identifier), *this);
     }
     return docStringShort;
 }
@@ -38,7 +39,7 @@ std::string_view Command::getDocStringLong() const
     if (docStringLong.empty())
     {
         throw docwriting::DocsNotBuildException(
-            std::format("Long documentation string not built for command '{}'.", identifier));
+            std::format("Long documentation string not built for command '{}'.", identifier), *this);
     }
     return docStringLong;
 }

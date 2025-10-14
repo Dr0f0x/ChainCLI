@@ -95,7 +95,7 @@ bool Parser::tryOptionArg(
             if (!matchedOpt->isRepeatable() &&
                 contextBuilder.isArgPresent(std::string(matchedOpt->getName())))
             {
-                throw ParseException("Non Repeatable Argument was repeated");
+                throw ParseException(std::format("Non Repeatable Argument {} was repeated", matchedOpt->getName()), inputs[index + 1], *matchedOpt);
             }
 
             auto val = matchedOpt->parseToValue(inputs[index + 1]);
@@ -155,7 +155,7 @@ void cli::parsing::Parser::parseArguments(const cli::commands::Command &command,
 
         if (posArgsIndex >= posArguments.size())
         {
-            throw ParseException("More positional arguments provided than command accepts");
+            throw ParseException("More positional arguments were provided than the command accepts", input, *(posArguments.back()));
         }
 
         if (const auto &posArg = *posArguments.at(posArgsIndex); posArg.isRepeatable())
@@ -167,7 +167,7 @@ void cli::parsing::Parser::parseArguments(const cli::commands::Command &command,
             if (!posArg.isRepeatable() &&
                 contextBuilder.isArgPresent(std::string(posArg.getName())))
             {
-                throw ParseException("Non Repeatable Argument was repeated");
+                throw ParseException(std::format("Non Repeatable Argument {} was repeated", posArg.getName()), input, posArg);
             }
             auto val = posArg.parseToValue(input);
             contextBuilder.addPositionalArgument(posArg.getName(), val);
@@ -191,7 +191,7 @@ inline_t void exclusiveCheck(const commands::ArgumentGroup *argGroup,
         }
         else if (contextBuilder.isArgPresent(std::string(argPtr->getName())))
         {
-            throw GroupParseException("Two arguments of mutually exclusive group were present");
+            throw GroupParseException(std::format("Two arguments of mutually exclusive group were present: {} and {}", firstProvided->getName(), argPtr->getName()), *argGroup);
         }
     }
 }
@@ -209,7 +209,7 @@ inline_t void inclusiveCheck(const commands::ArgumentGroup *argGroup,
         }
         else if (!contextBuilder.isArgPresent(std::string(argPtr->getName())))
         {
-            throw GroupParseException("Not all arguments of mutually inclusive group were present");
+            throw GroupParseException(std::format("Missing argument in mutually exclusive group: {}", argPtr->getName()), *argGroup);
         }
     }
 }
@@ -220,7 +220,7 @@ inline_t void checkRequired(const commands::ArgumentGroup *argGroup, const Conte
     {
         if (argPtr->isRequired() && !contextBuilder.isArgPresent(std::string(argPtr->getName())))
         {
-            throw ParseException("A required argument was not present");
+            throw ParseException(std::format("Required argument {} is missing", argPtr->getName()),"", *argPtr);
         }
     }
 }

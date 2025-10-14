@@ -18,6 +18,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <format>
 
 #include "parse_exception.h"
 
@@ -45,7 +46,7 @@ struct ParseHelper
             iss >> value;
             if (iss.fail() || !iss.eof())
             {
-                throw ParseException("Failed to parse value from input: " + input);
+                throw TypeParseException(std::format("Failed to parse value of type {} from input: {}", typeid(T).name(), input), input, typeid(T));
             }
         }
 

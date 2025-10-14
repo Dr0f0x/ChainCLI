@@ -7,6 +7,8 @@ add_library(${LIBRARY_NAME_STATIC} STATIC
     cli_context.cpp
     context_builder.h
     context_builder.cpp
+    context_exception.h
+    context_exception.cpp
 )
 
 add_library(${LIBRARY_NAME_SHARED} SHARED
@@ -17,6 +19,8 @@ add_library(${LIBRARY_NAME_SHARED} SHARED
     cli_context.cpp
     context_builder.h
     context_builder.cpp
+    context_exception.h
+    context_exception.cpp
 )
 
 if(ENABLE_COVERAGE)

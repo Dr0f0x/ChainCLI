@@ -20,7 +20,7 @@ if(BUILD_TOOLS)
     add_custom_target(generate_header
         COMMAND "${HEADY_EXE}"     
             --define "HEADY_HEADER_ONLY"
-            --source "${CMAKE_SOURCE_DIR}/lib"
+            --source "${CMAKE_SOURCE_DIR}/src/chaincli"
             --output "${GENERATED_HEADER}"
             --recursive
             --excluded "CMakeLists.txt"

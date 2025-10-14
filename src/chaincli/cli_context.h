@@ -24,36 +24,10 @@
 #include <unordered_set>
 
 #include "logging/logger.h"
+#include "context_exception.h"
 
 namespace cli
 {
-class MissingArgumentException : public std::runtime_error
-{
-public:
-    MissingArgumentException(const std::string &name,
-                             const std::unordered_map<std::string, std::any> &args)
-        : std::runtime_error(makeMessage(name, args))
-    {
-    }
-
-private:
-    static std::string makeMessage(const std::string &name,
-                                   const std::unordered_map<std::string, std::any> &args);
-};
-
-class InvalidArgumentTypeException : public std::runtime_error
-{
-public:
-    InvalidArgumentTypeException(const std::string &name, const std::type_info &requested,
-                                 const std::type_info &actual)
-        : std::runtime_error(makeMessage(name, requested, actual))
-    {
-    }
-
-private:
-    static std::string makeMessage(const std::string &name, const std::type_info &requested,
-                                   const std::type_info &actual);
-};
 
 /// @brief Represents the context of a command-line interface (CLI) invocation and as such contains
 /// the parsed values (if present for all Arguments)

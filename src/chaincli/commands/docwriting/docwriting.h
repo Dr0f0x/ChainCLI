@@ -29,13 +29,6 @@
 namespace cli::commands::docwriting
 {
 
-/// @brief Exception thrown when documentation strings of a command are not built.
-class DocsNotBuildException : public std::runtime_error
-{
-public:
-    using runtime_error::runtime_error;
-};
-
 /// @brief Documentation writer for CLI commands. Consists of formatters for commands and arguments.
 class DocWriter
 {
