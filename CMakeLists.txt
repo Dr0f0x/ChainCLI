@@ -119,7 +119,7 @@ add_subdirectory(demo)
 
 # Build the library
 if(BUILD_LIB)
-    add_subdirectory(lib)
+    add_subdirectory(src)
 endif()
 
 # Include tests
