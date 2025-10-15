@@ -45,7 +45,7 @@ public:
                         ContextBuilder &contextBuilder) const;
 
 private:
-    std::any parseRepeatableList(const cli::commands::TypedArgumentBase &arg,
+    std::vector<std::any> parseRepeatableList(const cli::commands::TypedArgumentBase &arg,
                                  const std::string &input) const;
 
     void parseRepeatable(const cli::commands::OptionArgumentBase &arg, const std::string &input,

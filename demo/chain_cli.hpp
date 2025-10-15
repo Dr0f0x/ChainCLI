@@ -2753,6 +2753,19 @@ public:
     /// @return a reference to this ContextBuilder instance
     ContextBuilder &addPositionalArgument(std::string_view argName, std::any &val);
 
+
+    /// @brief Add a repeatable positional argument to the context being built.
+    /// @param argName the name of the repeatable positional argument
+    /// @param vals values of the repeatable positional argument
+    /// @return a reference to this ContextBuilder instance
+    ContextBuilder &addRepeatablePositionalArgument(const std::string &argName, const std::vector<std::any> &vals);
+
+    /// @brief Add a repeatable positional argument to the context being built.
+    /// @param argName the name of the repeatable positional argument
+    /// @param vals values of the repeatable positional argument
+    /// @return a reference to this ContextBuilder instance
+    ContextBuilder &addRepeatablePositionalArgument(std::string_view argName, const std::vector<std::any> &vals);
+
     /// @brief Add an optional argument to the context being built.
     /// @param argName the name of the optional argument
     /// @param val  value of the optional argument
@@ -2764,6 +2777,18 @@ public:
     /// @param val  value of the optional argument
     /// @return a reference to this ContextBuilder instance
     ContextBuilder &addOptionArgument(std::string_view argName, std::any &val);
+
+    /// @brief Add a repeatable optional argument to the context being built.
+    /// @param argName the name of the repeatable optional argument
+    /// @param vals values of the repeatable optional argument
+    /// @return a reference to this ContextBuilder instance
+    ContextBuilder &addRepeatableOptionArgument(const std::string &argName, const std::vector<std::any> &vals);
+
+    /// @brief Add a repeatable optional argument to the context being built.
+    /// @param argName the name of the repeatable optional argument
+    /// @param vals values of the repeatable optional argument
+    /// @return a reference to this ContextBuilder instance
+    ContextBuilder &addRepeatableOptionArgument(std::string_view argName, const std::vector<std::any> &vals);
 
     /// @brief Add a flag argument to the context being built.
     /// @param argName the name of the flag argument
@@ -2818,7 +2843,7 @@ public:
                         ContextBuilder &contextBuilder) const;
 
 private:
-    std::any parseRepeatableList(const cli::commands::TypedArgumentBase &arg,
+    std::vector<std::any> parseRepeatableList(const cli::commands::TypedArgumentBase &arg,
                                  const std::string &input) const;
 
     void parseRepeatable(const cli::commands::OptionArgumentBase &arg, const std::string &input,
@@ -3953,10 +3978,10 @@ std::string PositionalArgumentBase::getArgDocString(const docwriting::DocWriter 
 namespace cli
 {
 ContextBuilder::ContextBuilder()
+    : positionalArgs(std::make_unique<std::unordered_map<std::string, std::any>>()),
+      optionalArgs(std::make_unique<std::unordered_map<std::string, std::any>>()),
+      flagArgs(std::make_unique<std::unordered_set<std::string>>())
 {
-    positionalArgs = std::make_unique<std::unordered_map<std::string, std::any>>();
-    optionalArgs = std::make_unique<std::unordered_map<std::string, std::any>>();
-    flagArgs = std::make_unique<std::unordered_set<std::string>>();
 }
 
 ContextBuilder &ContextBuilder::addPositionalArgument(const std::string &argName, std::any &val)
@@ -3967,8 +3992,28 @@ ContextBuilder &ContextBuilder::addPositionalArgument(const std::string &argName
 
 ContextBuilder &ContextBuilder::addPositionalArgument(std::string_view argName, std::any &val)
 {
-    positionalArgs->try_emplace(std::string(argName), val);
+    return addPositionalArgument(std::string(argName), val);
+}
+
+ContextBuilder &ContextBuilder::addRepeatablePositionalArgument(const std::string &argName, const std::vector<std::any> &values)
+{
+    if(!positionalArgs->contains(argName))
+    {
+        positionalArgs->try_emplace(argName, values);
+    }
+    else 
+    {
+        // If the argument already exists, we need to append the new values to the existing ones
+        std::any &existingValues = positionalArgs->at(argName);
+        std::vector<std::any> &vec = std::any_cast<std::vector<std::any> &>(existingValues);
+        vec.insert(vec.end(), values.begin(), values.end());
+    }
     return *this;
+}
+
+ContextBuilder &ContextBuilder::addRepeatablePositionalArgument(std::string_view argName, const std::vector<std::any> &values)
+{
+    return addRepeatablePositionalArgument(std::string(argName), values);
 }
 
 ContextBuilder &ContextBuilder::addOptionArgument(const std::string &argName, std::any &val)
@@ -3979,8 +4024,28 @@ ContextBuilder &ContextBuilder::addOptionArgument(const std::string &argName, st
 
 ContextBuilder &ContextBuilder::addOptionArgument(std::string_view argName, std::any &val)
 {
-    optionalArgs->try_emplace(std::string(argName), val);
+    return addOptionArgument(std::string(argName), val);
+}
+
+ContextBuilder &ContextBuilder::addRepeatableOptionArgument(const std::string &argName, const std::vector<std::any> &values)
+{
+    if(!optionalArgs->contains(argName))
+    {
+        optionalArgs->try_emplace(argName, values);
+    }
+    else
+    {
+        //append to existing values if already provided
+        std::any &existingValues = optionalArgs->at(argName);
+        std::vector<std::any> &vec = std::any_cast<std::vector<std::any> &>(existingValues);
+        vec.insert(vec.end(), values.begin(), values.end());
+    }
     return *this;
+}
+
+ContextBuilder &ContextBuilder::addRepeatableOptionArgument(std::string_view argName, const std::vector<std::any> &values)
+{
+    return addRepeatableOptionArgument(std::string(argName), values);
 }
 
 ContextBuilder &ContextBuilder::addFlagArgument(const std::string &argName)
@@ -4287,7 +4352,7 @@ int LogStreamBuf::sync()
 
 namespace cli::parsing
 {
-std::any Parser::parseRepeatableList(const cli::commands::TypedArgumentBase &arg,
+std::vector<std::any> Parser::parseRepeatableList(const cli::commands::TypedArgumentBase &arg,
                                      const std::string &input) const
 {
     std::stringstream ss(input);
@@ -4319,15 +4384,14 @@ void Parser::parseRepeatable(const cli::commands::OptionArgumentBase &arg, const
                              ContextBuilder &contextBuilder) const
 {
     auto values = parseRepeatableList(arg, input);
-    contextBuilder.addOptionArgument(arg.getShortName(), values);
-    contextBuilder.addOptionArgument(arg.getName(), values);
+    contextBuilder.addRepeatableOptionArgument(arg.getName(), values);
 }
 
 void Parser::parseRepeatable(const cli::commands::PositionalArgumentBase &arg,
                              const std::string &input, ContextBuilder &contextBuilder) const
 {
     auto values = parseRepeatableList(arg, input);
-    contextBuilder.addPositionalArgument(arg.getName(), values);
+    contextBuilder.addRepeatablePositionalArgument(arg.getName(), values);
 }
 
 bool Parser::tryOptionArg(
@@ -4360,9 +4424,7 @@ bool Parser::tryOptionArg(
 
             auto val = matchedOpt->parseToValue(inputs[index + 1]);
             contextBuilder.addOptionArgument(matchedOpt->getName(), val);
-            contextBuilder.addOptionArgument(matchedOpt->getShortName(), val);
         }
-        index++;
         return true;
     }
     return false;

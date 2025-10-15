@@ -11,7 +11,7 @@
 
 > **Quick Disclaimer at the start:** This is both my first real Cpp project as well as the first project I actually made public and I probably committed numerous mistakes in both cases, so if you notice anything please create an issue about so I can attempt to fix it. Thanks!
 
-For a more detailed overview than this README can give definitely check out the demo folder or have a look at the API-Reference.
+For a more detailed overview than this README can give definitely check out the [demo folder](https://github.com/Dr0f0x/ChainCLI/tree/v1.0.0-alpha/demo) or have a look at the API-Reference.
 
 ## Table of Contents
 
@@ -327,6 +327,8 @@ This is an INFO message
 
 You can easily write your own handler or formatter by extending the corresponding abstract base class (```AbstractHandler``` or ```AbstractFormatter```).
 
+> The streams available with ```Logger::info```, ```Logger::debug``` and so on have to manually flushed using ```std::flush```!
+
 ## Docformatters
 
 To generate its help messages the library uses one central class the ```Docwriter``` which has references to different types of docformatters: One for each argument type (positional/option/flag), one for a single command and one for the application as a whole.
@@ -394,4 +396,4 @@ struct CustomType
 ```
 
 
-Thats it! If some things are not fully clear yet, try having a look at the demo projects or check out the detailed API-Reference.
+Thats it! If some things are not fully clear yet, try having a look at the [demo projects](https://github.com/Dr0f0x/ChainCLI/tree/v1.0.0-alpha/demo) or check out the detailed API-Reference.

@@ -27,7 +27,7 @@
 
 namespace cli::parsing
 {
-std::any Parser::parseRepeatableList(const cli::commands::TypedArgumentBase &arg,
+std::vector<std::any> Parser::parseRepeatableList(const cli::commands::TypedArgumentBase &arg,
                                      const std::string &input) const
 {
     std::stringstream ss(input);
@@ -59,15 +59,14 @@ void Parser::parseRepeatable(const cli::commands::OptionArgumentBase &arg, const
                              ContextBuilder &contextBuilder) const
 {
     auto values = parseRepeatableList(arg, input);
-    contextBuilder.addOptionArgument(arg.getShortName(), values);
-    contextBuilder.addOptionArgument(arg.getName(), values);
+    contextBuilder.addRepeatableOptionArgument(arg.getName(), values);
 }
 
 void Parser::parseRepeatable(const cli::commands::PositionalArgumentBase &arg,
                              const std::string &input, ContextBuilder &contextBuilder) const
 {
     auto values = parseRepeatableList(arg, input);
-    contextBuilder.addPositionalArgument(arg.getName(), values);
+    contextBuilder.addRepeatablePositionalArgument(arg.getName(), values);
 }
 
 bool Parser::tryOptionArg(
@@ -100,9 +99,7 @@ bool Parser::tryOptionArg(
 
             auto val = matchedOpt->parseToValue(inputs[index + 1]);
             contextBuilder.addOptionArgument(matchedOpt->getName(), val);
-            contextBuilder.addOptionArgument(matchedOpt->getShortName(), val);
         }
-        index++;
         return true;
     }
     return false;
