@@ -1,16 +1,17 @@
 var searchData=
 [
-  ['inclusivegroup_0',['InclusiveGroup',['../classcli_1_1commands_1_1_inclusive_group.html',1,'cli::commands::InclusiveGroup'],['../classcli_1_1commands_1_1_inclusive_group.html#a6597266f51443ac1946c4aee87433055',1,'cli::commands::InclusiveGroup::InclusiveGroup()']]],
-  ['info_1',['info',['../classcli_1_1logging_1_1_logger.html#a4f89f29864f702a3678f6c422a6cbf91',1,'cli::logging::Logger::info(const std::string &amp;fmt, Args &amp;&amp;...args)'],['../classcli_1_1logging_1_1_logger.html#a0ddb4fdf009afd1230d62de4249cf392',1,'cli::logging::Logger::info()']]],
-  ['init_2',['init',['../classcli_1_1_cli_app.html#a09a6799ced2d25e0846ff619a855655c',1,'cli::CliApp']]],
-  ['insert_3',['insert',['../classcli_1_1commands_1_1_command_tree.html#a281775660f1ed4baebc83f953ee09593',1,'cli::commands::CommandTree::insert(std::unique_ptr&lt; Command &gt; cmd, std::string_view parentId, Ids &amp;&amp;...rest)'],['../classcli_1_1commands_1_1_command_tree.html#aaa86f530274988ff71a67e75e8706712',1,'cli::commands::CommandTree::insert(std::unique_ptr&lt; Command &gt; cmd)']]],
-  ['invalidargumenttypeexception_4',['InvalidArgumentTypeException',['../classcli_1_1_invalid_argument_type_exception.html',1,'cli']]],
-  ['isargpresent_5',['isArgPresent',['../classcli_1_1_cli_context.html#a947ceaff2ff5c07dcc09d7637874e7c6',1,'cli::CliContext::isArgPresent()'],['../classcli_1_1_context_builder.html#a67f7c60ddc2a9ffeb8bd42320e8c1d2a',1,'cli::ContextBuilder::isArgPresent()']]],
-  ['isexclusive_6',['isExclusive',['../classcli_1_1commands_1_1_argument_group.html#a8eeefa616cc3626b46f2d8f26894575c',1,'cli::commands::ArgumentGroup']]],
-  ['isflagpresent_7',['isFlagPresent',['../classcli_1_1_cli_context.html#adbbd178cf76769939bd17454d97453b2',1,'cli::CliContext']]],
-  ['isinclusive_8',['isInclusive',['../classcli_1_1commands_1_1_argument_group.html#a3d4c044b1f1ef39225b91d5c54977354',1,'cli::commands::ArgumentGroup']]],
-  ['isoptionargpresent_9',['isOptionArgPresent',['../classcli_1_1_cli_context.html#a7f23be3d2006d0859a94f14cdd03b043',1,'cli::CliContext']]],
-  ['ispositionalargpresent_10',['isPositionalArgPresent',['../classcli_1_1_cli_context.html#a505a6be070a63463a7fc1ba911bcb459',1,'cli::CliContext']]],
-  ['isrepeatable_11',['isRepeatable',['../classcli_1_1commands_1_1_argument_base.html#ab476bef223598cfa040dd8643768bab2',1,'cli::commands::ArgumentBase']]],
-  ['isrequired_12',['isRequired',['../classcli_1_1commands_1_1_argument_base.html#a207a84d6c076fbc116687c611dff4b3d',1,'cli::commands::ArgumentBase::isRequired()'],['../classcli_1_1commands_1_1_argument_group.html#a759ddfc88ed14e4e47e1d63461473906',1,'cli::commands::ArgumentGroup::isRequired()']]]
+  ['debug_0',['debug',['../classcli_1_1logging_1_1_abstract_logger.html#a56471dcb9c6dfabef17f0a0e00c22dd5',1,'cli::logging::AbstractLogger::debug(const std::string &amp;fmt, Args &amp;&amp;...args)'],['../classcli_1_1logging_1_1_abstract_logger.html#ab8b728e84d2fcbb88835c06a23477acb',1,'cli::logging::AbstractLogger::debug()']]],
+  ['default_20handlers_20formatters_20to_20the_20logger_20or_20docwriter_1',['2) Customize behaviour by adding your own/default handlers/formatters to the logger or docwriter',['../index.html#autotoc_md4',1,'']]],
+  ['defaultcliappdocformatter_2',['DefaultCliAppDocFormatter',['../classcli_1_1commands_1_1docwriting_1_1_default_cli_app_doc_formatter.html',1,'cli::commands::docwriting']]],
+  ['defaultcommandformatter_3',['DefaultCommandFormatter',['../classcli_1_1commands_1_1docwriting_1_1_default_command_formatter.html',1,'cli::commands::docwriting']]],
+  ['defaultflagformatter_4',['DefaultFlagFormatter',['../classcli_1_1commands_1_1docwriting_1_1_default_flag_formatter.html',1,'cli::commands::docwriting']]],
+  ['defaultoptionformatter_5',['DefaultOptionFormatter',['../classcli_1_1commands_1_1docwriting_1_1_default_option_formatter.html',1,'cli::commands::docwriting']]],
+  ['defaultpositionalformatter_6',['DefaultPositionalFormatter',['../classcli_1_1commands_1_1docwriting_1_1_default_positional_formatter.html',1,'cli::commands::docwriting']]],
+  ['define_20your_20commands_20with_20the_20desired_20arguments_20and_20add_20them_20to_20the_20application_7',['3) Define your commands with the desired arguments and add them to the application',['../index.html#autotoc_md5',1,'']]],
+  ['desired_20arguments_20and_20add_20them_20to_20the_20application_8',['3) Define your commands with the desired arguments and add them to the application',['../index.html#autotoc_md5',1,'']]],
+  ['docformatters_9',['Docformatters',['../index.html#autotoc_md15',1,'']]],
+  ['docsnotbuildexception_10',['DocsNotBuildException',['../classcli_1_1commands_1_1docwriting_1_1_docs_not_build_exception.html',1,'cli::commands::docwriting::DocsNotBuildException'],['../classcli_1_1commands_1_1docwriting_1_1_docs_not_build_exception.html#ab2cb379ca93a49a3e6b288fe1961b2a0',1,'cli::commands::docwriting::DocsNotBuildException::DocsNotBuildException()']]],
+  ['docstrings_11',['Command Docstrings',['../index.html#autotoc_md12',1,'']]],
+  ['docwriter_12',['2) Customize behaviour by adding your own/default handlers/formatters to the logger or docwriter',['../index.html#autotoc_md4',1,'']]],
+  ['docwriter_13',['DocWriter',['../classcli_1_1commands_1_1docwriting_1_1_doc_writer.html',1,'cli::commands::docwriting::DocWriter'],['../classcli_1_1commands_1_1docwriting_1_1_doc_writer.html#adfe40ecdf5eb825cf07a2a44a125a3fd',1,'cli::commands::docwriting::DocWriter::DocWriter()']]]
 ];

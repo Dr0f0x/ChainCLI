@@ -1,7 +1,4 @@
 var searchData=
 [
-  ['basehandler_0',['BaseHandler',['../classcli_1_1logging_1_1_base_handler.html',1,'cli::logging::BaseHandler'],['../classcli_1_1logging_1_1_base_handler.html#afdd7360b37e0ec6ef905b935e96432ff',1,'cli::logging::BaseHandler::BaseHandler()']]],
-  ['basicformatter_1',['BasicFormatter',['../classcli_1_1logging_1_1_basic_formatter.html',1,'cli::logging']]],
-  ['build_2',['build',['../classcli_1_1_context_builder.html#a5f8b29dbb64cd4ea656f786465f90982',1,'cli::ContextBuilder']]],
-  ['buildcommandpathmap_3',['buildCommandPathMap',['../classcli_1_1commands_1_1_command_tree.html#a5ee068a240f0758076a0c0dd8715e45b',1,'cli::commands::CommandTree']]]
+  ['2_20customize_20behaviour_20by_20adding_20your_20own_20default_20handlers_20formatters_20to_20the_20logger_20or_20docwriter_0',['2) Customize behaviour by adding your own/default handlers/formatters to the logger or docwriter',['../index.html#autotoc_md4',1,'']]]
 ];

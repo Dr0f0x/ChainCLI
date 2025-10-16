@@ -11,7 +11,17 @@
 
 > **Quick Disclaimer at the start:** This is both my first real Cpp project as well as the first project I actually made public and I probably committed numerous mistakes in both cases, so if you notice anything please create an issue about so I can attempt to fix it. Thanks!
 
-> For its single file build this project uses an adapted version of [Heady](https://github.com/JamesBoer/Heady) by James Boer a simple utitility that is defiently worth a try if you intend to do something similar.
+> For its single file build this project uses an adapted version of [Heady](https://github.com/JamesBoer/Heady) by James Boer a simple utitility that is definitely worth a try if you intend to do something similar.
+
+**ChainCLI** is a modern C++20 command-line interface library designed to make building CLI applications simple, intuitive, and maintainable. With its fluent API and method chaining approach, ChainCLI handles all the complex command-line parsing, help generation, and logging infrastructure so you can focus on implementing your application's core functionality.
+
+## Key Features
+
+- **Fluent API**: Build your CLI with intuitive method chaining
+- **Automatic Documentation**: Generate comprehensive help text automatically
+- **Type-Safe Arguments**: Strongly typed argument parsing with custom type support
+- **Command Hierarchies**: Support for nested subcommands and complex CLI structures
+- **Extensible**: Easy to extend with custom types, formatters, and handlers
 
 For a more detailed overview than this README can give definitely check out the [demo folder](https://github.com/Dr0f0x/ChainCLI/tree/v1.0.0-alpha/demo) or have a look at the API-Reference.
 

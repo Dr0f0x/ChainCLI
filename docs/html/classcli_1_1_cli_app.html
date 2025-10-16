@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.10.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>CliLib: cli::CliApp Class Reference</title>
+<title>ChainCLI: cli::CliApp Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -22,9 +22,11 @@
 <table cellspacing="0" cellpadding="0">
  <tbody>
  <tr id="projectrow">
+  <td id="projectlogo"><img alt="Logo" src="ChainCLILogoChainsOnlyTransparent.svg"/></td>
   <td id="projectalign">
-   <div id="projectname">CliLib
+   <div id="projectname">ChainCLI
    </div>
+   <div id="projectbrief">A modern C++20 command-line interface library</div>
   </td>
  </tr>
  </tbody>
@@ -101,6 +103,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:acb4b613be14622c2951d9b9bbbc2d11e" id="r_acb4b613be14622c2951d9b9bbbc2d11e"><td class="memItemLeft" align="right" valign="top"><a id="acb4b613be14622c2951d9b9bbbc2d11e" name="acb4b613be14622c2951d9b9bbbc2d11e"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>CliApp</b> (<a class="el" href="structcli_1_1_cli_config.html">CliConfig</a> &amp;&amp;config)</td></tr>
 <tr class="separator:acb4b613be14622c2951d9b9bbbc2d11e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2c3999750fecefeb4398017f3c28c169" id="r_a2c3999750fecefeb4398017f3c28c169"><td class="memItemLeft" align="right" valign="top"><a id="a2c3999750fecefeb4398017f3c28c169" name="a2c3999750fecefeb4398017f3c28c169"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>CliApp</b> (const <a class="el" href="structcli_1_1_cli_config.html">CliConfig</a> &amp;config, std::unique_ptr&lt; <a class="el" href="classcli_1_1logging_1_1_abstract_logger.html">logging::AbstractLogger</a> &gt; logger)</td></tr>
+<tr class="separator:a2c3999750fecefeb4398017f3c28c169"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a32c97b623d436bc008d72ea7d22a6e4a" id="r_a32c97b623d436bc008d72ea7d22a6e4a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcli_1_1_cli_app.html">CliApp</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a32c97b623d436bc008d72ea7d22a6e4a">withCommand</a> (std::unique_ptr&lt; <a class="el" href="classcli_1_1commands_1_1_command.html">commands::Command</a> &gt; subCommandPtr)</td></tr>
 <tr class="memdesc:a32c97b623d436bc008d72ea7d22a6e4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a new command to the application.  <br /></td></tr>
 <tr class="separator:a32c97b623d436bc008d72ea7d22a6e4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -114,12 +119,15 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>init</b> ()</td></tr>
 <tr class="memitem:a656d54ab24ca4e7b10784da5838d9557" id="r_a656d54ab24ca4e7b10784da5838d9557"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a656d54ab24ca4e7b10784da5838d9557">run</a> (int argc, char *argv[])</td></tr>
 <tr class="memdesc:a656d54ab24ca4e7b10784da5838d9557"><td class="mdescLeft">&#160;</td><td class="mdescRight">Run the CLI application with the given arguments.  <br /></td></tr>
 <tr class="separator:a656d54ab24ca4e7b10784da5838d9557"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad05b7f58e015ff0760c42f85e6013421" id="r_ad05b7f58e015ff0760c42f85e6013421"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcli_1_1logging_1_1_logger.html">logging::Logger</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad05b7f58e015ff0760c42f85e6013421">Logger</a> ()</td></tr>
-<tr class="memdesc:ad05b7f58e015ff0760c42f85e6013421"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the logger instance used by the CLI application.  <br /></td></tr>
-<tr class="separator:ad05b7f58e015ff0760c42f85e6013421"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a176dca312270fdfef20fc2c1a024ed75" id="r_a176dca312270fdfef20fc2c1a024ed75"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcli_1_1logging_1_1_abstract_logger.html">logging::AbstractLogger</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a176dca312270fdfef20fc2c1a024ed75">Logger</a> ()</td></tr>
+<tr class="memdesc:a176dca312270fdfef20fc2c1a024ed75"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the logger instance used by the CLI application.  <br /></td></tr>
+<tr class="separator:a176dca312270fdfef20fc2c1a024ed75"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa5e1f5948c7db316f53f436e251cc71c" id="r_aa5e1f5948c7db316f53f436e251cc71c"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classcli_1_1commands_1_1_command_tree.html">commands::CommandTree</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa5e1f5948c7db316f53f436e251cc71c">getCommandTree</a> () const</td></tr>
 <tr class="memdesc:aa5e1f5948c7db316f53f436e251cc71c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the command tree used by the CLI application.  <br /></td></tr>
 <tr class="separator:aa5e1f5948c7db316f53f436e251cc71c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a10b6a17bcfb40dd96a7def86e6016e38" id="r_a10b6a17bcfb40dd96a7def86e6016e38"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classcli_1_1commands_1_1_command.html">commands::Command</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a10b6a17bcfb40dd96a7def86e6016e38">getMainCommand</a> ()</td></tr>
+<tr class="memdesc:a10b6a17bcfb40dd96a7def86e6016e38"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the command tree used by the CLI application.  <br /></td></tr>
+<tr class="separator:a10b6a17bcfb40dd96a7def86e6016e38"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af972297ebe305273a52ff79f92925aae" id="r_af972297ebe305273a52ff79f92925aae"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structcli_1_1_cli_config.html">CliConfig</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af972297ebe305273a52ff79f92925aae">getConfig</a> ()</td></tr>
 <tr class="memdesc:af972297ebe305273a52ff79f92925aae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the configuration used by the CLI application.  <br /></td></tr>
 <tr class="separator:af972297ebe305273a52ff79f92925aae"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -217,8 +225,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>init</b> ()</td></tr>
 
 </div>
 </div>
-<a id="ad05b7f58e015ff0760c42f85e6013421" name="ad05b7f58e015ff0760c42f85e6013421"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad05b7f58e015ff0760c42f85e6013421">&#9670;&#160;</a></span>Logger()</h2>
+<a id="a10b6a17bcfb40dd96a7def86e6016e38" name="a10b6a17bcfb40dd96a7def86e6016e38"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a10b6a17bcfb40dd96a7def86e6016e38">&#9670;&#160;</a></span>getMainCommand()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -227,7 +235,35 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>init</b> ()</td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classcli_1_1logging_1_1_logger.html">logging::Logger</a> &amp; cli::CliApp::Logger </td>
+          <td class="memname"><a class="el" href="classcli_1_1commands_1_1_command.html">commands::Command</a> * cli::CliApp::getMainCommand </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the command tree used by the CLI application. </p>
+<dl class="section return"><dt>Returns</dt><dd>a reference to the command tree </dd></dl>
+
+</div>
+</div>
+<a id="a176dca312270fdfef20fc2c1a024ed75" name="a176dca312270fdfef20fc2c1a024ed75"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a176dca312270fdfef20fc2c1a024ed75">&#9670;&#160;</a></span>Logger()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classcli_1_1logging_1_1_abstract_logger.html">logging::AbstractLogger</a> &amp; cli::CliApp::Logger </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"></span></td><td>)</td>
           <td></td>
@@ -362,8 +398,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>init</b> ()</td></tr>
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>lib/<a class="el" href="cli__app_8h_source.html">cli_app.h</a></li>
-<li>lib/<b>cli_app.cpp</b></li>
+<li>src/chaincli/<a class="el" href="cli__app_8h_source.html">cli_app.h</a></li>
+<li>src/chaincli/<b>cli_app.cpp</b></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

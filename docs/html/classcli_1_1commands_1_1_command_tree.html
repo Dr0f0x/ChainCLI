@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.10.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>CliLib: cli::commands::CommandTree Class Reference</title>
+<title>ChainCLI: cli::commands::CommandTree Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -22,9 +22,11 @@
 <table cellspacing="0" cellpadding="0">
  <tbody>
  <tr id="projectrow">
+  <td id="projectlogo"><img alt="Logo" src="ChainCLILogoChainsOnlyTransparent.svg"/></td>
   <td id="projectalign">
-   <div id="projectname">CliLib
+   <div id="projectname">ChainCLI
    </div>
+   <div id="projectbrief">A modern C++20 command-line interface library</div>
   </td>
  </tr>
  </tbody>
@@ -121,6 +123,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a5ee068a240f0758076a0c0dd8715e45b" id="r_a5ee068a240f0758076a0c0dd8715e45b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5ee068a240f0758076a0c0dd8715e45b">buildCommandPathMap</a> (const std::string &amp;separator=&quot; &quot;)</td></tr>
 <tr class="memdesc:a5ee068a240f0758076a0c0dd8715e45b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Build a map of command paths for quick lookup.  <br /></td></tr>
 <tr class="separator:a5ee068a240f0758076a0c0dd8715e45b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a232c7d2be2cde5e89ca59bb3ac81f30c" id="r_a232c7d2be2cde5e89ca59bb3ac81f30c"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="classcli_1_1commands_1_1_command.html">Command</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a232c7d2be2cde5e89ca59bb3ac81f30c">getAllCommands</a> () const</td></tr>
+<tr class="memdesc:a232c7d2be2cde5e89ca59bb3ac81f30c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a vector of all commands in the tree.  <br /></td></tr>
+<tr class="separator:a232c7d2be2cde5e89ca59bb3ac81f30c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a411e7e55b9e69e00dc22afac3c0cb47e" id="r_a411e7e55b9e69e00dc22afac3c0cb47e"><td class="memItemLeft" align="right" valign="top">std::vector&lt; const <a class="el" href="classcli_1_1commands_1_1_command.html">Command</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a411e7e55b9e69e00dc22afac3c0cb47e">getAllCommandsConst</a> () const</td></tr>
+<tr class="memdesc:a411e7e55b9e69e00dc22afac3c0cb47e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a vector of all commands in the tree (const version).  <br /></td></tr>
+<tr class="separator:a411e7e55b9e69e00dc22afac3c0cb47e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Tree structure to manage commands and their subcommands. </p>
@@ -293,6 +301,46 @@ template&lt;typename... Ids&gt; </div>
 
 </div>
 </div>
+<a id="a232c7d2be2cde5e89ca59bb3ac81f30c" name="a232c7d2be2cde5e89ca59bb3ac81f30c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a232c7d2be2cde5e89ca59bb3ac81f30c">&#9670;&#160;</a></span>getAllCommands()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; <a class="el" href="classcli_1_1commands_1_1_command.html">Command</a> * &gt; cli::commands::CommandTree::getAllCommands </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get a vector of all commands in the tree. </p>
+<p>Commands are collected in a depth-first search (DFS) manner. </p><dl class="section return"><dt>Returns</dt><dd>A vector containing pointers to all commands in the tree. </dd></dl>
+
+</div>
+</div>
+<a id="a411e7e55b9e69e00dc22afac3c0cb47e" name="a411e7e55b9e69e00dc22afac3c0cb47e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a411e7e55b9e69e00dc22afac3c0cb47e">&#9670;&#160;</a></span>getAllCommandsConst()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; const <a class="el" href="classcli_1_1commands_1_1_command.html">Command</a> * &gt; cli::commands::CommandTree::getAllCommandsConst </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get a vector of all commands in the tree (const version). </p>
+<p>Commands are collected in a depth-first search (DFS) manner. </p><dl class="section return"><dt>Returns</dt><dd>A vector containing pointers to all commands in the tree. </dd></dl>
+
+</div>
+</div>
 <a id="aba98be4f389b054ecc579e41c1a5b424" name="aba98be4f389b054ecc579e41c1a5b424"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aba98be4f389b054ecc579e41c1a5b424">&#9670;&#160;</a></span>getPathForCommand()</h2>
 
@@ -462,8 +510,8 @@ template&lt;typename... Ids&gt; </div>
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>lib/commands/<a class="el" href="command__tree_8h_source.html">command_tree.h</a></li>
-<li>lib/commands/<b>command_tree.cpp</b></li>
+<li>src/chaincli/commands/<a class="el" href="command__tree_8h_source.html">command_tree.h</a></li>
+<li>src/chaincli/commands/<b>command_tree.cpp</b></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

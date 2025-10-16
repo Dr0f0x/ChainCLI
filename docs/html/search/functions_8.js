@@ -1,7 +1,7 @@
 var searchData=
 [
   ['inclusivegroup_0',['InclusiveGroup',['../classcli_1_1commands_1_1_inclusive_group.html#a6597266f51443ac1946c4aee87433055',1,'cli::commands::InclusiveGroup']]],
-  ['info_1',['info',['../classcli_1_1logging_1_1_logger.html#a4f89f29864f702a3678f6c422a6cbf91',1,'cli::logging::Logger::info(const std::string &amp;fmt, Args &amp;&amp;...args)'],['../classcli_1_1logging_1_1_logger.html#a0ddb4fdf009afd1230d62de4249cf392',1,'cli::logging::Logger::info()']]],
+  ['info_1',['info',['../classcli_1_1logging_1_1_abstract_logger.html#a4722c6894e9787ae77e114d3e72d3ec6',1,'cli::logging::AbstractLogger::info(const std::string &amp;fmt, Args &amp;&amp;...args)'],['../classcli_1_1logging_1_1_abstract_logger.html#ad1a78e7ed5d456cabad808c371bb4cd7',1,'cli::logging::AbstractLogger::info()']]],
   ['init_2',['init',['../classcli_1_1_cli_app.html#a09a6799ced2d25e0846ff619a855655c',1,'cli::CliApp']]],
   ['insert_3',['insert',['../classcli_1_1commands_1_1_command_tree.html#a281775660f1ed4baebc83f953ee09593',1,'cli::commands::CommandTree::insert(std::unique_ptr&lt; Command &gt; cmd, std::string_view parentId, Ids &amp;&amp;...rest)'],['../classcli_1_1commands_1_1_command_tree.html#aaa86f530274988ff71a67e75e8706712',1,'cli::commands::CommandTree::insert(std::unique_ptr&lt; Command &gt; cmd)']]],
   ['isargpresent_4',['isArgPresent',['../classcli_1_1_cli_context.html#a947ceaff2ff5c07dcc09d7637874e7c6',1,'cli::CliContext::isArgPresent()'],['../classcli_1_1_context_builder.html#a67f7c60ddc2a9ffeb8bd42320e8c1d2a',1,'cli::ContextBuilder::isArgPresent()']]],

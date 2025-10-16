@@ -1,6 +1,12 @@
 var searchData=
 [
-  ['timestamp_0',['timestamp',['../structcli_1_1logging_1_1_log_record.html#aae599457ba7508b9ff1e685ca8ad9f65',1,'cli::logging::LogRecord']]],
-  ['trace_1',['trace',['../classcli_1_1logging_1_1_logger.html#a7e3fc9dffc6665a8d4771094b108d12d',1,'cli::logging::Logger::trace(const std::string &amp;fmt, Args &amp;&amp;...args)'],['../classcli_1_1logging_1_1_logger.html#a90c1df37cbc76830da1a6924340c959f',1,'cli::logging::Logger::trace()']]],
-  ['typedargumentbase_2',['TypedArgumentBase',['../classcli_1_1commands_1_1_typed_argument_base.html',1,'cli::commands']]]
+  ['level_0',['level',['../structcli_1_1logging_1_1_log_record.html#aba36de22b5e3d18a6eeea26f4f616e9f',1,'cli::logging::LogRecord']]],
+  ['line_20arguments_1',['5) Call the run method of your CliApp with the passed command line arguments',['../index.html#autotoc_md7',1,'']]],
+  ['log_2',['log',['../classcli_1_1logging_1_1_abstract_logger.html#a3d4c8df173b8fa46bec4dead11f38e8f',1,'cli::logging::AbstractLogger::log(LogLevel lvl, const std::string &amp;message) const =0'],['../classcli_1_1logging_1_1_abstract_logger.html#aacede968faf51df1c34718ab8888d6e6',1,'cli::logging::AbstractLogger::log(LogLevel lvl, const std::string &amp;fmt, Args &amp;&amp;...args) const'],['../classcli_1_1logging_1_1_logger.html#a7eb9dc9074c7218ff59373faa0caac16',1,'cli::logging::Logger::log()']]],
+  ['logger_3',['Logger',['../classcli_1_1logging_1_1_logger.html',1,'cli::logging::Logger'],['../classcli_1_1_cli_app.html#a176dca312270fdfef20fc2c1a024ed75',1,'cli::CliApp::Logger()'],['../classcli_1_1logging_1_1_logger.html#ada832294b6d4eadc36301f2b4a74af28',1,'cli::logging::Logger::Logger()']]],
+  ['logger_20or_20docwriter_4',['2) Customize behaviour by adding your own/default handlers/formatters to the logger or docwriter',['../index.html#autotoc_md4',1,'']]],
+  ['logging_5',['Logging',['../index.html#autotoc_md14',1,'']]],
+  ['logic_6',['4) Use the generated CliContext with the parsed arguments in your own logic',['../index.html#autotoc_md6',1,'']]],
+  ['logrecord_7',['LogRecord',['../structcli_1_1logging_1_1_log_record.html',1,'cli::logging::LogRecord'],['../structcli_1_1logging_1_1_log_record.html#a6698df90be7901b11ebd1ed2d8a054a6',1,'cli::logging::LogRecord::LogRecord()']]],
+  ['logstreambuf_8',['LogStreamBuf',['../classcli_1_1logging_1_1_log_stream_buf.html',1,'cli::logging::LogStreamBuf'],['../classcli_1_1logging_1_1_log_stream_buf.html#ab037968434437c110b577f44787f3c58',1,'cli::logging::LogStreamBuf::LogStreamBuf()']]]
 ];

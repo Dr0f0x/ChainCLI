@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.10.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>CliLib: cli::logging::Logger Class Reference</title>
+<title>ChainCLI: cli::logging::Logger Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -22,9 +22,11 @@
 <table cellspacing="0" cellpadding="0">
  <tbody>
  <tr id="projectrow">
+  <td id="projectlogo"><img alt="Logo" src="ChainCLILogoChainsOnlyTransparent.svg"/></td>
   <td id="projectalign">
-   <div id="projectname">CliLib
+   <div id="projectname">ChainCLI
    </div>
+   <div id="projectbrief">A modern C++20 command-line interface library</div>
   </td>
  </tr>
  </tbody>
@@ -86,6 +88,15 @@ $(function() {
  <a href="#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="logger_8h_source.html">logger.h</a>&gt;</code></p>
+<div class="dynheader">
+Inheritance diagram for cli::logging::Logger:</div>
+<div class="dyncontent">
+ <div class="center">
+  <img src="classcli_1_1logging_1_1_logger.png" usemap="#cli::logging::Logger_map" alt=""/>
+  <map id="cli::logging::Logger_map" name="cli::logging::Logger_map">
+<area href="classcli_1_1logging_1_1_abstract_logger.html" title="Abstract base class for logger implementations." alt="cli::logging::AbstractLogger" shape="rect" coords="0,0,165,24"/>
+  </map>
+</div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -104,72 +115,75 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ada832294b6d4eadc36301f2b4a74af28" id="r_ada832294b6d4eadc36301f2b4a74af28"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ada832294b6d4eadc36301f2b4a74af28">Logger</a> (LogLevel lvl=LogLevel::TRACE)</td></tr>
 <tr class="memdesc:ada832294b6d4eadc36301f2b4a74af28"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a new <a class="el" href="classcli_1_1logging_1_1_logger.html" title="Logger class for handling log messages.">Logger</a> object with the specified minimum log level.  <br /></td></tr>
 <tr class="separator:ada832294b6d4eadc36301f2b4a74af28"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5a553ed3d32cd256d490c4f1292f43b3" id="r_a5a553ed3d32cd256d490c4f1292f43b3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5a553ed3d32cd256d490c4f1292f43b3">setLevel</a> (LogLevel lvl)</td></tr>
-<tr class="memdesc:a5a553ed3d32cd256d490c4f1292f43b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the minimum log level for this logger.  <br /></td></tr>
-<tr class="separator:a5a553ed3d32cd256d490c4f1292f43b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2e50820ba882ea36b29c07479b3f9c9f" id="r_a2e50820ba882ea36b29c07479b3f9c9f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2e50820ba882ea36b29c07479b3f9c9f">addHandler</a> (std::unique_ptr&lt; <a class="el" href="classcli_1_1logging_1_1_abstract_handler.html">AbstractHandler</a> &gt; handlerPtr)</td></tr>
-<tr class="memdesc:a2e50820ba882ea36b29c07479b3f9c9f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a log handler.  <br /></td></tr>
-<tr class="separator:a2e50820ba882ea36b29c07479b3f9c9f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6292bbb5181d9362b7c483765c9756cf" id="r_a6292bbb5181d9362b7c483765c9756cf"><td class="memItemLeft" align="right" valign="top"><a id="a6292bbb5181d9362b7c483765c9756cf" name="a6292bbb5181d9362b7c483765c9756cf"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>removeAllHandlers</b> ()</td></tr>
-<tr class="memdesc:a6292bbb5181d9362b7c483765c9756cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove all log handlers. <br /></td></tr>
-<tr class="separator:a6292bbb5181d9362b7c483765c9756cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a77914c130d4757e948700a7c5f427a0f" id="r_a77914c130d4757e948700a7c5f427a0f"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
-<tr class="memitem:a77914c130d4757e948700a7c5f427a0f"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a77914c130d4757e948700a7c5f427a0f">log</a> (LogLevel lvl, const std::string &amp;fmt, Args &amp;&amp;...args) const</td></tr>
-<tr class="memdesc:a77914c130d4757e948700a7c5f427a0f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Log a message at the specified log level using a format string to print the passed arguments.  <br /></td></tr>
-<tr class="separator:a77914c130d4757e948700a7c5f427a0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7e3fc9dffc6665a8d4771094b108d12d" id="r_a7e3fc9dffc6665a8d4771094b108d12d"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
-<tr class="memitem:a7e3fc9dffc6665a8d4771094b108d12d"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a7e3fc9dffc6665a8d4771094b108d12d">trace</a> (const std::string &amp;fmt, Args &amp;&amp;...args)</td></tr>
-<tr class="memdesc:a7e3fc9dffc6665a8d4771094b108d12d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Log a message at the TRACE level.  <br /></td></tr>
-<tr class="separator:a7e3fc9dffc6665a8d4771094b108d12d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6bd548ac12ceef2ad0d5f2a9d6f34d7d" id="r_a6bd548ac12ceef2ad0d5f2a9d6f34d7d"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
-<tr class="memitem:a6bd548ac12ceef2ad0d5f2a9d6f34d7d"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a6bd548ac12ceef2ad0d5f2a9d6f34d7d">verbose</a> (const std::string &amp;fmt, Args &amp;&amp;...args)</td></tr>
-<tr class="memdesc:a6bd548ac12ceef2ad0d5f2a9d6f34d7d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Log a message at the VERBOSE level.  <br /></td></tr>
-<tr class="separator:a6bd548ac12ceef2ad0d5f2a9d6f34d7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abcd857ab7741442dee84933f218d7202" id="r_abcd857ab7741442dee84933f218d7202"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
-<tr class="memitem:abcd857ab7741442dee84933f218d7202"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#abcd857ab7741442dee84933f218d7202">debug</a> (const std::string &amp;fmt, Args &amp;&amp;...args)</td></tr>
-<tr class="memdesc:abcd857ab7741442dee84933f218d7202"><td class="mdescLeft">&#160;</td><td class="mdescRight">Log a message at the DEBUG level.  <br /></td></tr>
-<tr class="separator:abcd857ab7741442dee84933f218d7202"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a27348d975270f3b731b0736c41154ad8" id="r_a27348d975270f3b731b0736c41154ad8"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
-<tr class="memitem:a27348d975270f3b731b0736c41154ad8"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a27348d975270f3b731b0736c41154ad8">success</a> (const std::string &amp;fmt, Args &amp;&amp;...args)</td></tr>
-<tr class="memdesc:a27348d975270f3b731b0736c41154ad8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Log a message at the SUCCESS level.  <br /></td></tr>
-<tr class="separator:a27348d975270f3b731b0736c41154ad8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4f89f29864f702a3678f6c422a6cbf91" id="r_a4f89f29864f702a3678f6c422a6cbf91"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
-<tr class="memitem:a4f89f29864f702a3678f6c422a6cbf91"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a4f89f29864f702a3678f6c422a6cbf91">info</a> (const std::string &amp;fmt, Args &amp;&amp;...args)</td></tr>
-<tr class="memdesc:a4f89f29864f702a3678f6c422a6cbf91"><td class="mdescLeft">&#160;</td><td class="mdescRight">Log a message at the INFO level.  <br /></td></tr>
-<tr class="separator:a4f89f29864f702a3678f6c422a6cbf91"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4e7a36d6f8fd477b19e64c243105ccbd" id="r_a4e7a36d6f8fd477b19e64c243105ccbd"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
-<tr class="memitem:a4e7a36d6f8fd477b19e64c243105ccbd"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a4e7a36d6f8fd477b19e64c243105ccbd">warning</a> (const std::string &amp;fmt, Args &amp;&amp;...args)</td></tr>
-<tr class="memdesc:a4e7a36d6f8fd477b19e64c243105ccbd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Log a message at the WARNING level.  <br /></td></tr>
-<tr class="separator:a4e7a36d6f8fd477b19e64c243105ccbd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6c4fc47e24b8e1d2d402555e4b7be647" id="r_a6c4fc47e24b8e1d2d402555e4b7be647"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
-<tr class="memitem:a6c4fc47e24b8e1d2d402555e4b7be647"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a6c4fc47e24b8e1d2d402555e4b7be647">error</a> (const std::string &amp;fmt, Args &amp;&amp;...args)</td></tr>
-<tr class="memdesc:a6c4fc47e24b8e1d2d402555e4b7be647"><td class="mdescLeft">&#160;</td><td class="mdescRight">Log a message at the ERROR level.  <br /></td></tr>
-<tr class="separator:a6c4fc47e24b8e1d2d402555e4b7be647"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acc755c7d87d6bd2d53723654a35ca656" id="r_acc755c7d87d6bd2d53723654a35ca656"><td class="memItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acc755c7d87d6bd2d53723654a35ca656">getStream</a> (LogLevel lvl)</td></tr>
-<tr class="memdesc:acc755c7d87d6bd2d53723654a35ca656"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the stream for the specified log level.  <br /></td></tr>
-<tr class="separator:acc755c7d87d6bd2d53723654a35ca656"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a90c1df37cbc76830da1a6924340c959f" id="r_a90c1df37cbc76830da1a6924340c959f"><td class="memItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a90c1df37cbc76830da1a6924340c959f">trace</a> ()</td></tr>
-<tr class="memdesc:a90c1df37cbc76830da1a6924340c959f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the stream for the TRACE log level.  <br /></td></tr>
-<tr class="separator:a90c1df37cbc76830da1a6924340c959f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0ec02e2de570b213195300c9849a1b97" id="r_a0ec02e2de570b213195300c9849a1b97"><td class="memItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0ec02e2de570b213195300c9849a1b97">verbose</a> ()</td></tr>
-<tr class="memdesc:a0ec02e2de570b213195300c9849a1b97"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the stream for the VERBOSE log level.  <br /></td></tr>
-<tr class="separator:a0ec02e2de570b213195300c9849a1b97"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad65d6da47837dc4af603f916250d39d1" id="r_ad65d6da47837dc4af603f916250d39d1"><td class="memItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad65d6da47837dc4af603f916250d39d1">debug</a> ()</td></tr>
-<tr class="memdesc:ad65d6da47837dc4af603f916250d39d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the stream for the DEBUG log level.  <br /></td></tr>
-<tr class="separator:ad65d6da47837dc4af603f916250d39d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7977c849c53c434293dc12b3421fed9b" id="r_a7977c849c53c434293dc12b3421fed9b"><td class="memItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7977c849c53c434293dc12b3421fed9b">success</a> ()</td></tr>
-<tr class="memdesc:a7977c849c53c434293dc12b3421fed9b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the stream for the SUCCESS log level.  <br /></td></tr>
-<tr class="separator:a7977c849c53c434293dc12b3421fed9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0ddb4fdf009afd1230d62de4249cf392" id="r_a0ddb4fdf009afd1230d62de4249cf392"><td class="memItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0ddb4fdf009afd1230d62de4249cf392">info</a> ()</td></tr>
-<tr class="memdesc:a0ddb4fdf009afd1230d62de4249cf392"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the stream for the INFO log level.  <br /></td></tr>
-<tr class="separator:a0ddb4fdf009afd1230d62de4249cf392"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af35cc287a4e93a55cea22f86af66fda9" id="r_af35cc287a4e93a55cea22f86af66fda9"><td class="memItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af35cc287a4e93a55cea22f86af66fda9">warning</a> ()</td></tr>
-<tr class="memdesc:af35cc287a4e93a55cea22f86af66fda9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the stream for the WARNING log level.  <br /></td></tr>
-<tr class="separator:af35cc287a4e93a55cea22f86af66fda9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aafbd2574cfdfe2df1d448ba8dab408e3" id="r_aafbd2574cfdfe2df1d448ba8dab408e3"><td class="memItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aafbd2574cfdfe2df1d448ba8dab408e3">error</a> ()</td></tr>
-<tr class="memdesc:aafbd2574cfdfe2df1d448ba8dab408e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the stream for the ERROR log level.  <br /></td></tr>
-<tr class="separator:aafbd2574cfdfe2df1d448ba8dab408e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2fbf72a3caf9f7f6808960ea4d199a0e" id="r_a2fbf72a3caf9f7f6808960ea4d199a0e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2fbf72a3caf9f7f6808960ea4d199a0e">setLevel</a> (LogLevel lvl) override</td></tr>
+<tr class="memdesc:a2fbf72a3caf9f7f6808960ea4d199a0e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the minimum log level for this logger.  <br /></td></tr>
+<tr class="separator:a2fbf72a3caf9f7f6808960ea4d199a0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a04623298a8f01d3f74f85e130cf2d6b2" id="r_a04623298a8f01d3f74f85e130cf2d6b2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a04623298a8f01d3f74f85e130cf2d6b2">addHandler</a> (std::unique_ptr&lt; <a class="el" href="classcli_1_1logging_1_1_abstract_handler.html">AbstractHandler</a> &gt; handlerPtr) override</td></tr>
+<tr class="memdesc:a04623298a8f01d3f74f85e130cf2d6b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a log handler.  <br /></td></tr>
+<tr class="separator:a04623298a8f01d3f74f85e130cf2d6b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a751be1ebbfa8e108c1dcfddaf2b937cc" id="r_a751be1ebbfa8e108c1dcfddaf2b937cc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a751be1ebbfa8e108c1dcfddaf2b937cc">removeAllHandlers</a> () override</td></tr>
+<tr class="memdesc:a751be1ebbfa8e108c1dcfddaf2b937cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove all log handlers.  <br /></td></tr>
+<tr class="separator:a751be1ebbfa8e108c1dcfddaf2b937cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7eb9dc9074c7218ff59373faa0caac16" id="r_a7eb9dc9074c7218ff59373faa0caac16"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7eb9dc9074c7218ff59373faa0caac16">log</a> (LogLevel lvl, const std::string &amp;msg) const override</td></tr>
+<tr class="memdesc:a7eb9dc9074c7218ff59373faa0caac16"><td class="mdescLeft">&#160;</td><td class="mdescRight">Log a message at the specified log level.  <br /></td></tr>
+<tr class="separator:a7eb9dc9074c7218ff59373faa0caac16"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aed2bf12194db720fff6191986d531618" id="r_aed2bf12194db720fff6191986d531618"><td class="memItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aed2bf12194db720fff6191986d531618">getStream</a> (LogLevel lvl) override</td></tr>
+<tr class="memdesc:aed2bf12194db720fff6191986d531618"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the stream for the specified log level.  <br /></td></tr>
+<tr class="separator:aed2bf12194db720fff6191986d531618"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_classcli_1_1logging_1_1_abstract_logger"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classcli_1_1logging_1_1_abstract_logger')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classcli_1_1logging_1_1_abstract_logger.html">cli::logging::AbstractLogger</a></td></tr>
+<tr class="memitem:aacede968faf51df1c34718ab8888d6e6 inherit pub_methods_classcli_1_1logging_1_1_abstract_logger" id="r_aacede968faf51df1c34718ab8888d6e6"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
+<tr class="memitem:aacede968faf51df1c34718ab8888d6e6 inherit pub_methods_classcli_1_1logging_1_1_abstract_logger"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classcli_1_1logging_1_1_abstract_logger.html#aacede968faf51df1c34718ab8888d6e6">log</a> (LogLevel lvl, const std::string &amp;fmt, Args &amp;&amp;...args) const</td></tr>
+<tr class="memdesc:aacede968faf51df1c34718ab8888d6e6 inherit pub_methods_classcli_1_1logging_1_1_abstract_logger"><td class="mdescLeft">&#160;</td><td class="mdescRight">Log a message at the specified log level using a format string to print the passed arguments.  <br /></td></tr>
+<tr class="separator:aacede968faf51df1c34718ab8888d6e6 inherit pub_methods_classcli_1_1logging_1_1_abstract_logger"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a393e78d9febe47f057421e8c06f57264 inherit pub_methods_classcli_1_1logging_1_1_abstract_logger" id="r_a393e78d9febe47f057421e8c06f57264"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
+<tr class="memitem:a393e78d9febe47f057421e8c06f57264 inherit pub_methods_classcli_1_1logging_1_1_abstract_logger"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classcli_1_1logging_1_1_abstract_logger.html#a393e78d9febe47f057421e8c06f57264">trace</a> (const std::string &amp;fmt, Args &amp;&amp;...args)</td></tr>
+<tr class="memdesc:a393e78d9febe47f057421e8c06f57264 inherit pub_methods_classcli_1_1logging_1_1_abstract_logger"><td class="mdescLeft">&#160;</td><td class="mdescRight">Log a message at the TRACE level.  <br /></td></tr>
+<tr class="separator:a393e78d9febe47f057421e8c06f57264 inherit pub_methods_classcli_1_1logging_1_1_abstract_logger"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a37f515db455a648bf1433a94c4aabdfd inherit pub_methods_classcli_1_1logging_1_1_abstract_logger" id="r_a37f515db455a648bf1433a94c4aabdfd"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
+<tr class="memitem:a37f515db455a648bf1433a94c4aabdfd inherit pub_methods_classcli_1_1logging_1_1_abstract_logger"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classcli_1_1logging_1_1_abstract_logger.html#a37f515db455a648bf1433a94c4aabdfd">verbose</a> (const std::string &amp;fmt, Args &amp;&amp;...args)</td></tr>
+<tr class="memdesc:a37f515db455a648bf1433a94c4aabdfd inherit pub_methods_classcli_1_1logging_1_1_abstract_logger"><td class="mdescLeft">&#160;</td><td class="mdescRight">Log a message at the VERBOSE level.  <br /></td></tr>
+<tr class="separator:a37f515db455a648bf1433a94c4aabdfd inherit pub_methods_classcli_1_1logging_1_1_abstract_logger"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a56471dcb9c6dfabef17f0a0e00c22dd5 inherit pub_methods_classcli_1_1logging_1_1_abstract_logger" id="r_a56471dcb9c6dfabef17f0a0e00c22dd5"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
+<tr class="memitem:a56471dcb9c6dfabef17f0a0e00c22dd5 inherit pub_methods_classcli_1_1logging_1_1_abstract_logger"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classcli_1_1logging_1_1_abstract_logger.html#a56471dcb9c6dfabef17f0a0e00c22dd5">debug</a> (const std::string &amp;fmt, Args &amp;&amp;...args)</td></tr>
+<tr class="memdesc:a56471dcb9c6dfabef17f0a0e00c22dd5 inherit pub_methods_classcli_1_1logging_1_1_abstract_logger"><td class="mdescLeft">&#160;</td><td class="mdescRight">Log a message at the DEBUG level.  <br /></td></tr>
+<tr class="separator:a56471dcb9c6dfabef17f0a0e00c22dd5 inherit pub_methods_classcli_1_1logging_1_1_abstract_logger"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af22755b787de580d4719773e9b841177 inherit pub_methods_classcli_1_1logging_1_1_abstract_logger" id="r_af22755b787de580d4719773e9b841177"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
+<tr class="memitem:af22755b787de580d4719773e9b841177 inherit pub_methods_classcli_1_1logging_1_1_abstract_logger"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classcli_1_1logging_1_1_abstract_logger.html#af22755b787de580d4719773e9b841177">success</a> (const std::string &amp;fmt, Args &amp;&amp;...args)</td></tr>
+<tr class="memdesc:af22755b787de580d4719773e9b841177 inherit pub_methods_classcli_1_1logging_1_1_abstract_logger"><td class="mdescLeft">&#160;</td><td class="mdescRight">Log a message at the SUCCESS level.  <br /></td></tr>
+<tr class="separator:af22755b787de580d4719773e9b841177 inherit pub_methods_classcli_1_1logging_1_1_abstract_logger"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4722c6894e9787ae77e114d3e72d3ec6 inherit pub_methods_classcli_1_1logging_1_1_abstract_logger" id="r_a4722c6894e9787ae77e114d3e72d3ec6"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
+<tr class="memitem:a4722c6894e9787ae77e114d3e72d3ec6 inherit pub_methods_classcli_1_1logging_1_1_abstract_logger"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classcli_1_1logging_1_1_abstract_logger.html#a4722c6894e9787ae77e114d3e72d3ec6">info</a> (const std::string &amp;fmt, Args &amp;&amp;...args)</td></tr>
+<tr class="memdesc:a4722c6894e9787ae77e114d3e72d3ec6 inherit pub_methods_classcli_1_1logging_1_1_abstract_logger"><td class="mdescLeft">&#160;</td><td class="mdescRight">Log a message at the INFO level.  <br /></td></tr>
+<tr class="separator:a4722c6894e9787ae77e114d3e72d3ec6 inherit pub_methods_classcli_1_1logging_1_1_abstract_logger"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2bdcd6efb82da5806a6a32d504ff6617 inherit pub_methods_classcli_1_1logging_1_1_abstract_logger" id="r_a2bdcd6efb82da5806a6a32d504ff6617"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
+<tr class="memitem:a2bdcd6efb82da5806a6a32d504ff6617 inherit pub_methods_classcli_1_1logging_1_1_abstract_logger"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classcli_1_1logging_1_1_abstract_logger.html#a2bdcd6efb82da5806a6a32d504ff6617">warning</a> (const std::string &amp;fmt, Args &amp;&amp;...args)</td></tr>
+<tr class="memdesc:a2bdcd6efb82da5806a6a32d504ff6617 inherit pub_methods_classcli_1_1logging_1_1_abstract_logger"><td class="mdescLeft">&#160;</td><td class="mdescRight">Log a message at the WARNING level.  <br /></td></tr>
+<tr class="separator:a2bdcd6efb82da5806a6a32d504ff6617 inherit pub_methods_classcli_1_1logging_1_1_abstract_logger"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abd98db1e77ca54a7c56791dfdafffa85 inherit pub_methods_classcli_1_1logging_1_1_abstract_logger" id="r_abd98db1e77ca54a7c56791dfdafffa85"><td class="memTemplParams" colspan="2">template&lt;typename... Args&gt; </td></tr>
+<tr class="memitem:abd98db1e77ca54a7c56791dfdafffa85 inherit pub_methods_classcli_1_1logging_1_1_abstract_logger"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classcli_1_1logging_1_1_abstract_logger.html#abd98db1e77ca54a7c56791dfdafffa85">error</a> (const std::string &amp;fmt, Args &amp;&amp;...args)</td></tr>
+<tr class="memdesc:abd98db1e77ca54a7c56791dfdafffa85 inherit pub_methods_classcli_1_1logging_1_1_abstract_logger"><td class="mdescLeft">&#160;</td><td class="mdescRight">Log a message at the ERROR level.  <br /></td></tr>
+<tr class="separator:abd98db1e77ca54a7c56791dfdafffa85 inherit pub_methods_classcli_1_1logging_1_1_abstract_logger"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a25a5edb8eb82d9ce6ae13fae434fb69a inherit pub_methods_classcli_1_1logging_1_1_abstract_logger" id="r_a25a5edb8eb82d9ce6ae13fae434fb69a"><td class="memItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcli_1_1logging_1_1_abstract_logger.html#a25a5edb8eb82d9ce6ae13fae434fb69a">trace</a> ()</td></tr>
+<tr class="memdesc:a25a5edb8eb82d9ce6ae13fae434fb69a inherit pub_methods_classcli_1_1logging_1_1_abstract_logger"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the stream for the TRACE log level.  <br /></td></tr>
+<tr class="separator:a25a5edb8eb82d9ce6ae13fae434fb69a inherit pub_methods_classcli_1_1logging_1_1_abstract_logger"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a786869f63fc46adc23cf9c1a7cc5c4ef inherit pub_methods_classcli_1_1logging_1_1_abstract_logger" id="r_a786869f63fc46adc23cf9c1a7cc5c4ef"><td class="memItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcli_1_1logging_1_1_abstract_logger.html#a786869f63fc46adc23cf9c1a7cc5c4ef">verbose</a> ()</td></tr>
+<tr class="memdesc:a786869f63fc46adc23cf9c1a7cc5c4ef inherit pub_methods_classcli_1_1logging_1_1_abstract_logger"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the stream for the VERBOSE log level.  <br /></td></tr>
+<tr class="separator:a786869f63fc46adc23cf9c1a7cc5c4ef inherit pub_methods_classcli_1_1logging_1_1_abstract_logger"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab8b728e84d2fcbb88835c06a23477acb inherit pub_methods_classcli_1_1logging_1_1_abstract_logger" id="r_ab8b728e84d2fcbb88835c06a23477acb"><td class="memItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcli_1_1logging_1_1_abstract_logger.html#ab8b728e84d2fcbb88835c06a23477acb">debug</a> ()</td></tr>
+<tr class="memdesc:ab8b728e84d2fcbb88835c06a23477acb inherit pub_methods_classcli_1_1logging_1_1_abstract_logger"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the stream for the DEBUG log level.  <br /></td></tr>
+<tr class="separator:ab8b728e84d2fcbb88835c06a23477acb inherit pub_methods_classcli_1_1logging_1_1_abstract_logger"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa04a8c9ee157d1d615fa5a037f7768f8 inherit pub_methods_classcli_1_1logging_1_1_abstract_logger" id="r_aa04a8c9ee157d1d615fa5a037f7768f8"><td class="memItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcli_1_1logging_1_1_abstract_logger.html#aa04a8c9ee157d1d615fa5a037f7768f8">success</a> ()</td></tr>
+<tr class="memdesc:aa04a8c9ee157d1d615fa5a037f7768f8 inherit pub_methods_classcli_1_1logging_1_1_abstract_logger"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the stream for the SUCCESS log level.  <br /></td></tr>
+<tr class="separator:aa04a8c9ee157d1d615fa5a037f7768f8 inherit pub_methods_classcli_1_1logging_1_1_abstract_logger"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad1a78e7ed5d456cabad808c371bb4cd7 inherit pub_methods_classcli_1_1logging_1_1_abstract_logger" id="r_ad1a78e7ed5d456cabad808c371bb4cd7"><td class="memItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcli_1_1logging_1_1_abstract_logger.html#ad1a78e7ed5d456cabad808c371bb4cd7">info</a> ()</td></tr>
+<tr class="memdesc:ad1a78e7ed5d456cabad808c371bb4cd7 inherit pub_methods_classcli_1_1logging_1_1_abstract_logger"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the stream for the INFO log level.  <br /></td></tr>
+<tr class="separator:ad1a78e7ed5d456cabad808c371bb4cd7 inherit pub_methods_classcli_1_1logging_1_1_abstract_logger"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac8ac93ad285e34eecea4c385039070a7 inherit pub_methods_classcli_1_1logging_1_1_abstract_logger" id="r_ac8ac93ad285e34eecea4c385039070a7"><td class="memItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcli_1_1logging_1_1_abstract_logger.html#ac8ac93ad285e34eecea4c385039070a7">warning</a> ()</td></tr>
+<tr class="memdesc:ac8ac93ad285e34eecea4c385039070a7 inherit pub_methods_classcli_1_1logging_1_1_abstract_logger"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the stream for the WARNING log level.  <br /></td></tr>
+<tr class="separator:ac8ac93ad285e34eecea4c385039070a7 inherit pub_methods_classcli_1_1logging_1_1_abstract_logger"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a83674e1212314830c13bc7d3cc692d3c inherit pub_methods_classcli_1_1logging_1_1_abstract_logger" id="r_a83674e1212314830c13bc7d3cc692d3c"><td class="memItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classcli_1_1logging_1_1_abstract_logger.html#a83674e1212314830c13bc7d3cc692d3c">error</a> ()</td></tr>
+<tr class="memdesc:a83674e1212314830c13bc7d3cc692d3c inherit pub_methods_classcli_1_1logging_1_1_abstract_logger"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the stream for the ERROR log level.  <br /></td></tr>
+<tr class="separator:a83674e1212314830c13bc7d3cc692d3c inherit pub_methods_classcli_1_1logging_1_1_abstract_logger"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="classcli_1_1logging_1_1_logger.html" title="Logger class for handling log messages.">Logger</a> class for handling log messages. </p>
@@ -208,11 +222,14 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>removeAllHandlers</b>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a2e50820ba882ea36b29c07479b3f9c9f" name="a2e50820ba882ea36b29c07479b3f9c9f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2e50820ba882ea36b29c07479b3f9c9f">&#9670;&#160;</a></span>addHandler()</h2>
+<a id="a04623298a8f01d3f74f85e130cf2d6b2" name="a04623298a8f01d3f74f85e130cf2d6b2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a04623298a8f01d3f74f85e130cf2d6b2">&#9670;&#160;</a></span>addHandler()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void cli::logging::Logger::addHandler </td>
@@ -221,6 +238,11 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>removeAllHandlers</b>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>Add a log handler. </p>
@@ -231,158 +253,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>removeAllHandlers</b>
   </dd>
 </dl>
 
-</div>
-</div>
-<a id="ad65d6da47837dc4af603f916250d39d1" name="ad65d6da47837dc4af603f916250d39d1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad65d6da47837dc4af603f916250d39d1">&#9670;&#160;</a></span>debug() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::ostream &amp; cli::logging::Logger::debug </td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Get the stream for the DEBUG log level. </p>
-<dl class="section return"><dt>Returns</dt><dd>The output stream for the DEBUG log level </dd></dl>
+<p>Implements <a class="el" href="classcli_1_1logging_1_1_abstract_logger.html#ae9fd56d0e440dc17df9b8fc787ab3033">cli::logging::AbstractLogger</a>.</p>
 
 </div>
 </div>
-<a id="abcd857ab7741442dee84933f218d7202" name="abcd857ab7741442dee84933f218d7202"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abcd857ab7741442dee84933f218d7202">&#9670;&#160;</a></span>debug() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename... Args&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void cli::logging::Logger::debug </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>fmt</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">Args &amp;&amp;...</td>          <td class="paramname"><span class="paramname"><em>args</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Log a message at the DEBUG level. </p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">...Args</td><td>The argument types for the format string </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">fmt</td><td>The format string </td></tr>
-    <tr><td class="paramname">...args</td><td>The arguments for the format string </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="aafbd2574cfdfe2df1d448ba8dab408e3" name="aafbd2574cfdfe2df1d448ba8dab408e3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aafbd2574cfdfe2df1d448ba8dab408e3">&#9670;&#160;</a></span>error() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::ostream &amp; cli::logging::Logger::error </td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Get the stream for the ERROR log level. </p>
-<dl class="section return"><dt>Returns</dt><dd>The output stream for the ERROR log level </dd></dl>
-
-</div>
-</div>
-<a id="a6c4fc47e24b8e1d2d402555e4b7be647" name="a6c4fc47e24b8e1d2d402555e4b7be647"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6c4fc47e24b8e1d2d402555e4b7be647">&#9670;&#160;</a></span>error() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename... Args&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void cli::logging::Logger::error </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>fmt</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">Args &amp;&amp;...</td>          <td class="paramname"><span class="paramname"><em>args</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Log a message at the ERROR level. </p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">...Args</td><td>The argument types for the format string </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">fmt</td><td>The format string </td></tr>
-    <tr><td class="paramname">...args</td><td>The arguments for the format string </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="acc755c7d87d6bd2d53723654a35ca656" name="acc755c7d87d6bd2d53723654a35ca656"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acc755c7d87d6bd2d53723654a35ca656">&#9670;&#160;</a></span>getStream()</h2>
+<a id="aed2bf12194db720fff6191986d531618" name="aed2bf12194db720fff6191986d531618"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aed2bf12194db720fff6191986d531618">&#9670;&#160;</a></span>getStream()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -399,7 +275,7 @@ template&lt;typename... Args&gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -413,89 +289,15 @@ template&lt;typename... Args&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The output stream for the specified log level </dd></dl>
 
+<p>Implements <a class="el" href="classcli_1_1logging_1_1_abstract_logger.html#acdbce4b027131e7f29ed916f7c36a567">cli::logging::AbstractLogger</a>.</p>
+
 </div>
 </div>
-<a id="a0ddb4fdf009afd1230d62de4249cf392" name="a0ddb4fdf009afd1230d62de4249cf392"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0ddb4fdf009afd1230d62de4249cf392">&#9670;&#160;</a></span>info() <span class="overload">[1/2]</span></h2>
+<a id="a7eb9dc9074c7218ff59373faa0caac16" name="a7eb9dc9074c7218ff59373faa0caac16"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7eb9dc9074c7218ff59373faa0caac16">&#9670;&#160;</a></span>log()</h2>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::ostream &amp; cli::logging::Logger::info </td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Get the stream for the INFO log level. </p>
-<dl class="section return"><dt>Returns</dt><dd>The output stream for the INFO log level </dd></dl>
-
-</div>
-</div>
-<a id="a4f89f29864f702a3678f6c422a6cbf91" name="a4f89f29864f702a3678f6c422a6cbf91"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4f89f29864f702a3678f6c422a6cbf91">&#9670;&#160;</a></span>info() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename... Args&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void cli::logging::Logger::info </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>fmt</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">Args &amp;&amp;...</td>          <td class="paramname"><span class="paramname"><em>args</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Log a message at the INFO level. </p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">...Args</td><td>The argument types for the format string </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">fmt</td><td>The format string </td></tr>
-    <tr><td class="paramname">...args</td><td>The arguments for the format string </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="a77914c130d4757e948700a7c5f427a0f" name="a77914c130d4757e948700a7c5f427a0f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a77914c130d4757e948700a7c5f427a0f">&#9670;&#160;</a></span>log()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename... Args&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -508,44 +310,66 @@ template&lt;typename... Args&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>fmt</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">Args &amp;&amp;...</td>          <td class="paramname"><span class="paramname"><em>args</em></span>&#160;) const</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>message</em></span>&#160;) const</td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
-<p>Log a message at the specified log level using a format string to print the passed arguments. </p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">...Args</td><td>The argument types for the format string </td></tr>
-  </table>
-  </dd>
-</dl>
+<p>Log a message at the specified log level. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">lvl</td><td>The log level for this message </td></tr>
-    <tr><td class="paramname">fmt</td><td>The format string </td></tr>
-    <tr><td class="paramname">...args</td><td>The arguments for the format string </td></tr>
+    <tr><td class="paramname">lvl</td><td>The log level </td></tr>
+    <tr><td class="paramname">message</td><td>The message to log </td></tr>
   </table>
   </dd>
 </dl>
 
+<p>Implements <a class="el" href="classcli_1_1logging_1_1_abstract_logger.html#a3d4c8df173b8fa46bec4dead11f38e8f">cli::logging::AbstractLogger</a>.</p>
+
 </div>
 </div>
-<a id="a5a553ed3d32cd256d490c4f1292f43b3" name="a5a553ed3d32cd256d490c4f1292f43b3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5a553ed3d32cd256d490c4f1292f43b3">&#9670;&#160;</a></span>setLevel()</h2>
+<a id="a751be1ebbfa8e108c1dcfddaf2b937cc" name="a751be1ebbfa8e108c1dcfddaf2b937cc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a751be1ebbfa8e108c1dcfddaf2b937cc">&#9670;&#160;</a></span>removeAllHandlers()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void cli::logging::Logger::removeAllHandlers </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Remove all log handlers. </p>
+
+<p>Implements <a class="el" href="classcli_1_1logging_1_1_abstract_logger.html#a01b5ba946d18a7985391f6c3938d87b2">cli::logging::AbstractLogger</a>.</p>
+
+</div>
+</div>
+<a id="a2fbf72a3caf9f7f6808960ea4d199a0e" name="a2fbf72a3caf9f7f6808960ea4d199a0e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2fbf72a3caf9f7f6808960ea4d199a0e">&#9670;&#160;</a></span>setLevel()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void cli::logging::Logger::setLevel </td>
@@ -554,6 +378,11 @@ template&lt;typename... Args&gt; </div>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>Set the minimum log level for this logger. </p>
@@ -564,307 +393,13 @@ template&lt;typename... Args&gt; </div>
   </dd>
 </dl>
 
-</div>
-</div>
-<a id="a7977c849c53c434293dc12b3421fed9b" name="a7977c849c53c434293dc12b3421fed9b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7977c849c53c434293dc12b3421fed9b">&#9670;&#160;</a></span>success() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::ostream &amp; cli::logging::Logger::success </td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Get the stream for the SUCCESS log level. </p>
-<dl class="section return"><dt>Returns</dt><dd>The output stream for the SUCCESS log level </dd></dl>
-
-</div>
-</div>
-<a id="a27348d975270f3b731b0736c41154ad8" name="a27348d975270f3b731b0736c41154ad8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a27348d975270f3b731b0736c41154ad8">&#9670;&#160;</a></span>success() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename... Args&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void cli::logging::Logger::success </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>fmt</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">Args &amp;&amp;...</td>          <td class="paramname"><span class="paramname"><em>args</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Log a message at the SUCCESS level. </p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">...Args</td><td>The argument types for the format string </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">fmt</td><td>The format string </td></tr>
-    <tr><td class="paramname">...args</td><td>The arguments for the format string </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="a90c1df37cbc76830da1a6924340c959f" name="a90c1df37cbc76830da1a6924340c959f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a90c1df37cbc76830da1a6924340c959f">&#9670;&#160;</a></span>trace() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::ostream &amp; cli::logging::Logger::trace </td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Get the stream for the TRACE log level. </p>
-<dl class="section return"><dt>Returns</dt><dd>The output stream for the TRACE log level </dd></dl>
-
-</div>
-</div>
-<a id="a7e3fc9dffc6665a8d4771094b108d12d" name="a7e3fc9dffc6665a8d4771094b108d12d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7e3fc9dffc6665a8d4771094b108d12d">&#9670;&#160;</a></span>trace() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename... Args&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void cli::logging::Logger::trace </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>fmt</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">Args &amp;&amp;...</td>          <td class="paramname"><span class="paramname"><em>args</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Log a message at the TRACE level. </p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">...Args</td><td>The argument types for the format string </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">fmt</td><td>The format string </td></tr>
-    <tr><td class="paramname">...args</td><td>The arguments for the format string </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="a0ec02e2de570b213195300c9849a1b97" name="a0ec02e2de570b213195300c9849a1b97"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0ec02e2de570b213195300c9849a1b97">&#9670;&#160;</a></span>verbose() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::ostream &amp; cli::logging::Logger::verbose </td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Get the stream for the VERBOSE log level. </p>
-<dl class="section return"><dt>Returns</dt><dd>The output stream for the VERBOSE log level </dd></dl>
-
-</div>
-</div>
-<a id="a6bd548ac12ceef2ad0d5f2a9d6f34d7d" name="a6bd548ac12ceef2ad0d5f2a9d6f34d7d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6bd548ac12ceef2ad0d5f2a9d6f34d7d">&#9670;&#160;</a></span>verbose() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename... Args&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void cli::logging::Logger::verbose </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>fmt</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">Args &amp;&amp;...</td>          <td class="paramname"><span class="paramname"><em>args</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Log a message at the VERBOSE level. </p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">...Args</td><td>The argument types for the format string </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">fmt</td><td>The format string </td></tr>
-    <tr><td class="paramname">...args</td><td>The arguments for the format string </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="af35cc287a4e93a55cea22f86af66fda9" name="af35cc287a4e93a55cea22f86af66fda9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af35cc287a4e93a55cea22f86af66fda9">&#9670;&#160;</a></span>warning() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::ostream &amp; cli::logging::Logger::warning </td>
-          <td>(</td>
-          <td class="paramname"><span class="paramname"></span></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Get the stream for the WARNING log level. </p>
-<dl class="section return"><dt>Returns</dt><dd>The output stream for the WARNING log level </dd></dl>
-
-</div>
-</div>
-<a id="a4e7a36d6f8fd477b19e64c243105ccbd" name="a4e7a36d6f8fd477b19e64c243105ccbd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4e7a36d6f8fd477b19e64c243105ccbd">&#9670;&#160;</a></span>warning() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename... Args&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void cli::logging::Logger::warning </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>fmt</em>, </span></td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">Args &amp;&amp;...</td>          <td class="paramname"><span class="paramname"><em>args</em></span>&#160;)</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Log a message at the WARNING level. </p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">...Args</td><td>The argument types for the format string </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">fmt</td><td>The format string </td></tr>
-    <tr><td class="paramname">...args</td><td>The arguments for the format string </td></tr>
-  </table>
-  </dd>
-</dl>
+<p>Implements <a class="el" href="classcli_1_1logging_1_1_abstract_logger.html#a0a3fb47dd2b05bbfb8f59ec59000db0c">cli::logging::AbstractLogger</a>.</p>
 
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
-<li>lib/logging/<a class="el" href="logger_8h_source.html">logger.h</a></li>
-<li>lib/logging/<b>logger.cpp</b></li>
+<li>src/chaincli/logging/<a class="el" href="logger_8h_source.html">logger.h</a></li>
+<li>src/chaincli/logging/<b>logger.cpp</b></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

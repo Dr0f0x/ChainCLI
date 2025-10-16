@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.10.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>CliLib: cli::parsing::ParseException Class Reference</title>
+<title>ChainCLI: cli::parsing::ParseException Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -22,9 +22,11 @@
 <table cellspacing="0" cellpadding="0">
  <tbody>
  <tr id="projectrow">
+  <td id="projectlogo"><img alt="Logo" src="ChainCLILogoChainsOnlyTransparent.svg"/></td>
   <td id="projectalign">
-   <div id="projectname">CliLib
+   <div id="projectname">ChainCLI
    </div>
+   <div id="projectbrief">A modern C++20 command-line interface library</div>
   </td>
  </tr>
  </tbody>
@@ -75,11 +77,14 @@ $(function() {
 </div>
 </div><!-- top -->
 <div class="header">
+  <div class="summary">
+<a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="classcli_1_1parsing_1_1_parse_exception-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">cli::parsing::ParseException Class Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
-<p>Exception thrown when parsing fails.  
+<p>Exception thrown when parsing for an argument fails.  
  <a href="#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="parse__exception_8h_source.html">parse_exception.h</a>&gt;</code></p>
@@ -89,10 +94,166 @@ Inheritance diagram for cli::parsing::ParseException:</div>
  <div class="center">
   <img src="classcli_1_1parsing_1_1_parse_exception.png" alt=""/>
  </div></div>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr class="memitem:aedb0c4dddeb15ec45eb515ad9650c438" id="r_aedb0c4dddeb15ec45eb515ad9650c438"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aedb0c4dddeb15ec45eb515ad9650c438">ParseException</a> (const std::string &amp;message, const std::string &amp;input, const <a class="el" href="classcli_1_1commands_1_1_argument_base.html">cli::commands::ArgumentBase</a> &amp;argument)</td></tr>
+<tr class="memdesc:aedb0c4dddeb15ec45eb515ad9650c438"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a <a class="el" href="classcli_1_1parsing_1_1_parse_exception.html" title="Exception thrown when parsing for an argument fails.">ParseException</a> with a message, input string, and argument.  <br /></td></tr>
+<tr class="separator:aedb0c4dddeb15ec45eb515ad9650c438"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a264e0df5dd7570771d464bee00bdaee8" id="r_a264e0df5dd7570771d464bee00bdaee8"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a264e0df5dd7570771d464bee00bdaee8">ParseException</a> (const std::string &amp;input, const <a class="el" href="classcli_1_1commands_1_1_argument_base.html">cli::commands::ArgumentBase</a> &amp;argument)</td></tr>
+<tr class="memdesc:a264e0df5dd7570771d464bee00bdaee8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a <a class="el" href="classcli_1_1parsing_1_1_parse_exception.html" title="Exception thrown when parsing for an argument fails.">ParseException</a> with default message, input string, and argument.  <br /></td></tr>
+<tr class="separator:a264e0df5dd7570771d464bee00bdaee8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeec3d44c42bc6a0ae7182ad596d609a0" id="r_aeec3d44c42bc6a0ae7182ad596d609a0"><td class="memItemLeft" align="right" valign="top">const std::string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aeec3d44c42bc6a0ae7182ad596d609a0">getInput</a> () const noexcept</td></tr>
+<tr class="memdesc:aeec3d44c42bc6a0ae7182ad596d609a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the input string that failed to parse.  <br /></td></tr>
+<tr class="separator:aeec3d44c42bc6a0ae7182ad596d609a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac29c06f24482bcc10ab3f4cdb82b2dd1" id="r_ac29c06f24482bcc10ab3f4cdb82b2dd1"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="classcli_1_1commands_1_1_argument_base.html">cli::commands::ArgumentBase</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac29c06f24482bcc10ab3f4cdb82b2dd1">getArgument</a> () const noexcept</td></tr>
+<tr class="memdesc:ac29c06f24482bcc10ab3f4cdb82b2dd1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the argument that failed to parse.  <br /></td></tr>
+<tr class="separator:ac29c06f24482bcc10ab3f4cdb82b2dd1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Exception thrown when parsing fails. </p>
-</div><hr/>The documentation for this class was generated from the following file:<ul>
-<li>lib/parsing/<a class="el" href="parse__exception_8h_source.html">parse_exception.h</a></li>
+<div class="textblock"><p>Exception thrown when parsing for an argument fails. </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="aedb0c4dddeb15ec45eb515ad9650c438" name="aedb0c4dddeb15ec45eb515ad9650c438"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aedb0c4dddeb15ec45eb515ad9650c438">&#9670;&#160;</a></span>ParseException() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">cli::parsing::ParseException::ParseException </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>message</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>input</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classcli_1_1commands_1_1_argument_base.html">cli::commands::ArgumentBase</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>argument</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Construct a <a class="el" href="classcli_1_1parsing_1_1_parse_exception.html" title="Exception thrown when parsing for an argument fails.">ParseException</a> with a message, input string, and argument. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">message</td><td>The error message </td></tr>
+    <tr><td class="paramname">input</td><td>The input string that failed to parse </td></tr>
+    <tr><td class="paramname">argument</td><td>The argument that failed to parse </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a264e0df5dd7570771d464bee00bdaee8" name="a264e0df5dd7570771d464bee00bdaee8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a264e0df5dd7570771d464bee00bdaee8">&#9670;&#160;</a></span>ParseException() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">cli::parsing::ParseException::ParseException </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;</td>          <td class="paramname"><span class="paramname"><em>input</em>, </span></td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classcli_1_1commands_1_1_argument_base.html">cli::commands::ArgumentBase</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>argument</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Construct a <a class="el" href="classcli_1_1parsing_1_1_parse_exception.html" title="Exception thrown when parsing for an argument fails.">ParseException</a> with default message, input string, and argument. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">input</td><td>The input string that failed to parse </td></tr>
+    <tr><td class="paramname">argument</td><td>The argument that failed to parse </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="ac29c06f24482bcc10ab3f4cdb82b2dd1" name="ac29c06f24482bcc10ab3f4cdb82b2dd1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac29c06f24482bcc10ab3f4cdb82b2dd1">&#9670;&#160;</a></span>getArgument()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const <a class="el" href="classcli_1_1commands_1_1_argument_base.html">cli::commands::ArgumentBase</a> &amp; cli::parsing::ParseException::getArgument </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the argument that failed to parse. </p>
+<dl class="section return"><dt>Returns</dt><dd>reference to the argument </dd></dl>
+
+</div>
+</div>
+<a id="aeec3d44c42bc6a0ae7182ad596d609a0" name="aeec3d44c42bc6a0ae7182ad596d609a0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeec3d44c42bc6a0ae7182ad596d609a0">&#9670;&#160;</a></span>getInput()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const std::string &amp; cli::parsing::ParseException::getInput </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Gets the input string that failed to parse. </p>
+<dl class="section return"><dt>Returns</dt><dd>the input string </dd></dl>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following file:<ul>
+<li>src/chaincli/parsing/<a class="el" href="parse__exception_8h_source.html">parse_exception.h</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

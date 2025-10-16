@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['clilib_0',['CliLib',['../index.html',1,'']]]
+  ['chaincli_0',['ChainCLI',['../index.html',1,'']]]
 ];

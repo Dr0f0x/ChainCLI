@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.10.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>CliLib: Member List</title>
+<title>ChainCLI: Member List</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -22,9 +22,11 @@
 <table cellspacing="0" cellpadding="0">
  <tbody>
  <tr id="projectrow">
+  <td id="projectlogo"><img alt="Logo" src="ChainCLILogoChainsOnlyTransparent.svg"/></td>
   <td id="projectalign">
-   <div id="projectname">CliLib
+   <div id="projectname">ChainCLI
    </div>
+   <div id="projectbrief">A modern C++20 command-line interface library</div>
   </td>
  </tr>
  </tbody>
@@ -84,11 +86,13 @@ $(function() {
   <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>CliApp</b>(const CliApp &amp;)=delete (defined in <a class="el" href="classcli_1_1_cli_app.html">cli::CliApp</a>)</td><td class="entry"><a class="el" href="classcli_1_1_cli_app.html">cli::CliApp</a></td><td class="entry"></td></tr>
   <tr bgcolor="#f0f0f0" class="odd"><td class="entry"><b>CliApp</b>(std::string_view executableName) (defined in <a class="el" href="classcli_1_1_cli_app.html">cli::CliApp</a>)</td><td class="entry"><a class="el" href="classcli_1_1_cli_app.html">cli::CliApp</a></td><td class="entry"><span class="mlabel">explicit</span></td></tr>
   <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>CliApp</b>(CliConfig &amp;&amp;config) (defined in <a class="el" href="classcli_1_1_cli_app.html">cli::CliApp</a>)</td><td class="entry"><a class="el" href="classcli_1_1_cli_app.html">cli::CliApp</a></td><td class="entry"><span class="mlabel">explicit</span></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classcli_1_1_cli_app.html#aa5e1f5948c7db316f53f436e251cc71c">getCommandTree</a>() const</td><td class="entry"><a class="el" href="classcli_1_1_cli_app.html">cli::CliApp</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classcli_1_1_cli_app.html#af972297ebe305273a52ff79f92925aae">getConfig</a>()</td><td class="entry"><a class="el" href="classcli_1_1_cli_app.html">cli::CliApp</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classcli_1_1_cli_app.html#aa7f9f0f9356f49e96b538148da734419">getDocWriter</a>()</td><td class="entry"><a class="el" href="classcli_1_1_cli_app.html">cli::CliApp</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="odd"><td class="entry"><b>CliApp</b>(const CliConfig &amp;config, std::unique_ptr&lt; logging::AbstractLogger &gt; logger) (defined in <a class="el" href="classcli_1_1_cli_app.html">cli::CliApp</a>)</td><td class="entry"><a class="el" href="classcli_1_1_cli_app.html">cli::CliApp</a></td><td class="entry"><span class="mlabel">explicit</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classcli_1_1_cli_app.html#aa5e1f5948c7db316f53f436e251cc71c">getCommandTree</a>() const</td><td class="entry"><a class="el" href="classcli_1_1_cli_app.html">cli::CliApp</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classcli_1_1_cli_app.html#af972297ebe305273a52ff79f92925aae">getConfig</a>()</td><td class="entry"><a class="el" href="classcli_1_1_cli_app.html">cli::CliApp</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classcli_1_1_cli_app.html#aa7f9f0f9356f49e96b538148da734419">getDocWriter</a>()</td><td class="entry"><a class="el" href="classcli_1_1_cli_app.html">cli::CliApp</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classcli_1_1_cli_app.html#a10b6a17bcfb40dd96a7def86e6016e38">getMainCommand</a>()</td><td class="entry"><a class="el" href="classcli_1_1_cli_app.html">cli::CliApp</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="classcli_1_1_cli_app.html#a09a6799ced2d25e0846ff619a855655c">init</a>()</td><td class="entry"><a class="el" href="classcli_1_1_cli_app.html">cli::CliApp</a></td><td class="entry"></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classcli_1_1_cli_app.html#ad05b7f58e015ff0760c42f85e6013421">Logger</a>()</td><td class="entry"><a class="el" href="classcli_1_1_cli_app.html">cli::CliApp</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classcli_1_1_cli_app.html#a176dca312270fdfef20fc2c1a024ed75">Logger</a>()</td><td class="entry"><a class="el" href="classcli_1_1_cli_app.html">cli::CliApp</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
   <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>operator=</b>(const CliApp &amp;)=delete (defined in <a class="el" href="classcli_1_1_cli_app.html">cli::CliApp</a>)</td><td class="entry"><a class="el" href="classcli_1_1_cli_app.html">cli::CliApp</a></td><td class="entry"></td></tr>
   <tr class="odd"><td class="entry"><a class="el" href="classcli_1_1_cli_app.html#a656d54ab24ca4e7b10784da5838d9557">run</a>(int argc, char *argv[])</td><td class="entry"><a class="el" href="classcli_1_1_cli_app.html">cli::CliApp</a></td><td class="entry"></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="classcli_1_1_cli_app.html#a487b64555744f2f42181480e6a8a3910">setLogger</a>(std::unique_ptr&lt; logging::Logger &gt; &amp;&amp;newLogger)</td><td class="entry"><a class="el" href="classcli_1_1_cli_app.html">cli::CliApp</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
