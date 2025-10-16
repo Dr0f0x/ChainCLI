@@ -51,6 +51,8 @@ void Logger::addHandler(std::unique_ptr<AbstractHandler> handlerPtr)
 
 void Logger::log(LogLevel lvl, const std::string &msg) const
 {
+    if(lvl < minLevel)
+        return; // ignore messages below minimum level
     LogRecord record{lvl, msg};
 
     for (auto const &handler : handlers)

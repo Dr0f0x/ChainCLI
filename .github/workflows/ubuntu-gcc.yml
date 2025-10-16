@@ -29,6 +29,7 @@ jobs:
         -DCMAKE_CXX_COMPILER=g++
         -DCMAKE_CXX_FLAGS="-Wall -Wextra -Wpedantic -Werror"
         -DCMAKE_BUILD_TYPE=Release
+        -DENABLE_COVERAGE=ON
         -DRUN_CLANG_TIDY=ON
         -S ${{ github.workspace }}
 
@@ -57,17 +58,24 @@ jobs:
       shell: pwsh
       run: |
         New-Item -ItemType Directory -Force -Path build\coverage
-        gcovr -r . --filter lib/ --html-details build/coverage/coverage.html --cobertura -o build/coverage/coverage.xml --exclude '_deps' --gcov-ignore-errors=no_working_dir_found
+        gcovr -r . --filter src/ --html-details build/coverage/coverage.html --cobertura -o build/coverage/coverage.xml --exclude '_deps' --gcov-ignore-errors=no_working_dir_found
 
     - name: Upload coverage artifact
       uses: actions/upload-artifact@v4
       with:
         name: coverage-report
         path: build/coverage
+    
+    - name: Run codacy-coverage-reporter
+      if: ${{ vars.UPLOAD_COVERAGE == 'true' }}
+      uses: codacy/codacy-coverage-reporter-action@v1.3.0
+      with:
+        project-token: ${{ secrets.CODACY_TOKEN }}
+        coverage-reports: build/coverage/coverage.xml
 
     - name: Upload coverage reports to Codecov
       if: ${{ vars.UPLOAD_COVERAGE == 'true' }}
       uses: codecov/codecov-action@v5
       with:
-        directory: build/coverage/
+        files: build/coverage/coverage.xml
         token: ${{ secrets.CODECOV_TOKEN }}

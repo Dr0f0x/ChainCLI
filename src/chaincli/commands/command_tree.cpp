@@ -19,8 +19,8 @@
 namespace cli::commands
 {
 CommandTree::CommandTree(std::string_view rootName)
+: root(std::make_unique<Command>(rootName))
 {
-    root = std::make_unique<Command>(rootName);
 }
 
 std::string_view CommandTree::getPathForCommand(Command *cmd) const

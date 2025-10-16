@@ -809,6 +809,20 @@ private:
 
 // begin --- log_streambuffer.h --- 
 
+// Copyright 2025 Dominik Czekai
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 #pragma once
 #include <memory>
 #include <string>
@@ -1064,6 +1078,7 @@ private:
 
 namespace cli
 {
+    /// @brief Thrown when an argument that was requested is missing in the context.
     class MissingArgumentException : public std::runtime_error
 {
 public:
@@ -1078,6 +1093,7 @@ private:
                                    const std::unordered_map<std::string, std::any> &args);
 };
 
+/// @brief Thrown when an argument type that was requested is not the one that was parsed.
 class InvalidArgumentTypeException : public std::runtime_error
 {
 public:
@@ -2642,6 +2658,7 @@ public:
                                                  const cli::CliConfig &configuration) = 0;
 };
 
+/// @brief Default formatter for CLI application documentation.
 class DefaultCliAppDocFormatter : public AbstractCliAppDocFormatter
 {
 public:
@@ -3617,8 +3634,8 @@ std::string MalformedCommandException::buildMessage(const Command &cmd, const st
 namespace cli::commands
 {
 CommandTree::CommandTree(std::string_view rootName)
+: root(std::make_unique<Command>(rootName))
 {
-    root = std::make_unique<Command>(rootName);
 }
 
 std::string_view CommandTree::getPathForCommand(Command *cmd) const
@@ -4531,6 +4548,8 @@ void Logger::addHandler(std::unique_ptr<AbstractHandler> handlerPtr)
 
 void Logger::log(LogLevel lvl, const std::string &msg) const
 {
+    if(lvl < minLevel)
+        return; // ignore messages below minimum level
     LogRecord record{lvl, msg};
 
     for (auto const &handler : handlers)
@@ -4556,7 +4575,19 @@ std::ostream &Logger::getStream(LogLevel lvl)
 
 // begin --- log_streambuffer.cpp --- 
 
-
+// Copyright 2025 Dominik Czekai
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 namespace cli::logging
 {

@@ -529,7 +529,7 @@ namespace detail {
         }
 
     protected:
-        ResultValueBase( Type type ) : ResultBase( type ) {}
+        explicit ResultValueBase( Type type ) : ResultBase( type ) {}
 
         ResultValueBase( ResultValueBase const &other ) : ResultBase( other ) {
             if( m_type == ResultBase::Ok )
