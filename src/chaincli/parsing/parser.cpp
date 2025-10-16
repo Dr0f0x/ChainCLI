@@ -28,8 +28,12 @@
 namespace cli::parsing
 {
 std::vector<std::any> Parser::parseRepeatableList(const cli::commands::TypedArgumentBase &arg,
-                                     const std::string &input) const
+                                                  const std::string &input) const
 {
+#ifdef CHAIN_CLI_VERBOSE
+    std::cout << "Parsing repeatable list for argument of type: " << arg.getType().name()
+              << " with delimiter-separated input: " << input << "\n";
+#endif
     std::stringstream ss(input);
     std::string token;
     std::vector<std::any> parsedValues;
@@ -94,7 +98,9 @@ bool Parser::tryOptionArg(
             if (!matchedOpt->isRepeatable() &&
                 contextBuilder.isArgPresent(std::string(matchedOpt->getName())))
             {
-                throw ParseException(std::format("Non Repeatable Argument {} was repeated", matchedOpt->getName()), inputs[index + 1], *matchedOpt);
+                throw ParseException(
+                    std::format("Non Repeatable Argument {} was repeated", matchedOpt->getName()),
+                    inputs[index + 1], *matchedOpt);
             }
 
             auto val = matchedOpt->parseToValue(inputs[index + 1]);
@@ -131,6 +137,16 @@ void cli::parsing::Parser::parseArguments(const cli::commands::Command &command,
                                           const std::vector<std::string> &inputs,
                                           ContextBuilder &contextBuilder) const
 {
+#ifdef CHAIN_CLI_VERBOSE
+    std::cout << "Parsing arguments for command: " << command.getIdentifier() << "\n";
+    std::cout << "Input arguments: ";
+    for (const auto &input : inputs)
+    {
+        std::cout << "\"" << input << "\" ";
+    }
+    std::cout << "\n";
+#endif
+
     const auto &posArguments = command.getPositionalArguments();
     const auto &optArguments = command.getOptionArguments();
     const auto &flagArguments = command.getFlagArguments();
@@ -141,18 +157,27 @@ void cli::parsing::Parser::parseArguments(const cli::commands::Command &command,
         const auto &input = inputs[i];
         if (tryOptionArg(optArguments, inputs, input, i, contextBuilder))
         {
+#ifdef CHAIN_CLI_VERBOSE
+            std::cout << "Processed option argument: " << input << "\n";
+#endif
             i++;
             continue;
         }
 
         if (tryFlagArg(flagArguments, input, contextBuilder))
         {
+#ifdef CHAIN_CLI_VERBOSE
+            std::cout << "Processed flag argument: " << input << "\n";
+#endif
             continue;
         }
 
         if (posArgsIndex >= posArguments.size())
         {
-            throw ParseException(std::format("More positional arguments were provided than the command accepts with input: {}", input), input, *(posArguments.back()));
+            throw ParseException(std::format("More positional arguments were provided than the "
+                                             "command accepts with input: {}",
+                                             input),
+                                 input, *(posArguments.back()));
         }
 
         if (const auto &posArg = *posArguments.at(posArgsIndex); posArg.isRepeatable())
@@ -164,9 +189,14 @@ void cli::parsing::Parser::parseArguments(const cli::commands::Command &command,
             if (!posArg.isRepeatable() &&
                 contextBuilder.isArgPresent(std::string(posArg.getName())))
             {
-                throw ParseException(std::format("Non Repeatable Argument {} was repeated", posArg.getName()), input, posArg);
+                throw ParseException(
+                    std::format("Non Repeatable Argument {} was repeated", posArg.getName()), input,
+                    posArg);
             }
             auto val = posArg.parseToValue(input);
+#ifdef CHAIN_CLI_VERBOSE
+            std::cout << "Processed positional argument: " << input << "\n";
+#endif
             contextBuilder.addPositionalArgument(posArg.getName(), val);
         }
 
@@ -186,9 +216,13 @@ inline_t void exclusiveCheck(const commands::ArgumentGroup *argGroup,
         {
             firstProvided = argPtr.get();
         }
-        else if (contextBuilder.isArgPresent(std::string(argPtr->getName())) && firstProvided != nullptr)
+        else if (contextBuilder.isArgPresent(std::string(argPtr->getName())) &&
+                 firstProvided != nullptr)
         {
-            throw GroupParseException(std::format("Two arguments of mutually exclusive group were present: {} and {}", firstProvided->getName(), argPtr->getName()), *argGroup);
+            throw GroupParseException(
+                std::format("Two arguments of mutually exclusive group were present: {} and {}",
+                            firstProvided->getName(), argPtr->getName()),
+                *argGroup);
         }
     }
 }
@@ -206,24 +240,28 @@ inline_t void inclusiveCheck(const commands::ArgumentGroup *argGroup,
         }
         else if (!contextBuilder.isArgPresent(std::string(argPtr->getName())))
         {
-            throw GroupParseException(std::format("Missing argument in mutually exclusive group: {}", argPtr->getName()), *argGroup);
+            throw GroupParseException(
+                std::format("Missing argument in mutually exclusive group: {}", argPtr->getName()),
+                *argGroup);
         }
     }
 }
 
-inline_t void checkRequired(const commands::ArgumentGroup *argGroup, const ContextBuilder &contextBuilder)
+inline_t void checkRequired(const commands::ArgumentGroup *argGroup,
+                            const ContextBuilder &contextBuilder)
 {
     for (const auto &argPtr : argGroup->getArguments())
     {
         if (argPtr->isRequired() && !contextBuilder.isArgPresent(std::string(argPtr->getName())))
         {
-            throw ParseException(std::format("Required argument {} is missing", argPtr->getName()),"", *argPtr);
+            throw ParseException(std::format("Required argument {} is missing", argPtr->getName()),
+                                 "", *argPtr);
         }
     }
 }
 
 void Parser::checkGroupsAndRequired(const cli::commands::Command &command,
-                         const ContextBuilder &contextBuilder) const
+                                    const ContextBuilder &contextBuilder) const
 {
     for (const auto &argGroup : command.getArgumentGroups())
     {

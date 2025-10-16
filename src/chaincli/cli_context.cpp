@@ -14,6 +14,10 @@
 
 #include "cli_context.h"
 
+#ifdef CHAIN_CLI_VERBOSE
+#include <iostream>
+#endif
+
 namespace cli
 {
 

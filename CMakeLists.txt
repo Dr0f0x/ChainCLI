@@ -14,6 +14,9 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(LIBRARY_NAME_STATIC cli_lib_static)
 set(LIBRARY_NAME_SHARED cli_lib)
 
+#internal library logs
+#dd_compile_options(-DCHAIN_CLI_VERBOSE)
+
 set(RUN_CLANG_TIDY OFF)
 
 find_program(CLANG_TIDY_EXE NAMES clang-tidy)

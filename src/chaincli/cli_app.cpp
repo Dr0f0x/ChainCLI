@@ -61,10 +61,16 @@ CliApp &CliApp::withCommand(std::unique_ptr<commands::Command> subCommandPtr)
 
 void CliApp::init()
 {
+#ifdef CHAIN_CLI_VERBOSE
+    std::cout << "Initializing CLI application...\n";
+#endif
     initialized = true;
 
     commandsTree.buildCommandPathMap();
 
+#ifdef CHAIN_CLI_VERBOSE
+    std::cout << "Building documentation strings for commands...\n";
+#endif
     commandsTree.forEachCommand([this](commands::Command *cmd) {
         docWriter.setDocStrings(*cmd, commandsTree.getPathForCommand(cmd));
     });
@@ -73,8 +79,19 @@ void CliApp::init()
 // NOLINTNEXTLINE(cppcoreguidelines-avoid-c-arrays)
 int CliApp::run(int argc, char *argv[])
 {
+#ifdef CHAIN_CLI_VERBOSE
+    std::cout << "Starting CLI application with " << argc << " arguments\n";
+    std::cout << "Arguments: ";
+    for (int i = 0; i < argc; ++i) {
+        std::cout << "\"" << argv[i] << "\" ";
+    }
+    std::cout << "\n";
+#endif
     if (!initialized)
     {
+#ifdef CHAIN_CLI_VERBOSE
+        std::cout << "Application not initialized, initializing now...\n";
+#endif
         init();
     }
     return internalRun(std::span<char *const>(argv + 1, argc - 1));
@@ -84,6 +101,13 @@ int CliApp::run(int argc, char *argv[])
 // werent consumed in the tree traversal
 inline_t commands::Command *locateCommand(commands::CommandTree &commandsTree, std::vector<std::string> &args)
 {
+#ifdef CHAIN_CLI_VERBOSE
+    std::cout << "Locating command in tree with arguments: ";
+    for (const auto &arg : args) {
+        std::cout << "\"" << arg << "\" ";
+    }
+    std::cout << "\n";
+#endif
     commands::Command *commandPtr = commandsTree.getRootCommand();
 
     int consumed = 0;
@@ -96,11 +120,19 @@ inline_t commands::Command *locateCommand(commands::CommandTree &commandsTree, s
         {
             break;
         }
-
+        
         commandPtr = subCommandPtr;
         ++consumed;
     }
     args.erase(args.begin(), args.begin() + consumed);
+#ifdef CHAIN_CLI_VERBOSE
+    std::cout << "Located command: " << commandPtr->getIdentifier() << ", consumed " << consumed << " arguments\n";
+    std::cout << "Remaining arguments: ";
+    for (const auto &arg : args) {
+        std::cout << "\"" << arg << "\" ";
+    }
+    std::cout << "\n";
+#endif
     return commandPtr;
 }
 
@@ -110,6 +142,9 @@ int CliApp::internalRun(std::span<char *const> args)
 
     if (rootShortCircuits(argVec, *(commandsTree.getRootCommand())))
     {
+#ifdef CHAIN_CLI_VERBOSE
+        std::cout << "Root short-circuit triggered, exiting early\n";
+#endif
         return 0;
     }
 
@@ -118,6 +153,9 @@ int CliApp::internalRun(std::span<char *const> args)
     {
         if (commandShortCircuits(argVec, cmd))
         {
+#ifdef CHAIN_CLI_VERBOSE
+            std::cout << "Command short-circuit triggered for: " << cmd->getIdentifier() << "\n";
+#endif
             return 0;
         }
 
@@ -127,11 +165,20 @@ int CliApp::internalRun(std::span<char *const> args)
 
         auto contextBuilder = cli::ContextBuilder();
 
+#ifdef CHAIN_CLI_VERBOSE
+        std::cout << "Parsing arguments for command execution...\n";
+#endif
         parser.parseArguments(*cmd, argVec, contextBuilder);
+#ifdef CHAIN_CLI_VERBOSE
+        std::cout << "Building context and executing command...\n";
+#endif
         cmd->execute(*contextBuilder.build(*logger));
     }
     else
     {
+#ifdef CHAIN_CLI_VERBOSE
+        std::cout << "No valid command found or command has no execution function\n";
+#endif
         logger->error() << "Unknown command: " << args[0] << "\n" << std::flush;
         auto allCommands = commandsTree.getAllCommandsConst();
         logger->info(docWriter.generateAppDocString(allCommands));

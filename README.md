@@ -116,6 +116,8 @@ catch ()
 
 or with your own way of calling CliApp::run.
 
+> To see library internal logs define ```CHAIN_CLI_VERBOSE``` when compiling.
+
 ## Commands
 
 Commands are created with a unique identifier (=the name of the command to invoke it from the command line) and each command can have its own subcommands that can be added with the ```withSubcommand``` method. That means overall the commands are structured in a tree that can be traversed via the identifiers.

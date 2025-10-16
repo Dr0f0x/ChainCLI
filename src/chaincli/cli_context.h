@@ -23,6 +23,10 @@
 #include <string>
 #include <unordered_set>
 
+#ifdef CHAIN_CLI_VERBOSE
+#include <iostream>
+#endif
+
 #include "logging/logger.h"
 #include "context_exception.h"
 
@@ -79,6 +83,9 @@ public:
     /// @return the value of the positional argument cast to the specified type
     template <typename T> T getPositionalArg(const std::string &argName) const
     {
+#ifdef CHAIN_CLI_VERBOSE
+        std::cout << "Getting positional argument '" << argName << "' as type " << typeid(T).name() << "\n";
+#endif
         return getAnyCast<T>(argName, *positionalArgs);
     }
 
@@ -99,6 +106,9 @@ public:
     /// @return the value of the optional argument cast to the specified type
     template <typename T> T getOptionArg(const std::string &argName) const
     {
+#ifdef CHAIN_CLI_VERBOSE
+        std::cout << "Getting option argument '" << argName << "' as type " << typeid(T).name() << "\n";
+#endif
         return getAnyCast<T>(argName, *optionArgs);
     }
 
@@ -119,6 +129,9 @@ public:
     /// @return a vector of all values of the repeatable option argument cast to the specified type
     template <typename T> std::vector<T> getRepeatableOptionArg(const std::string &argName) const
     {
+#ifdef CHAIN_CLI_VERBOSE
+        std::cout << "Getting repeatable option argument '" << argName << "' as vector of type " << typeid(T).name() << "\n";
+#endif
         auto it = optionArgs->find(argName);
         if (it == optionArgs->end())
             throw MissingArgumentException(argName, *optionArgs);
@@ -128,7 +141,6 @@ public:
             auto anyVec = getAnyCast<std::vector<std::any>>(argName, *optionArgs);
             std::vector<T> result;
             result.reserve(anyVec.size());
-
             for (const auto &elem : anyVec)
             {
                 result.push_back(std::any_cast<T>(elem));
@@ -151,6 +163,9 @@ public:
     template <typename T>
     std::vector<T> getRepeatablePositionalArg(const std::string &argName) const
     {
+#ifdef CHAIN_CLI_VERBOSE
+        std::cout << "Getting repeatable positional argument '" << argName << "' as vector of type " << typeid(T).name() << "\n";
+#endif
         auto it = positionalArgs->find(argName);
         if (it == positionalArgs->end())
             throw MissingArgumentException(argName, *positionalArgs);
@@ -160,7 +175,6 @@ public:
             auto anyVec = getAnyCast<std::vector<std::any>>(argName, *positionalArgs);
             std::vector<T> result;
             result.reserve(anyVec.size());
-
             for (const auto &elem : anyVec)
             {
                 result.push_back(std::any_cast<T>(elem));
@@ -181,6 +195,9 @@ public:
     /// @return the value of the argument cast to the specified type
     template <typename T> T getArg(const std::string &argName) const
     {
+#ifdef CHAIN_CLI_VERBOSE
+        std::cout << "Getting any argument '" << argName << "' as type " << typeid(T).name() << "\n";
+#endif
         if (isPositionalArgPresent(argName))
         {
             return getAnyCast<T>(argName, *positionalArgs);
@@ -202,6 +219,9 @@ public:
     /// @return a vector of all values of the repeatable argument cast to the specified type
     template <typename T> auto getRepeatableArg(const std::string &argName) const
     {
+#ifdef CHAIN_CLI_VERBOSE
+        std::cout << "Getting repeatable argument '" << argName << "' as vector of type " << typeid(T).name() << "\n";
+#endif
         if (isPositionalArgPresent(argName))
         {
             return getRepeatablePositionalArg<T>(argName);

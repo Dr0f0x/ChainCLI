@@ -434,6 +434,10 @@ public:
 #include <string>
 #include <unordered_set>
 
+#ifdef CHAIN_CLI_VERBOSE
+#include <iostream>
+#endif
+
 // begin --- logger.h --- 
 
 /*
@@ -1147,6 +1151,9 @@ public:
     /// @return the value of the positional argument cast to the specified type
     template <typename T> T getPositionalArg(const std::string &argName) const
     {
+#ifdef CHAIN_CLI_VERBOSE
+        std::cout << "Getting positional argument '" << argName << "' as type " << typeid(T).name() << "\n";
+#endif
         return getAnyCast<T>(argName, *positionalArgs);
     }
 
@@ -1167,6 +1174,9 @@ public:
     /// @return the value of the optional argument cast to the specified type
     template <typename T> T getOptionArg(const std::string &argName) const
     {
+#ifdef CHAIN_CLI_VERBOSE
+        std::cout << "Getting option argument '" << argName << "' as type " << typeid(T).name() << "\n";
+#endif
         return getAnyCast<T>(argName, *optionArgs);
     }
 
@@ -1187,6 +1197,9 @@ public:
     /// @return a vector of all values of the repeatable option argument cast to the specified type
     template <typename T> std::vector<T> getRepeatableOptionArg(const std::string &argName) const
     {
+#ifdef CHAIN_CLI_VERBOSE
+        std::cout << "Getting repeatable option argument '" << argName << "' as vector of type " << typeid(T).name() << "\n";
+#endif
         auto it = optionArgs->find(argName);
         if (it == optionArgs->end())
             throw MissingArgumentException(argName, *optionArgs);
@@ -1196,7 +1209,6 @@ public:
             auto anyVec = getAnyCast<std::vector<std::any>>(argName, *optionArgs);
             std::vector<T> result;
             result.reserve(anyVec.size());
-
             for (const auto &elem : anyVec)
             {
                 result.push_back(std::any_cast<T>(elem));
@@ -1219,6 +1231,9 @@ public:
     template <typename T>
     std::vector<T> getRepeatablePositionalArg(const std::string &argName) const
     {
+#ifdef CHAIN_CLI_VERBOSE
+        std::cout << "Getting repeatable positional argument '" << argName << "' as vector of type " << typeid(T).name() << "\n";
+#endif
         auto it = positionalArgs->find(argName);
         if (it == positionalArgs->end())
             throw MissingArgumentException(argName, *positionalArgs);
@@ -1228,7 +1243,6 @@ public:
             auto anyVec = getAnyCast<std::vector<std::any>>(argName, *positionalArgs);
             std::vector<T> result;
             result.reserve(anyVec.size());
-
             for (const auto &elem : anyVec)
             {
                 result.push_back(std::any_cast<T>(elem));
@@ -1249,6 +1263,9 @@ public:
     /// @return the value of the argument cast to the specified type
     template <typename T> T getArg(const std::string &argName) const
     {
+#ifdef CHAIN_CLI_VERBOSE
+        std::cout << "Getting any argument '" << argName << "' as type " << typeid(T).name() << "\n";
+#endif
         if (isPositionalArgPresent(argName))
         {
             return getAnyCast<T>(argName, *positionalArgs);
@@ -1270,6 +1287,9 @@ public:
     /// @return a vector of all values of the repeatable argument cast to the specified type
     template <typename T> auto getRepeatableArg(const std::string &argName) const
     {
+#ifdef CHAIN_CLI_VERBOSE
+        std::cout << "Getting repeatable argument '" << argName << "' as vector of type " << typeid(T).name() << "\n";
+#endif
         if (isPositionalArgPresent(argName))
         {
             return getRepeatablePositionalArg<T>(argName);
@@ -3081,10 +3101,16 @@ CliApp &CliApp::withCommand(std::unique_ptr<commands::Command> subCommandPtr)
 
 void CliApp::init()
 {
+#ifdef CHAIN_CLI_VERBOSE
+    std::cout << "Initializing CLI application...\n";
+#endif
     initialized = true;
 
     commandsTree.buildCommandPathMap();
 
+#ifdef CHAIN_CLI_VERBOSE
+    std::cout << "Building documentation strings for commands...\n";
+#endif
     commandsTree.forEachCommand([this](commands::Command *cmd) {
         docWriter.setDocStrings(*cmd, commandsTree.getPathForCommand(cmd));
     });
@@ -3093,8 +3119,19 @@ void CliApp::init()
 // NOLINTNEXTLINE(cppcoreguidelines-avoid-c-arrays)
 int CliApp::run(int argc, char *argv[])
 {
+#ifdef CHAIN_CLI_VERBOSE
+    std::cout << "Starting CLI application with " << argc << " arguments\n";
+    std::cout << "Arguments: ";
+    for (int i = 0; i < argc; ++i) {
+        std::cout << "\"" << argv[i] << "\" ";
+    }
+    std::cout << "\n";
+#endif
     if (!initialized)
     {
+#ifdef CHAIN_CLI_VERBOSE
+        std::cout << "Application not initialized, initializing now...\n";
+#endif
         init();
     }
     return internalRun(std::span<char *const>(argv + 1, argc - 1));
@@ -3104,6 +3141,13 @@ int CliApp::run(int argc, char *argv[])
 // werent consumed in the tree traversal
 inline commands::Command *locateCommand(commands::CommandTree &commandsTree, std::vector<std::string> &args)
 {
+#ifdef CHAIN_CLI_VERBOSE
+    std::cout << "Locating command in tree with arguments: ";
+    for (const auto &arg : args) {
+        std::cout << "\"" << arg << "\" ";
+    }
+    std::cout << "\n";
+#endif
     commands::Command *commandPtr = commandsTree.getRootCommand();
 
     int consumed = 0;
@@ -3116,11 +3160,19 @@ inline commands::Command *locateCommand(commands::CommandTree &commandsTree, std
         {
             break;
         }
-
+        
         commandPtr = subCommandPtr;
         ++consumed;
     }
     args.erase(args.begin(), args.begin() + consumed);
+#ifdef CHAIN_CLI_VERBOSE
+    std::cout << "Located command: " << commandPtr->getIdentifier() << ", consumed " << consumed << " arguments\n";
+    std::cout << "Remaining arguments: ";
+    for (const auto &arg : args) {
+        std::cout << "\"" << arg << "\" ";
+    }
+    std::cout << "\n";
+#endif
     return commandPtr;
 }
 
@@ -3130,6 +3182,9 @@ int CliApp::internalRun(std::span<char *const> args)
 
     if (rootShortCircuits(argVec, *(commandsTree.getRootCommand())))
     {
+#ifdef CHAIN_CLI_VERBOSE
+        std::cout << "Root short-circuit triggered, exiting early\n";
+#endif
         return 0;
     }
 
@@ -3138,19 +3193,33 @@ int CliApp::internalRun(std::span<char *const> args)
     {
         if (commandShortCircuits(argVec, cmd))
         {
+#ifdef CHAIN_CLI_VERBOSE
+            std::cout << "Command short-circuit triggered for: " << cmd->getIdentifier() << "\n";
+#endif
             return 0;
         }
 
-        logger->trace("Executing command: {}", cmd->getIdentifier());
+        #ifdef CHAIN_CLI_VERBOSE
+        std::cout << "Executing command: " << cmd->getIdentifier() << "\n";
+        #endif
 
         auto contextBuilder = cli::ContextBuilder();
 
+#ifdef CHAIN_CLI_VERBOSE
+        std::cout << "Parsing arguments for command execution...\n";
+#endif
         parser.parseArguments(*cmd, argVec, contextBuilder);
+#ifdef CHAIN_CLI_VERBOSE
+        std::cout << "Building context and executing command...\n";
+#endif
         cmd->execute(*contextBuilder.build(*logger));
     }
     else
     {
-        std::cout << "Unknown command: " << args[0] << "\n";
+#ifdef CHAIN_CLI_VERBOSE
+        std::cout << "No valid command found or command has no execution function\n";
+#endif
+        logger->error() << "Unknown command: " << args[0] << "\n" << std::flush;
         auto allCommands = commandsTree.getAllCommandsConst();
         logger->info(docWriter.generateAppDocString(allCommands));
     }
@@ -3221,6 +3290,10 @@ CliApp &CliApp::withCommand(commands::Command &&subCommand)
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
+#ifdef CHAIN_CLI_VERBOSE
+#include <iostream>
+#endif
 
 namespace cli
 {
@@ -4093,6 +4166,10 @@ std::string PositionalArgumentBase::getArgDocString(const docwriting::DocWriter 
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#ifdef CHAIN_CLI_VERBOSE
+#include <iostream>
+#endif
+
 namespace cli
 {
 ContextBuilder::ContextBuilder()
@@ -4104,6 +4181,9 @@ ContextBuilder::ContextBuilder()
 
 ContextBuilder &ContextBuilder::addPositionalArgument(const std::string &argName, std::any &val)
 {
+#ifdef CHAIN_CLI_VERBOSE
+    std::cout << "Appending positional argument: " << argName << "\n";
+#endif
     positionalArgs->try_emplace(argName, val);
     return *this;
 }
@@ -4115,6 +4195,9 @@ ContextBuilder &ContextBuilder::addPositionalArgument(std::string_view argName, 
 
 ContextBuilder &ContextBuilder::addRepeatablePositionalArgument(const std::string &argName, const std::vector<std::any> &values)
 {
+#ifdef CHAIN_CLI_VERBOSE
+    std::cout << "Adding repeatable positional argument to context: " << argName << " with " << values.size() << " values\n";
+#endif
     if(!positionalArgs->contains(argName))
     {
         positionalArgs->try_emplace(argName, values);
@@ -4122,6 +4205,9 @@ ContextBuilder &ContextBuilder::addRepeatablePositionalArgument(const std::strin
     else 
     {
         // If the argument already exists, we need to append the new values to the existing ones
+#ifdef CHAIN_CLI_VERBOSE
+        std::cout << "Adding to existing repeatable positional argument: " << argName << "\n";
+#endif
         std::any &existingValues = positionalArgs->at(argName);
         std::vector<std::any> &vec = std::any_cast<std::vector<std::any> &>(existingValues);
         vec.insert(vec.end(), values.begin(), values.end());
@@ -4136,6 +4222,9 @@ ContextBuilder &ContextBuilder::addRepeatablePositionalArgument(std::string_view
 
 ContextBuilder &ContextBuilder::addOptionArgument(const std::string &argName, std::any &val)
 {
+#ifdef CHAIN_CLI_VERBOSE
+    std::cout << "Adding option argument: " << argName << "\n";
+#endif
     optionalArgs->try_emplace(argName, val);
     return *this;
 }
@@ -4147,6 +4236,9 @@ ContextBuilder &ContextBuilder::addOptionArgument(std::string_view argName, std:
 
 ContextBuilder &ContextBuilder::addRepeatableOptionArgument(const std::string &argName, const std::vector<std::any> &values)
 {
+#ifdef CHAIN_CLI_VERBOSE
+    std::cout << "Adding to repeatable option argument to context: " << argName << " with " << values.size() << " values\n";
+#endif
     if(!optionalArgs->contains(argName))
     {
         optionalArgs->try_emplace(argName, values);
@@ -4154,6 +4246,9 @@ ContextBuilder &ContextBuilder::addRepeatableOptionArgument(const std::string &a
     else
     {
         //append to existing values if already provided
+#ifdef CHAIN_CLI_VERBOSE
+        std::cout << "  Appending to existing repeatable option argument: " << argName << "\n";
+#endif
         std::any &existingValues = optionalArgs->at(argName);
         std::vector<std::any> &vec = std::any_cast<std::vector<std::any> &>(existingValues);
         vec.insert(vec.end(), values.begin(), values.end());
@@ -4168,6 +4263,9 @@ ContextBuilder &ContextBuilder::addRepeatableOptionArgument(std::string_view arg
 
 ContextBuilder &ContextBuilder::addFlagArgument(const std::string &argName)
 {
+#ifdef CHAIN_CLI_VERBOSE
+    std::cout << "Adding flag argument: " << argName << "\n";
+#endif
     flagArgs->insert(argName);
     return *this;
 }
@@ -4186,6 +4284,10 @@ bool ContextBuilder::isArgPresent(const std::string &argName) const
 
 std::unique_ptr<CliContext> ContextBuilder::build(cli::logging::AbstractLogger &logger)
 {
+#ifdef CHAIN_CLI_VERBOSE
+    std::cout << "Building CliContext with " << positionalArgs->size() << " positional, " 
+              << optionalArgs->size() << " option, and " << flagArgs->size() << " flag arguments\n";
+#endif
     return std::make_unique<CliContext>(std::move(positionalArgs), std::move(optionalArgs),
                                         std::move(flagArgs), logger);
 }
@@ -4504,8 +4606,12 @@ int LogStreamBuf::sync()
 namespace cli::parsing
 {
 std::vector<std::any> Parser::parseRepeatableList(const cli::commands::TypedArgumentBase &arg,
-                                     const std::string &input) const
+                                                  const std::string &input) const
 {
+#ifdef CHAIN_CLI_VERBOSE
+    std::cout << "Parsing repeatable list for argument of type: " << arg.getType().name()
+              << " with delimiter-separated input: " << input << "\n";
+#endif
     std::stringstream ss(input);
     std::string token;
     std::vector<std::any> parsedValues;
@@ -4570,7 +4676,9 @@ bool Parser::tryOptionArg(
             if (!matchedOpt->isRepeatable() &&
                 contextBuilder.isArgPresent(std::string(matchedOpt->getName())))
             {
-                throw ParseException(std::format("Non Repeatable Argument {} was repeated", matchedOpt->getName()), inputs[index + 1], *matchedOpt);
+                throw ParseException(
+                    std::format("Non Repeatable Argument {} was repeated", matchedOpt->getName()),
+                    inputs[index + 1], *matchedOpt);
             }
 
             auto val = matchedOpt->parseToValue(inputs[index + 1]);
@@ -4607,6 +4715,16 @@ void cli::parsing::Parser::parseArguments(const cli::commands::Command &command,
                                           const std::vector<std::string> &inputs,
                                           ContextBuilder &contextBuilder) const
 {
+#ifdef CHAIN_CLI_VERBOSE
+    std::cout << "Parsing arguments for command: " << command.getIdentifier() << "\n";
+    std::cout << "Input arguments: ";
+    for (const auto &input : inputs)
+    {
+        std::cout << "\"" << input << "\" ";
+    }
+    std::cout << "\n";
+#endif
+
     const auto &posArguments = command.getPositionalArguments();
     const auto &optArguments = command.getOptionArguments();
     const auto &flagArguments = command.getFlagArguments();
@@ -4617,18 +4735,27 @@ void cli::parsing::Parser::parseArguments(const cli::commands::Command &command,
         const auto &input = inputs[i];
         if (tryOptionArg(optArguments, inputs, input, i, contextBuilder))
         {
+#ifdef CHAIN_CLI_VERBOSE
+            std::cout << "Processed option argument: " << input << "\n";
+#endif
             i++;
             continue;
         }
 
         if (tryFlagArg(flagArguments, input, contextBuilder))
         {
+#ifdef CHAIN_CLI_VERBOSE
+            std::cout << "Processed flag argument: " << input << "\n";
+#endif
             continue;
         }
 
         if (posArgsIndex >= posArguments.size())
         {
-            throw ParseException(std::format("More positional arguments were provided than the command accepts with input: {}", input), input, *(posArguments.back()));
+            throw ParseException(std::format("More positional arguments were provided than the "
+                                             "command accepts with input: {}",
+                                             input),
+                                 input, *(posArguments.back()));
         }
 
         if (const auto &posArg = *posArguments.at(posArgsIndex); posArg.isRepeatable())
@@ -4640,9 +4767,14 @@ void cli::parsing::Parser::parseArguments(const cli::commands::Command &command,
             if (!posArg.isRepeatable() &&
                 contextBuilder.isArgPresent(std::string(posArg.getName())))
             {
-                throw ParseException(std::format("Non Repeatable Argument {} was repeated", posArg.getName()), input, posArg);
+                throw ParseException(
+                    std::format("Non Repeatable Argument {} was repeated", posArg.getName()), input,
+                    posArg);
             }
             auto val = posArg.parseToValue(input);
+#ifdef CHAIN_CLI_VERBOSE
+            std::cout << "Processed positional argument: " << input << "\n";
+#endif
             contextBuilder.addPositionalArgument(posArg.getName(), val);
         }
 
@@ -4662,9 +4794,13 @@ inline void exclusiveCheck(const commands::ArgumentGroup *argGroup,
         {
             firstProvided = argPtr.get();
         }
-        else if (contextBuilder.isArgPresent(std::string(argPtr->getName())) && firstProvided != nullptr)
+        else if (contextBuilder.isArgPresent(std::string(argPtr->getName())) &&
+                 firstProvided != nullptr)
         {
-            throw GroupParseException(std::format("Two arguments of mutually exclusive group were present: {} and {}", firstProvided->getName(), argPtr->getName()), *argGroup);
+            throw GroupParseException(
+                std::format("Two arguments of mutually exclusive group were present: {} and {}",
+                            firstProvided->getName(), argPtr->getName()),
+                *argGroup);
         }
     }
 }
@@ -4682,24 +4818,28 @@ inline void inclusiveCheck(const commands::ArgumentGroup *argGroup,
         }
         else if (!contextBuilder.isArgPresent(std::string(argPtr->getName())))
         {
-            throw GroupParseException(std::format("Missing argument in mutually exclusive group: {}", argPtr->getName()), *argGroup);
+            throw GroupParseException(
+                std::format("Missing argument in mutually exclusive group: {}", argPtr->getName()),
+                *argGroup);
         }
     }
 }
 
-inline void checkRequired(const commands::ArgumentGroup *argGroup, const ContextBuilder &contextBuilder)
+inline void checkRequired(const commands::ArgumentGroup *argGroup,
+                            const ContextBuilder &contextBuilder)
 {
     for (const auto &argPtr : argGroup->getArguments())
     {
         if (argPtr->isRequired() && !contextBuilder.isArgPresent(std::string(argPtr->getName())))
         {
-            throw ParseException(std::format("Required argument {} is missing", argPtr->getName()),"", *argPtr);
+            throw ParseException(std::format("Required argument {} is missing", argPtr->getName()),
+                                 "", *argPtr);
         }
     }
 }
 
 void Parser::checkGroupsAndRequired(const cli::commands::Command &command,
-                         const ContextBuilder &contextBuilder) const
+                                    const ContextBuilder &contextBuilder) const
 {
     for (const auto &argGroup : command.getArgumentGroups())
     {

@@ -1,5 +1,6 @@
 #include <cmath>
 
+#define CHAIN_CLI_VERBOSE
 #include "chain_cli.hpp"
 
 void add(const cli::CliContext &ctx)
