@@ -5,18 +5,18 @@ void inclusiveFunc(const cli::CliContext &ctx)
     auto input = ctx.getPositionalArg<std::string>("input");
     bool hasValue = ctx.isOptionArgPresent("--value");
 
-    ctx.Logger.info() << "Input: " << input;
+    ctx.Logger().info() << "Input: " << input;
 
     if (hasValue)
     {
         auto value = ctx.getOptionArg<int>("--value");
         auto name = ctx.getOptionArg<std::string>("--name");
-        ctx.Logger.info() << "Value: " << value;
-        ctx.Logger.info() << " Name: " << name << std::flush;
+        ctx.Logger().info() << "Value: " << value;
+        ctx.Logger().info() << " Name: " << name << std::flush;
     }
     else
     {
-        ctx.Logger.info() << "No inclusive group arguments provided." << std::flush;
+        ctx.Logger().info() << "No inclusive group arguments provided." << std::flush;
     }
 }
 
@@ -26,21 +26,21 @@ void exclusiveFunc(const cli::CliContext &ctx)
     bool hasValue = ctx.isOptionArgPresent("--value");
     bool hasName = ctx.isOptionArgPresent("--name");
 
-    ctx.Logger.info() << "Input: " << input;
+    ctx.Logger().info() << "Input: " << input;
 
     if (hasValue)
     {
         auto value = ctx.getOptionArg<int>("--value");
-        ctx.Logger.info() << "Value: " << value << std::flush;
+        ctx.Logger().info() << "Value: " << value << std::flush;
     }
     else if (hasName)
     {
         auto name = ctx.getOptionArg<std::string>("--name");
-        ctx.Logger.info() << "Name: " << name << std::flush;
+        ctx.Logger().info() << "Name: " << name << std::flush;
     }
     else
     {
-        ctx.Logger.info() << "No exclusive group arguments provided." << std::flush;
+        ctx.Logger().info() << "No exclusive group arguments provided." << std::flush;
     }
 }
 

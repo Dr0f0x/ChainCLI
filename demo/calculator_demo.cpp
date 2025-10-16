@@ -9,7 +9,7 @@ void add(const cli::CliContext &ctx)
     {
         res += val;
     }
-    ctx.Logger.info("Result: {}", res);
+    ctx.Logger().info("Result: {}", res);
 }
 
 void multiply(const cli::CliContext &ctx)
@@ -19,7 +19,7 @@ void multiply(const cli::CliContext &ctx)
     {
         res *= val;
     }
-    ctx.Logger.info("Result: {}", res);
+    ctx.Logger().info("Result: {}", res);
 }
 
 void subtract(const cli::CliContext &ctx)
@@ -33,7 +33,7 @@ void subtract(const cli::CliContext &ctx)
         bound = ctx.getOptionArg<double>("--bound");
         if (minuend < bound)
         {
-            ctx.Logger.debug("Initial minuend {} is already below the bound {}", minuend, bound);
+            ctx.Logger().debug("Initial minuend {} is already below the bound {}", minuend, bound);
         }
     }
 
@@ -42,11 +42,11 @@ void subtract(const cli::CliContext &ctx)
         minuend -= val;
         if (boundPresent && minuend < bound)
         {
-            ctx.Logger.info("Subtraction crossed the bound of {}: current value is {}", bound,
+            ctx.Logger().info("Subtraction crossed the bound of {}: current value is {}", bound,
                             minuend);
         }
     }
-    ctx.Logger.info("Result: {}", minuend);
+    ctx.Logger().info("Result: {}", minuend);
 }
 
 void divide(const cli::CliContext &ctx)
@@ -55,13 +55,13 @@ void divide(const cli::CliContext &ctx)
     bool useRemainder = ctx.isFlagPresent("--remainder");
 
     if (useRemainder)
-        ctx.Logger.info("Using remainders for division");
+        ctx.Logger().info("Using remainders for division");
 
     for (const auto &val : ctx.getRepeatableArg<double>("divisor"))
     {
         if (val == 0)
         {
-            ctx.Logger.error("Division by zero is not allowed!");
+            ctx.Logger().error("Division by zero is not allowed!");
             return;
         }
 
@@ -76,9 +76,9 @@ void divide(const cli::CliContext &ctx)
     }
 
     if (useRemainder)
-        ctx.Logger.info("Remainder result: {}", dividend);
+        ctx.Logger().info("Remainder result: {}", dividend);
     else
-        ctx.Logger.info("Division result: {}", dividend);
+        ctx.Logger().info("Division result: {}", dividend);
 }
 
 void initCommands(cli::CliApp &cliApp)

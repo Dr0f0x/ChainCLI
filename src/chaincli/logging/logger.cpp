@@ -22,9 +22,9 @@ Logger::Logger(LogLevel lvl) : minLevel(lvl)
 {
     // Wrap logInternal as a lambda and pass it to LogStreamBuf
     auto logFuncPtr = std::make_shared<std::function<void(LogLevel, const std::string &)>>(
-        [this](LogLevel level, const std::string &msg) { this->logInternal(level, msg); });
+        [this](LogLevel level, const std::string &msg) { this->log(level, msg); });
 
-    for (int i = static_cast<int>(LogLevel::TRACE); i <= static_cast<int>(LogLevel::ERROR); ++i)
+    for (auto i = static_cast<int>(LogLevel::TRACE); i <= static_cast<int>(LogLevel::ERROR); ++i)
     {
         auto level = static_cast<LogLevel>(i);
         buffers[level] = std::make_unique<LogStreamBuf>(logFuncPtr, level, minLevel);
@@ -49,7 +49,7 @@ void Logger::addHandler(std::unique_ptr<AbstractHandler> handlerPtr)
     handlers.push_back(std::move(handlerPtr));
 }
 
-void Logger::logInternal(LogLevel lvl, const std::string &msg) const
+void Logger::log(LogLevel lvl, const std::string &msg) const
 {
     LogRecord record{lvl, msg};
 
@@ -59,17 +59,13 @@ void Logger::logInternal(LogLevel lvl, const std::string &msg) const
     }
 }
 
-int LogStreamBuf::sync()
+std::ostream &Logger::getStream(LogLevel lvl)
 {
-    if (lvl < minLevel)
-        return 0; // skip
-
-    if (auto msg = str(); !msg.empty())
+    if (auto it = streams.find(lvl); it != streams.end())
     {
-        (*logFuncPtr)(lvl, msg); // call the function
-        str("");                 // clear the buffer
+        return *(it->second);
     }
-    return 0;
+    throw std::invalid_argument("Invalid log level for stream");
 }
 
 } // namespace cli::logging

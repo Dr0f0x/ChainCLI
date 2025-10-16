@@ -152,7 +152,7 @@ void cli::parsing::Parser::parseArguments(const cli::commands::Command &command,
 
         if (posArgsIndex >= posArguments.size())
         {
-            throw ParseException("More positional arguments were provided than the command accepts", input, *(posArguments.back()));
+            throw ParseException(std::format("More positional arguments were provided than the command accepts with input: {}", input), input, *(posArguments.back()));
         }
 
         if (const auto &posArg = *posArguments.at(posArgsIndex); posArg.isRepeatable())
@@ -186,7 +186,7 @@ inline_t void exclusiveCheck(const commands::ArgumentGroup *argGroup,
         {
             firstProvided = argPtr.get();
         }
-        else if (contextBuilder.isArgPresent(std::string(argPtr->getName())))
+        else if (contextBuilder.isArgPresent(std::string(argPtr->getName())) && firstProvided != nullptr)
         {
             throw GroupParseException(std::format("Two arguments of mutually exclusive group were present: {} and {}", firstProvided->getName(), argPtr->getName()), *argGroup);
         }

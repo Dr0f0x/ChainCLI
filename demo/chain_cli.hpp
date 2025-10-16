@@ -677,9 +677,9 @@ public:
 #include <string>
 
 #if defined(_MSC_VER)
-#define ESC "\x1B"
+constexpr const std::string ESC = "\x1B";
 #else
-#define ESC "\033"
+constexpr const std::string ESC = "\033";
 #endif
 
 namespace cli::logging
@@ -693,13 +693,13 @@ inline LogStyleMap defaultStyles()
 {
     using enum cli::logging::LogLevel;
     return {
-        {TRACE, ESC "[90m"},   // gray
-        {VERBOSE, ESC "[90m"}, // gray
-        {DEBUG, ESC "[36m"},   // cyan
+        {TRACE, ESC + "[90m"},   // gray
+        {VERBOSE, ESC + "[90m"}, // gray
+        {DEBUG, ESC + "[36m"},   // cyan
         // Info uses plain grey text (no color)
-        {SUCCESS, ESC "[32m"}, // green
-        {WARNING, ESC "[33m"}, // yellow
-        {ERROR, ESC "[31m"},   // red
+        {SUCCESS, ESC + "[32m"}, // green
+        {WARNING, ESC + "[33m"}, // yellow
+        {ERROR, ESC + "[31m"},   // red
     };
 }
 } // namespace cli::logging
@@ -803,9 +803,16 @@ private:
 
 
 
+// begin --- log_streambuffer.h --- 
+
+#pragma once
+#include <memory>
+#include <string>
+#include <sstream>
+#include <functional>
+
 namespace cli::logging
 {
-
 /// @brief Log stream buffer with a minimum LogLevel, that redirects the buffered output to a
 /// logging function. Used to offer own streams to write to for each log level.
 /// @note Does not flush automatically on newline, call sync() or explicitly flush buffer.
@@ -816,7 +823,7 @@ public:
     /// @param logFuncPtr The logging function to call with the buffered output
     /// @param lvl The log level for this buffer
     /// @param lvlMin The minimum log level for this buffer
-    LogStreamBuf(std::shared_ptr<std::function<void(LogLevel, const std::string &)>> logFuncPtr,
+    explicit LogStreamBuf(std::shared_ptr<std::function<void(LogLevel, const std::string &)>> logFuncPtr,
                  LogLevel lvl, LogLevel lvlMin)
         : logFuncPtr(logFuncPtr), lvl(lvl), minLevel(lvlMin)
     {
@@ -833,32 +840,42 @@ private:
     LogLevel lvl;
     LogLevel minLevel;
 };
+} // namespace cli::logging
 
-/// @brief Logger class for handling log messages.
-class Logger
+
+// end --- log_streambuffer.h --- 
+
+
+
+namespace cli::logging
+{
+
+/// @brief Abstract base class for logger implementations
+class AbstractLogger
 {
 public:
-    // Non-copyable
-    Logger(const Logger &) = delete;
-    Logger &operator=(const Logger &) = delete;
-
-    Logger(Logger &&) = default;
-    Logger &operator=(Logger &&) = default;
-
-    /// @brief Construct a new Logger object with the specified minimum log level.
-    /// @param lvl The minimum log level for this logger
-    explicit Logger(LogLevel lvl = LogLevel::TRACE);
+    virtual ~AbstractLogger() = default;
 
     /// @brief Set the minimum log level for this logger.
     /// @param lvl The new minimum log level
-    void setLevel(LogLevel lvl);
+    virtual void setLevel(LogLevel lvl) = 0;
 
     /// @brief Add a log handler.
     /// @param handlerPtr The log handler to add
-    void addHandler(std::unique_ptr<AbstractHandler> handlerPtr);
+    virtual void addHandler(std::unique_ptr<AbstractHandler> handlerPtr) = 0;
 
     /// @brief Remove all log handlers.
-    void removeAllHandlers() { handlers.clear(); }
+    virtual void removeAllHandlers() = 0;
+
+    /// @brief Log a message at the specified log level.
+    /// @param lvl The log level
+    /// @param message The message to log
+    virtual void log(LogLevel lvl, const std::string &message) const = 0;
+
+    /// @brief Get the stream for the specified log level.
+    /// @param lvl The log level
+    /// @return The output stream for the specified log level
+    virtual std::ostream &getStream(LogLevel lvl) = 0;
 
     /// @brief Log a message at the specified log level using a format string to print the passed
     /// arguments.
@@ -868,10 +885,8 @@ public:
     /// @param ...args The arguments for the format string
     template <typename... Args> void log(LogLevel lvl, const std::string &fmt, Args &&...args) const
     {
-        if (lvl < minLevel)
-            return;
         std::string formatted = std::vformat(fmt, std::make_format_args(args...));
-        logInternal(lvl, formatted);
+        log(lvl, formatted);
     }
 
 #pragma region LogLevelShortcuts
@@ -943,43 +958,69 @@ public:
 
 #pragma region LogStreamShortcuts
 
-    /// @brief Get the stream for the specified log level.
-    /// @param lvl The log level
-    /// @return The output stream for the specified log level
-    std::ostream &getStream(LogLevel lvl) { return *streams[lvl]; }
-
     /// @brief Get the stream for the TRACE log level.
     /// @return The output stream for the TRACE log level
-    std::ostream &trace() { return *streams[LogLevel::TRACE]; }
+    std::ostream &trace() { return getStream(LogLevel::TRACE); }
 
     /// @brief Get the stream for the VERBOSE log level.
     /// @return The output stream for the VERBOSE log level
-    std::ostream &verbose() { return *streams[LogLevel::VERBOSE]; }
+    std::ostream &verbose() { return getStream(LogLevel::VERBOSE); }
 
     /// @brief Get the stream for the DEBUG log level.
     /// @return The output stream for the DEBUG log level
-    std::ostream &debug() { return *streams[LogLevel::DEBUG]; }
+    std::ostream &debug() { return getStream(LogLevel::DEBUG); }
 
     /// @brief Get the stream for the SUCCESS log level.
     /// @return The output stream for the SUCCESS log level
-    std::ostream &success() { return *streams[LogLevel::SUCCESS]; }
+    std::ostream &success() { return getStream(LogLevel::SUCCESS); }
 
     /// @brief Get the stream for the INFO log level.
     /// @return The output stream for the INFO log level
-    std::ostream &info() { return *streams[LogLevel::INFO]; }
+    std::ostream &info() { return getStream(LogLevel::INFO); }
 
     /// @brief Get the stream for the WARNING log level.
     /// @return The output stream for the WARNING log level
-    std::ostream &warning() { return *streams[LogLevel::WARNING]; }
+    std::ostream &warning() { return getStream(LogLevel::WARNING); }
 
     /// @brief Get the stream for the ERROR log level.
     /// @return The output stream for the ERROR log level
-    std::ostream &error() { return *streams[LogLevel::ERROR]; }
+    std::ostream &error() { return getStream(LogLevel::ERROR); }
 
 #pragma endregion LogStreamShortcuts
+};
+
+/// @brief Logger class for handling log messages.
+class Logger : public AbstractLogger
+{
+public:
+    ~Logger() override = default;
+    // Non-copyable
+    Logger(const Logger &) = delete;
+    Logger &operator=(const Logger &) = delete;
+
+    Logger(Logger &&) = default;
+    Logger &operator=(Logger &&) = default;
+
+    /// @brief Construct a new Logger object with the specified minimum log level.
+    /// @param lvl The minimum log level for this logger
+    explicit Logger(LogLevel lvl = LogLevel::TRACE);
+
+    /// @brief Set the minimum log level for this logger.
+    /// @param lvl The new minimum log level
+    void setLevel(LogLevel lvl) override;
+
+    /// @brief Add a log handler.
+    /// @param handlerPtr The log handler to add
+    void addHandler(std::unique_ptr<AbstractHandler> handlerPtr) override;
+
+    /// @brief Remove all log handlers.
+    void removeAllHandlers() override { handlers.clear(); }
+
+    void log(LogLevel lvl, const std::string& msg) const override;
+
+    std::ostream& getStream(LogLevel lvl) override;
 
 private:
-    void logInternal(LogLevel lvl, const std::string &fmt) const;
     LogLevel minLevel;
     std::vector<std::unique_ptr<AbstractHandler>> handlers;
 
@@ -994,6 +1035,22 @@ private:
 
 
 // begin --- context_exception.h --- 
+
+/*
+ * Copyright 2025 Dominik Czekai
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 #pragma once
 #include <stdexcept>
@@ -1053,8 +1110,8 @@ public:
     explicit CliContext(std::unique_ptr<std::unordered_map<std::string, std::any>> posArgs,
                         std::unique_ptr<std::unordered_map<std::string, std::any>> optArgs,
                         std::unique_ptr<std::unordered_set<std::string>> flagArgs,
-                        cli::logging::Logger &logger)
-        : Logger(logger), positionalArgs(std::move(posArgs)), optionArgs(std::move(optArgs)),
+                        cli::logging::AbstractLogger &logger)
+        : logger(logger), positionalArgs(std::move(posArgs)), optionArgs(std::move(optArgs)),
           flagArgs(std::move(flagArgs))
     {
     }
@@ -1227,9 +1284,13 @@ public:
         }
     }
 
-    cli::logging::Logger &Logger;
+    logging::AbstractLogger &Logger() const
+    {
+        return logger;
+    }
 
 private:
+    cli::logging::AbstractLogger &logger;
     std::unique_ptr<std::unordered_map<std::string, std::any>> positionalArgs;
     std::unique_ptr<std::unordered_map<std::string, std::any>> optionArgs;
     std::unique_ptr<std::unordered_set<std::string>> flagArgs;
@@ -2723,6 +2784,22 @@ private:
 
 // begin --- context_builder.h --- 
 
+/*
+ * Copyright 2025 Dominik Czekai
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 #pragma once
 #include <any>
 #include <memory>
@@ -2808,7 +2885,7 @@ public:
     /// @brief Builds the final CliContext object from the accumulated arguments.
     /// @param logger the logger instance to use in the created context
     /// @return a unique_ptr to the created CliContext object
-    std::unique_ptr<CliContext> build(cli::logging::Logger &logger);
+    std::unique_ptr<CliContext> build(cli::logging::AbstractLogger &logger);
 
 private:
     std::unique_ptr<std::unordered_map<std::string, std::any>> positionalArgs;
@@ -2894,6 +2971,7 @@ public:
 
     explicit CliApp(std::string_view executableName);
     explicit CliApp(CliConfig &&config);
+    explicit CliApp(const CliConfig &config, std::unique_ptr<logging::AbstractLogger> logger);
     ~CliApp() = default;
 
     /// @brief Add a new command to the application
@@ -2920,7 +2998,7 @@ public:
 
     /// @brief Get the logger instance used by the CLI application
     /// @return a reference to the logger instance
-    [[nodiscard]] logging::Logger &Logger() { return *logger; }
+    [[nodiscard]] logging::AbstractLogger &Logger() { return *logger; }
 
     /// @brief Get the command tree used by the CLI application
     /// @return a reference to the command tree
@@ -2945,15 +3023,13 @@ public:
 private:
     int internalRun(std::span<char *const> args);
     bool rootShortCircuits(std::vector<std::string> &args, const cli::commands::Command &cmd) const;
-    bool commandShortCircuits(std::vector<std::string> &args, cli::commands::Command *cmd) const;
-
-    commands::CommandTree commandsTree;
+    bool commandShortCircuits(std::vector<std::string> &args, const cli::commands::Command *cmd) const;
     bool initialized{false};
-
-    std::unique_ptr<logging::Logger> logger =
-        std::make_unique<logging::Logger>(logging::LogLevel::DEBUG);
+    commands::CommandTree commandsTree;
 
     std::unique_ptr<CliConfig> configuration;
+    std::unique_ptr<logging::AbstractLogger> logger;
+
     parsing::Parser parser;
     cli::commands::docwriting::DocWriter docWriter;
 };
@@ -2971,16 +3047,30 @@ namespace cli
 {
 CliApp::CliApp(CliConfig &&config)
     : commandsTree(config.executableName),
-      configuration(std::make_unique<CliConfig>(std::move(config))), parser(*configuration),
+      configuration(std::make_unique<CliConfig>(std::move(config))),
+      logger(std::make_unique<logging::Logger>()),
+      parser(*configuration),
       docWriter(*configuration)
 {
 }
 
 CliApp::CliApp(std::string_view executableName)
-    : commandsTree(executableName), configuration(std::make_unique<CliConfig>()),
-      parser(*configuration), docWriter(*configuration)
+    : commandsTree(executableName),
+      configuration(std::make_unique<CliConfig>()),
+      logger(std::make_unique<logging::Logger>()),
+      parser(*configuration),
+      docWriter(*configuration)
 {
     configuration->executableName = std::string(executableName);
+}
+
+CliApp::CliApp(const CliConfig &config, std::unique_ptr<logging::AbstractLogger> logger)
+    : commandsTree(config.executableName),
+      configuration(std::make_unique<CliConfig>(config)),
+      logger(std::move(logger)),
+      parser(*configuration),
+      docWriter(*configuration)
+{
 }
 
 CliApp &CliApp::withCommand(std::unique_ptr<commands::Command> subCommandPtr)
@@ -3043,7 +3133,7 @@ int CliApp::internalRun(std::span<char *const> args)
         return 0;
     }
 
-    if (commands::Command *cmd = locateCommand(commandsTree, argVec);
+    if (const commands::Command *cmd = locateCommand(commandsTree, argVec);
         cmd && cmd->hasExecutionFunction())
     {
         if (commandShortCircuits(argVec, cmd))
@@ -3095,7 +3185,7 @@ bool CliApp::rootShortCircuits(std::vector<std::string> &args,
 }
 
 bool CliApp::commandShortCircuits(std::vector<std::string> &args,
-                                  cli::commands::Command *cmd) const
+                                  const cli::commands::Command *cmd) const
 {
     if (args.size() == 1 && (args.at(0) == "-h" || args.at(0) == "--help"))
     {
@@ -3219,6 +3309,22 @@ bool ArgumentGroup::isRequired() const
 #include <iostream>
 
 // begin --- docs_exception.h --- 
+
+/*
+ * Copyright 2025 Dominik Czekai
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 #pragma once
 #include <stdexcept>
@@ -3973,7 +4079,19 @@ std::string PositionalArgumentBase::getArgDocString(const docwriting::DocWriter 
 
 // begin --- context_builder.cpp --- 
 
-
+// Copyright 2025 Dominik Czekai
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 namespace cli
 {
@@ -4066,7 +4184,7 @@ bool ContextBuilder::isArgPresent(const std::string &argName) const
            positionalArgs->contains(argName);
 }
 
-std::unique_ptr<CliContext> ContextBuilder::build(cli::logging::Logger &logger)
+std::unique_ptr<CliContext> ContextBuilder::build(cli::logging::AbstractLogger &logger)
 {
     return std::make_unique<CliContext>(std::move(positionalArgs), std::move(optionalArgs),
                                         std::move(flagArgs), logger);
@@ -4079,7 +4197,19 @@ std::unique_ptr<CliContext> ContextBuilder::build(cli::logging::Logger &logger)
 
 // begin --- context_exception.cpp --- 
 
-
+// Copyright 2025 Dominik Czekai
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 #include <sstream>
 
 namespace cli
@@ -4270,9 +4400,9 @@ Logger::Logger(LogLevel lvl) : minLevel(lvl)
 {
     // Wrap logInternal as a lambda and pass it to LogStreamBuf
     auto logFuncPtr = std::make_shared<std::function<void(LogLevel, const std::string &)>>(
-        [this](LogLevel level, const std::string &msg) { this->logInternal(level, msg); });
+        [this](LogLevel level, const std::string &msg) { this->log(level, msg); });
 
-    for (int i = static_cast<int>(LogLevel::TRACE); i <= static_cast<int>(LogLevel::ERROR); ++i)
+    for (auto i = static_cast<int>(LogLevel::TRACE); i <= static_cast<int>(LogLevel::ERROR); ++i)
     {
         auto level = static_cast<LogLevel>(i);
         buffers[level] = std::make_unique<LogStreamBuf>(logFuncPtr, level, minLevel);
@@ -4297,7 +4427,7 @@ void Logger::addHandler(std::unique_ptr<AbstractHandler> handlerPtr)
     handlers.push_back(std::move(handlerPtr));
 }
 
-void Logger::logInternal(LogLevel lvl, const std::string &msg) const
+void Logger::log(LogLevel lvl, const std::string &msg) const
 {
     LogRecord record{lvl, msg};
 
@@ -4307,6 +4437,27 @@ void Logger::logInternal(LogLevel lvl, const std::string &msg) const
     }
 }
 
+std::ostream &Logger::getStream(LogLevel lvl)
+{
+    if (auto it = streams.find(lvl); it != streams.end())
+    {
+        return *(it->second);
+    }
+    throw std::invalid_argument("Invalid log level for stream");
+}
+
+} // namespace cli::logging
+
+// end --- logger.cpp --- 
+
+
+
+// begin --- log_streambuffer.cpp --- 
+
+
+
+namespace cli::logging
+{
 int LogStreamBuf::sync()
 {
     if (lvl < minLevel)
@@ -4319,10 +4470,10 @@ int LogStreamBuf::sync()
     }
     return 0;
 }
-
 } // namespace cli::logging
 
-// end --- logger.cpp --- 
+
+// end --- log_streambuffer.cpp --- 
 
 
 
@@ -4477,7 +4628,7 @@ void cli::parsing::Parser::parseArguments(const cli::commands::Command &command,
 
         if (posArgsIndex >= posArguments.size())
         {
-            throw ParseException("More positional arguments were provided than the command accepts", input, *(posArguments.back()));
+            throw ParseException(std::format("More positional arguments were provided than the command accepts with input: {}", input), input, *(posArguments.back()));
         }
 
         if (const auto &posArg = *posArguments.at(posArgsIndex); posArg.isRepeatable())
@@ -4511,7 +4662,7 @@ inline void exclusiveCheck(const commands::ArgumentGroup *argGroup,
         {
             firstProvided = argPtr.get();
         }
-        else if (contextBuilder.isArgPresent(std::string(argPtr->getName())))
+        else if (contextBuilder.isArgPresent(std::string(argPtr->getName())) && firstProvided != nullptr)
         {
             throw GroupParseException(std::format("Two arguments of mutually exclusive group were present: {} and {}", firstProvided->getName(), argPtr->getName()), *argGroup);
         }

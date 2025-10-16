@@ -49,6 +49,7 @@ public:
 
     explicit CliApp(std::string_view executableName);
     explicit CliApp(CliConfig &&config);
+    explicit CliApp(const CliConfig &config, std::unique_ptr<logging::AbstractLogger> logger);
     ~CliApp() = default;
 
     /// @brief Add a new command to the application
@@ -75,7 +76,7 @@ public:
 
     /// @brief Get the logger instance used by the CLI application
     /// @return a reference to the logger instance
-    [[nodiscard]] logging::Logger &Logger() { return *logger; }
+    [[nodiscard]] logging::AbstractLogger &Logger() { return *logger; }
 
     /// @brief Get the command tree used by the CLI application
     /// @return a reference to the command tree
@@ -100,15 +101,13 @@ public:
 private:
     int internalRun(std::span<char *const> args);
     bool rootShortCircuits(std::vector<std::string> &args, const cli::commands::Command &cmd) const;
-    bool commandShortCircuits(std::vector<std::string> &args, cli::commands::Command *cmd) const;
-
-    commands::CommandTree commandsTree;
+    bool commandShortCircuits(std::vector<std::string> &args, const cli::commands::Command *cmd) const;
     bool initialized{false};
-
-    std::unique_ptr<logging::Logger> logger =
-        std::make_unique<logging::Logger>(logging::LogLevel::DEBUG);
+    commands::CommandTree commandsTree;
 
     std::unique_ptr<CliConfig> configuration;
+    std::unique_ptr<logging::AbstractLogger> logger;
+
     parsing::Parser parser;
     cli::commands::docwriting::DocWriter docWriter;
 };

@@ -21,63 +21,37 @@
 #include <vector>
 
 #include "handler.h"
+#include "log_streambuffer.h"
 
 namespace cli::logging
 {
 
-/// @brief Log stream buffer with a minimum LogLevel, that redirects the buffered output to a
-/// logging function. Used to offer own streams to write to for each log level.
-/// @note Does not flush automatically on newline, call sync() or explicitly flush buffer.
-class LogStreamBuf : public std::stringbuf
+/// @brief Abstract base class for logger implementations
+class AbstractLogger
 {
 public:
-    /// @brief Construct a new LogStreamBuf
-    /// @param logFuncPtr The logging function to call with the buffered output
-    /// @param lvl The log level for this buffer
-    /// @param lvlMin The minimum log level for this buffer
-    LogStreamBuf(std::shared_ptr<std::function<void(LogLevel, const std::string &)>> logFuncPtr,
-                 LogLevel lvl, LogLevel lvlMin)
-        : logFuncPtr(logFuncPtr), lvl(lvl), minLevel(lvlMin)
-    {
-    }
-
-    int sync() override;
-
-    /// @brief Set the minimum log level for this buffer
-    /// @param lvlMin The new minimum log level
-    void setMinLevel(LogLevel lvlMin) { minLevel = lvlMin; }
-
-private:
-    std::shared_ptr<std::function<void(LogLevel, const std::string &)>> logFuncPtr;
-    LogLevel lvl;
-    LogLevel minLevel;
-};
-
-/// @brief Logger class for handling log messages.
-class Logger
-{
-public:
-    // Non-copyable
-    Logger(const Logger &) = delete;
-    Logger &operator=(const Logger &) = delete;
-
-    Logger(Logger &&) = default;
-    Logger &operator=(Logger &&) = default;
-
-    /// @brief Construct a new Logger object with the specified minimum log level.
-    /// @param lvl The minimum log level for this logger
-    explicit Logger(LogLevel lvl = LogLevel::TRACE);
+    virtual ~AbstractLogger() = default;
 
     /// @brief Set the minimum log level for this logger.
     /// @param lvl The new minimum log level
-    void setLevel(LogLevel lvl);
+    virtual void setLevel(LogLevel lvl) = 0;
 
     /// @brief Add a log handler.
     /// @param handlerPtr The log handler to add
-    void addHandler(std::unique_ptr<AbstractHandler> handlerPtr);
+    virtual void addHandler(std::unique_ptr<AbstractHandler> handlerPtr) = 0;
 
     /// @brief Remove all log handlers.
-    void removeAllHandlers() { handlers.clear(); }
+    virtual void removeAllHandlers() = 0;
+
+    /// @brief Log a message at the specified log level.
+    /// @param lvl The log level
+    /// @param message The message to log
+    virtual void log(LogLevel lvl, const std::string &message) const = 0;
+
+    /// @brief Get the stream for the specified log level.
+    /// @param lvl The log level
+    /// @return The output stream for the specified log level
+    virtual std::ostream &getStream(LogLevel lvl) = 0;
 
     /// @brief Log a message at the specified log level using a format string to print the passed
     /// arguments.
@@ -87,10 +61,8 @@ public:
     /// @param ...args The arguments for the format string
     template <typename... Args> void log(LogLevel lvl, const std::string &fmt, Args &&...args) const
     {
-        if (lvl < minLevel)
-            return;
         std::string formatted = std::vformat(fmt, std::make_format_args(args...));
-        logInternal(lvl, formatted);
+        log(lvl, formatted);
     }
 
 #pragma region LogLevelShortcuts
@@ -162,43 +134,69 @@ public:
 
 #pragma region LogStreamShortcuts
 
-    /// @brief Get the stream for the specified log level.
-    /// @param lvl The log level
-    /// @return The output stream for the specified log level
-    std::ostream &getStream(LogLevel lvl) { return *streams[lvl]; }
-
     /// @brief Get the stream for the TRACE log level.
     /// @return The output stream for the TRACE log level
-    std::ostream &trace() { return *streams[LogLevel::TRACE]; }
+    std::ostream &trace() { return getStream(LogLevel::TRACE); }
 
     /// @brief Get the stream for the VERBOSE log level.
     /// @return The output stream for the VERBOSE log level
-    std::ostream &verbose() { return *streams[LogLevel::VERBOSE]; }
+    std::ostream &verbose() { return getStream(LogLevel::VERBOSE); }
 
     /// @brief Get the stream for the DEBUG log level.
     /// @return The output stream for the DEBUG log level
-    std::ostream &debug() { return *streams[LogLevel::DEBUG]; }
+    std::ostream &debug() { return getStream(LogLevel::DEBUG); }
 
     /// @brief Get the stream for the SUCCESS log level.
     /// @return The output stream for the SUCCESS log level
-    std::ostream &success() { return *streams[LogLevel::SUCCESS]; }
+    std::ostream &success() { return getStream(LogLevel::SUCCESS); }
 
     /// @brief Get the stream for the INFO log level.
     /// @return The output stream for the INFO log level
-    std::ostream &info() { return *streams[LogLevel::INFO]; }
+    std::ostream &info() { return getStream(LogLevel::INFO); }
 
     /// @brief Get the stream for the WARNING log level.
     /// @return The output stream for the WARNING log level
-    std::ostream &warning() { return *streams[LogLevel::WARNING]; }
+    std::ostream &warning() { return getStream(LogLevel::WARNING); }
 
     /// @brief Get the stream for the ERROR log level.
     /// @return The output stream for the ERROR log level
-    std::ostream &error() { return *streams[LogLevel::ERROR]; }
+    std::ostream &error() { return getStream(LogLevel::ERROR); }
 
 #pragma endregion LogStreamShortcuts
+};
+
+/// @brief Logger class for handling log messages.
+class Logger : public AbstractLogger
+{
+public:
+    ~Logger() override = default;
+    // Non-copyable
+    Logger(const Logger &) = delete;
+    Logger &operator=(const Logger &) = delete;
+
+    Logger(Logger &&) = default;
+    Logger &operator=(Logger &&) = default;
+
+    /// @brief Construct a new Logger object with the specified minimum log level.
+    /// @param lvl The minimum log level for this logger
+    explicit Logger(LogLevel lvl = LogLevel::TRACE);
+
+    /// @brief Set the minimum log level for this logger.
+    /// @param lvl The new minimum log level
+    void setLevel(LogLevel lvl) override;
+
+    /// @brief Add a log handler.
+    /// @param handlerPtr The log handler to add
+    void addHandler(std::unique_ptr<AbstractHandler> handlerPtr) override;
+
+    /// @brief Remove all log handlers.
+    void removeAllHandlers() override { handlers.clear(); }
+
+    void log(LogLevel lvl, const std::string& msg) const override;
+
+    std::ostream& getStream(LogLevel lvl) override;
 
 private:
-    void logInternal(LogLevel lvl, const std::string &fmt) const;
     LogLevel minLevel;
     std::vector<std::unique_ptr<AbstractHandler>> handlers;
 

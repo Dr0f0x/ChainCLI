@@ -27,16 +27,30 @@ namespace cli
 {
 CliApp::CliApp(CliConfig &&config)
     : commandsTree(config.executableName),
-      configuration(std::make_unique<CliConfig>(std::move(config))), parser(*configuration),
+      configuration(std::make_unique<CliConfig>(std::move(config))),
+      logger(std::make_unique<logging::Logger>()),
+      parser(*configuration),
       docWriter(*configuration)
 {
 }
 
 CliApp::CliApp(std::string_view executableName)
-    : commandsTree(executableName), configuration(std::make_unique<CliConfig>()),
-      parser(*configuration), docWriter(*configuration)
+    : commandsTree(executableName),
+      configuration(std::make_unique<CliConfig>()),
+      logger(std::make_unique<logging::Logger>()),
+      parser(*configuration),
+      docWriter(*configuration)
 {
     configuration->executableName = std::string(executableName);
+}
+
+CliApp::CliApp(const CliConfig &config, std::unique_ptr<logging::AbstractLogger> logger)
+    : commandsTree(config.executableName),
+      configuration(std::make_unique<CliConfig>(config)),
+      logger(std::move(logger)),
+      parser(*configuration),
+      docWriter(*configuration)
+{
 }
 
 CliApp &CliApp::withCommand(std::unique_ptr<commands::Command> subCommandPtr)
@@ -99,7 +113,7 @@ int CliApp::internalRun(std::span<char *const> args)
         return 0;
     }
 
-    if (commands::Command *cmd = locateCommand(commandsTree, argVec);
+    if (const commands::Command *cmd = locateCommand(commandsTree, argVec);
         cmd && cmd->hasExecutionFunction())
     {
         if (commandShortCircuits(argVec, cmd))
@@ -107,7 +121,9 @@ int CliApp::internalRun(std::span<char *const> args)
             return 0;
         }
 
-        logger->trace("Executing command: {}", cmd->getIdentifier());
+        #ifdef CHAIN_CLI_VERBOSE
+        std::cout << "Executing command: " << cmd->getIdentifier() << "\n";
+        #endif
 
         auto contextBuilder = cli::ContextBuilder();
 
@@ -116,7 +132,7 @@ int CliApp::internalRun(std::span<char *const> args)
     }
     else
     {
-        std::cout << "Unknown command: " << args[0] << "\n";
+        logger->error() << "Unknown command: " << args[0] << "\n" << std::flush;
         auto allCommands = commandsTree.getAllCommandsConst();
         logger->info(docWriter.generateAppDocString(allCommands));
     }
@@ -151,7 +167,7 @@ bool CliApp::rootShortCircuits(std::vector<std::string> &args,
 }
 
 bool CliApp::commandShortCircuits(std::vector<std::string> &args,
-                                  cli::commands::Command *cmd) const
+                                  const cli::commands::Command *cmd) const
 {
     if (args.size() == 1 && (args.at(0) == "-h" || args.at(0) == "--help"))
     {

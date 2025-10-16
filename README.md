@@ -11,6 +11,8 @@
 
 > **Quick Disclaimer at the start:** This is both my first real Cpp project as well as the first project I actually made public and I probably committed numerous mistakes in both cases, so if you notice anything please create an issue about so I can attempt to fix it. Thanks!
 
+> For its single file build this project uses an adapted version of [Heady](https://github.com/JamesBoer/Heady) by James Boer a simple utitility that is defiently worth a try if you intend to do something similar.
+
 For a more detailed overview than this README can give definitely check out the [demo folder](https://github.com/Dr0f0x/ChainCLI/tree/v1.0.0-alpha/demo) or have a look at the API-Reference.
 
 ## Table of Contents
@@ -86,7 +88,7 @@ void add(const cli::CliContext &ctx)
     {
         res += val;
     }
-    ctx.Logger.info("Result: {}", res);
+    ctx.Logger().info("Result: {}", res);
 }
 ```
 
@@ -245,11 +247,11 @@ void subtract(const cli::CliContext &ctx)
         minuend -= val;
         if (boundPresent && minuend < bound)
         {
-            ctx.Logger.info("Subtraction crossed the bound of {}: current value is {}", bound,
+            ctx.Logger().info("Subtraction crossed the bound of {}: current value is {}", bound,
                             minuend);
         }
     }
-    ctx.Logger.info("Result: {}", minuend);
+    ctx.Logger().info("Result: {}", minuend);
 }
 ```
 
@@ -311,7 +313,7 @@ The ```CliConfig``` struct is used to configure the CliApplication and change de
 
 ## Logging
 
-The library uses a simple logging module that works by using a single logger instance and attaching handlers with their own formatters to it. Each Handler is responsible for outputting a message that was formatted by its formatter (the default formatters provided are the message only formatter and one that includes timestamp and loglevel) to a different target (the default handlers provided target either the console or a file).
+The library uses a simple logging module that works by creating a single logger instance and attaching handlers with their own formatters to it. Each Handler is responsible for outputting a message that was formatted by its formatter (the default formatters provided are the message only formatter and one that includes timestamp and loglevel) to a different target (the default handlers provided target either the console or a file).
 
 Both the logger itself and all the handlers have a minimum level and ignore all logs that are below it. The one of the logger can be set with ```Logger::setLevel``` for the handlers they have to be specified before adding them to the logger, e.g in the constructor (the default console handler has Trace as its level).
 
@@ -325,9 +327,9 @@ This is an INFO message
 <span style="color: green">This is a SUCCESS message</span>  
 <span style="color: red">This is an ERROR message</span>
 
-You can easily write your own handler or formatter by extending the corresponding abstract base class (```AbstractHandler``` or ```AbstractFormatter```).
+You can easily write your own handler or formatter by extending the corresponding abstract base class (```AbstractHandler``` or ```AbstractFormatter```). If needed one can also write their own implementation of the ```AbstractLogger``` and pass it when creating the CliApp to use instead of the one the library provides.
 
-> The streams available with ```Logger::info```, ```Logger::debug``` and so on have to manually flushed using ```std::flush```!
+> The streams available with ```Logger::info```, ```Logger::debug``` and so on have to be manually flushed using ```std::flush```!
 
 ## Docformatters
 

@@ -102,7 +102,7 @@ public:
     /// @brief Builds the final CliContext object from the accumulated arguments.
     /// @param logger the logger instance to use in the created context
     /// @return a unique_ptr to the created CliContext object
-    std::unique_ptr<CliContext> build(cli::logging::Logger &logger);
+    std::unique_ptr<CliContext> build(cli::logging::AbstractLogger &logger);
 
 private:
     std::unique_ptr<std::unordered_map<std::string, std::any>> positionalArgs;

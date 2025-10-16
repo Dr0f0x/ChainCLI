@@ -5,8 +5,8 @@ void genericProcessFunction(const cli::CliContext &ctx)
     auto filename = ctx.getPositionalArg<std::string>("filename");
     bool verbose = ctx.isFlagPresent("--verbose");
     
-    ctx.Logger.info() << "filename: " << filename;
-    ctx.Logger.info() << "verbose: " << (verbose ? "true" : "false") << std::flush;
+    ctx.Logger().info() << "filename: " << filename;
+    ctx.Logger().info() << "verbose: " << (verbose ? "true" : "false") << std::flush;
 }
 
 void genericCopyFunction(const cli::CliContext &ctx)
@@ -14,12 +14,12 @@ void genericCopyFunction(const cli::CliContext &ctx)
     auto source = ctx.getPositionalArg<std::string>("source");
     auto destination = ctx.getRepeatableOptionArg<std::string>("--output");
 
-    ctx.Logger.info() << "source: " << source;
+    ctx.Logger().info() << "source: " << source;
     for (const auto &dest : destination)
     {
-        ctx.Logger.info() << " destination: " << dest;
+        ctx.Logger().info() << " destination: " << dest;
     }
-    ctx.Logger.info() << std::flush;
+    ctx.Logger().info() << std::flush;
 }
 
 void initCommands(cli::CliApp &app)

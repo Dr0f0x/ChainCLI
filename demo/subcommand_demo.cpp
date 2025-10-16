@@ -12,14 +12,14 @@ void initCommands(cli::CliApp &app)
     child1Cmd.withShortDescription("Child 1 command")
         .withLongDescription("The first child command")
         .withExecutionFunc([](const cli::CliContext &ctx) {
-            ctx.Logger.info() << "Child 1 executed" << std::flush;
+            ctx.Logger().info() << "Child 1 executed" << std::flush;
         });
 
     auto child2Cmd = cli::commands::Command("child2");
     child2Cmd.withShortDescription("Child 2 command")
         .withLongDescription("The second child command")
         .withExecutionFunc([](const cli::CliContext &ctx) {
-            ctx.Logger.info() << "Child 2 executed" << std::flush;
+            ctx.Logger().info() << "Child 2 executed" << std::flush;
         });
 
     parentCmd.withSubCommand(std::move(child1Cmd));

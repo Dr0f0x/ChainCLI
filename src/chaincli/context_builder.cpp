@@ -105,7 +105,7 @@ bool ContextBuilder::isArgPresent(const std::string &argName) const
            positionalArgs->contains(argName);
 }
 
-std::unique_ptr<CliContext> ContextBuilder::build(cli::logging::Logger &logger)
+std::unique_ptr<CliContext> ContextBuilder::build(cli::logging::AbstractLogger &logger)
 {
     return std::make_unique<CliContext>(std::move(positionalArgs), std::move(optionalArgs),
                                         std::move(flagArgs), logger);

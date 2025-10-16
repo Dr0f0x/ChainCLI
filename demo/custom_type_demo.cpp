@@ -48,8 +48,8 @@ void customTypeFunc(const cli::CliContext &ctx)
     auto ct = ctx.getPositionalArg<CustomType>("customArg");
 
     // Display the parsed custom type
-    ctx.Logger.info() << "Received custom type" << "Integer part (a):" << ct.a;
-    ctx.Logger.info() << "Double part (b):" << ct.b << std::flush;
+    ctx.Logger().info() << "Received custom type" << "Integer part (a):" << ct.a;
+    ctx.Logger().info() << "Double part (b):" << ct.b << std::flush;
 }
 
 int main(int argc, char *argv[])

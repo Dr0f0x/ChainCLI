@@ -3,8 +3,8 @@
 void rootFunc(const cli::CliContext &ctx)
 {
     auto input = ctx.getPositionalArg<std::string>("input");
-    ctx.Logger.info() << "Input: " << input << '\n';
-    ctx.Logger.info() << "This is the root command"
+    ctx.Logger().info() << "Input: " << input << '\n';
+    ctx.Logger().info() << "This is the root command"
                       << std::flush;
 }
 

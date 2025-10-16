@@ -8,6 +8,8 @@ target_sources(${LIBRARY_NAME_STATIC}
         logger.cpp
         loglevel.h
         logrecord.h
+        log_streambuffer.h
+        log_streambuffer.cpp
 )
 
 target_sources(${LIBRARY_NAME_SHARED}
@@ -20,4 +22,6 @@ target_sources(${LIBRARY_NAME_SHARED}
         logger.cpp
         loglevel.h
         logrecord.h
+        log_streambuffer.h
+        log_streambuffer.cpp
 )

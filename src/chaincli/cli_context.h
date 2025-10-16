@@ -42,8 +42,8 @@ public:
     explicit CliContext(std::unique_ptr<std::unordered_map<std::string, std::any>> posArgs,
                         std::unique_ptr<std::unordered_map<std::string, std::any>> optArgs,
                         std::unique_ptr<std::unordered_set<std::string>> flagArgs,
-                        cli::logging::Logger &logger)
-        : Logger(logger), positionalArgs(std::move(posArgs)), optionArgs(std::move(optArgs)),
+                        cli::logging::AbstractLogger &logger)
+        : logger(logger), positionalArgs(std::move(posArgs)), optionArgs(std::move(optArgs)),
           flagArgs(std::move(flagArgs))
     {
     }
@@ -216,9 +216,13 @@ public:
         }
     }
 
-    cli::logging::Logger &Logger;
+    logging::AbstractLogger &Logger() const
+    {
+        return logger;
+    }
 
 private:
+    cli::logging::AbstractLogger &logger;
     std::unique_ptr<std::unordered_map<std::string, std::any>> positionalArgs;
     std::unique_ptr<std::unordered_map<std::string, std::any>> optionArgs;
     std::unique_ptr<std::unordered_set<std::string>> flagArgs;

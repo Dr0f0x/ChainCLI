@@ -21,9 +21,9 @@
 #include "loglevel.h"
 
 #if defined(_MSC_VER)
-#define ESC "\x1B"
+constexpr const std::string ESC = "\x1B";
 #else
-#define ESC "\033"
+constexpr const std::string ESC = "\033";
 #endif
 
 namespace cli::logging
@@ -37,13 +37,13 @@ inline LogStyleMap defaultStyles()
 {
     using enum cli::logging::LogLevel;
     return {
-        {TRACE, ESC "[90m"},   // gray
-        {VERBOSE, ESC "[90m"}, // gray
-        {DEBUG, ESC "[36m"},   // cyan
+        {TRACE, ESC + "[90m"},   // gray
+        {VERBOSE, ESC + "[90m"}, // gray
+        {DEBUG, ESC + "[36m"},   // cyan
         // Info uses plain grey text (no color)
-        {SUCCESS, ESC "[32m"}, // green
-        {WARNING, ESC "[33m"}, // yellow
-        {ERROR, ESC "[31m"},   // red
+        {SUCCESS, ESC + "[32m"}, // green
+        {WARNING, ESC + "[33m"}, // yellow
+        {ERROR, ESC + "[31m"},   // red
     };
 }
 } // namespace cli::logging
