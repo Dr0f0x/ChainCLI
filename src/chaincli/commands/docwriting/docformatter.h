@@ -154,6 +154,7 @@ public:
                                                  const cli::CliConfig &configuration) = 0;
 };
 
+/// @brief Default formatter for CLI application documentation.
 class DefaultCliAppDocFormatter : public AbstractCliAppDocFormatter
 {
 public:

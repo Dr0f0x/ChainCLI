@@ -22,6 +22,7 @@
 
 namespace cli
 {
+    /// @brief Thrown when an argument that was requested is missing in the context.
     class MissingArgumentException : public std::runtime_error
 {
 public:
@@ -36,6 +37,7 @@ private:
                                    const std::unordered_map<std::string, std::any> &args);
 };
 
+/// @brief Thrown when an argument type that was requested is not the one that was parsed.
 class InvalidArgumentTypeException : public std::runtime_error
 {
 public:
