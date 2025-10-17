@@ -35,38 +35,41 @@ inline_t std::pair<char, char> getOptionArgumentBrackets(bool required)
         return {'[', ']'};
 }
 
-std::string DefaultFlagFormatter::generateArgDocString(
+inline_t std::string DefaultFlagFormatter::generateArgDocString(
     const FlagArgument &argument, [[maybe_unused]] const cli::CliConfig &configuration)
 {
     std::ostringstream builder;
     auto [inBracket, outBracket] = getOptionArgumentBrackets(argument.isRequired());
     builder << inBracket << argument.getName();
-    if (!argument.getShortName().empty()) {
+    if (!argument.getShortName().empty())
+    {
         builder << ',' << argument.getShortName();
     }
     builder << outBracket;
     return builder.str();
 }
 
-std::string DefaultFlagFormatter::generateOptionsDocString(
+inline_t std::string DefaultFlagFormatter::generateOptionsDocString(
     const FlagArgument &argument, [[maybe_unused]] const cli::CliConfig &configuration)
 {
     std::ostringstream builder;
     builder << argument.getName();
-    if (!argument.getShortName().empty()) {
+    if (!argument.getShortName().empty())
+    {
         builder << ' ' << argument.getShortName();
     }
     return std::format("{:<{}}{:>{}}", builder.str(), configuration.optionsWidth,
                        argument.getOptionComment(), argument.getOptionComment().size());
 }
 
-std::string DefaultOptionFormatter::generateArgDocString(
+inline_t std::string DefaultOptionFormatter::generateArgDocString(
     const OptionArgumentBase &argument, [[maybe_unused]] const cli::CliConfig &configuration)
 {
     std::ostringstream builder;
     auto [inBracket, outBracket] = getOptionArgumentBrackets(argument.isRequired());
     builder << inBracket << argument.getName();
-    if (!argument.getShortName().empty()) {
+    if (!argument.getShortName().empty())
+    {
         builder << ',' << argument.getShortName();
     }
     builder << ' ' << '<' << argument.getValueName() << '>' << outBracket;
@@ -76,12 +79,13 @@ std::string DefaultOptionFormatter::generateArgDocString(
     return builder.str();
 }
 
-std::string DefaultOptionFormatter::generateOptionsDocString(
+inline_t std::string DefaultOptionFormatter::generateOptionsDocString(
     const OptionArgumentBase &argument, [[maybe_unused]] const cli::CliConfig &configuration)
 {
     std::ostringstream builder;
     builder << argument.getName();
-    if (!argument.getShortName().empty()) {
+    if (!argument.getShortName().empty())
+    {
         builder << ',' << argument.getShortName();
     }
     builder << ' ' << '<' << argument.getValueName() << '>';
@@ -91,7 +95,7 @@ std::string DefaultOptionFormatter::generateOptionsDocString(
                        argument.getOptionComment(), argument.getOptionComment().size());
 }
 
-std::string DefaultPositionalFormatter::generateArgDocString(
+inline_t std::string DefaultPositionalFormatter::generateArgDocString(
     const PositionalArgumentBase &argument, [[maybe_unused]] const cli::CliConfig &configuration)
 {
     std::ostringstream builder;
@@ -105,7 +109,7 @@ std::string DefaultPositionalFormatter::generateArgDocString(
     return builder.str();
 }
 
-std::string DefaultPositionalFormatter::generateOptionsDocString(
+inline_t std::string DefaultPositionalFormatter::generateOptionsDocString(
     const PositionalArgumentBase &argument, [[maybe_unused]] const cli::CliConfig &configuration)
 {
     std::ostringstream builder;
@@ -149,7 +153,7 @@ inline_t void addGroupArgumentDocString(std::ostringstream &builder,
     }
 }
 
-std::string DefaultCommandFormatter::generateLongDocString(
+inline_t std::string DefaultCommandFormatter::generateLongDocString(
     const Command &command, std::string_view fullCommandPath, const DocWriter &writer,
     [[maybe_unused]] const cli::CliConfig &configuration)
 {
@@ -174,7 +178,7 @@ std::string DefaultCommandFormatter::generateLongDocString(
     return builder.str();
 }
 
-std::string DefaultCommandFormatter::generateShortDocString(
+inline_t std::string DefaultCommandFormatter::generateShortDocString(
     const Command &command, std::string_view fullCommandPath, const DocWriter &writer,
     [[maybe_unused]] const cli::CliConfig &configuration)
 {
@@ -190,30 +194,39 @@ std::string DefaultCommandFormatter::generateShortDocString(
     return builder.str();
 }
 
-std::string DefaultCliAppDocFormatter::generateAppDocString(
+inline_t std::string DefaultCliAppDocFormatter::generateAppDocString(
     const cli::CliConfig &configuration,
     const std::vector<const cli::commands::Command *> &commands)
 {
     std::ostringstream builder;
-    builder << configuration.description << "\n";
+    builder << configuration.description << "\n\n";
 
-    for (const auto &cmd : commands)
+    if (commands.size() == 1)
     {
+        auto cmd = commands.at(0);
         if (cmd->hasExecutionFunction())
-            builder << cmd->getDocStringShort() << "\n\n";
+                builder << cmd->getDocStringLong();
+    }
+    else
+    {
+        for (const auto &cmd : commands)
+        {
+            if (cmd->hasExecutionFunction())
+                builder << cmd->getDocStringShort() << "\n\n";
+        }
+        builder << "Use <command> --help|-h to get more information about a specific command";
     }
 
-    builder << "Use <command> --help|-h to get more information about a specific command";
     return builder.str();
 }
 
-std::string DefaultCliAppDocFormatter::generateCommandDocString(const Command &command,
-                                                                [[maybe_unused]] const cli::CliConfig &configuration)
+inline_t std::string DefaultCliAppDocFormatter::generateCommandDocString(
+    const Command &command, [[maybe_unused]] const cli::CliConfig &configuration)
 {
     return std::string(command.getDocStringLong());
 }
 
-std::string DefaultCliAppDocFormatter::generateAppVersionString(const cli::CliConfig &configuration)
+inline_t std::string DefaultCliAppDocFormatter::generateAppVersionString(const cli::CliConfig &configuration)
 {
     return std::format("{} version: {}", configuration.executableName, configuration.version);
 }

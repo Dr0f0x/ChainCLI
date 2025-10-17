@@ -25,7 +25,7 @@
 
 namespace cli
 {
-CliApp::CliApp(CliConfig &&config)
+inline_t CliApp::CliApp(CliConfig &&config)
     : commandsTree(config.executableName),
       configuration(std::make_unique<CliConfig>(std::move(config))),
       logger(std::make_unique<logging::Logger>()),
@@ -34,7 +34,7 @@ CliApp::CliApp(CliConfig &&config)
 {
 }
 
-CliApp::CliApp(std::string_view executableName)
+inline_t CliApp::CliApp(std::string_view executableName)
     : commandsTree(executableName),
       configuration(std::make_unique<CliConfig>()),
       logger(std::make_unique<logging::Logger>()),
@@ -44,7 +44,7 @@ CliApp::CliApp(std::string_view executableName)
     configuration->executableName = std::string(executableName);
 }
 
-CliApp::CliApp(const CliConfig &config, std::unique_ptr<logging::AbstractLogger> logger)
+inline_t CliApp::CliApp(const CliConfig &config, std::unique_ptr<logging::AbstractLogger> logger)
     : commandsTree(config.executableName),
       configuration(std::make_unique<CliConfig>(config)),
       logger(std::move(logger)),
@@ -53,13 +53,13 @@ CliApp::CliApp(const CliConfig &config, std::unique_ptr<logging::AbstractLogger>
 {
 }
 
-CliApp &CliApp::withCommand(std::unique_ptr<commands::Command> subCommandPtr)
+inline_t CliApp &CliApp::withCommand(std::unique_ptr<commands::Command> subCommandPtr)
 {
     commandsTree.insert(std::move(subCommandPtr));
     return *this;
 }
 
-void CliApp::init()
+inline_t void CliApp::init()
 {
 #ifdef CHAIN_CLI_VERBOSE
     std::cout << "Initializing CLI application...\n";
@@ -77,7 +77,7 @@ void CliApp::init()
 }
 
 // NOLINTNEXTLINE(cppcoreguidelines-avoid-c-arrays)
-int CliApp::run(int argc, char *argv[])
+inline_t int CliApp::run(int argc, char *argv[])
 {
 #ifdef CHAIN_CLI_VERBOSE
     std::cout << "Starting CLI application with " << argc << " arguments\n";
@@ -136,7 +136,7 @@ inline_t commands::Command *locateCommand(commands::CommandTree &commandsTree, s
     return commandPtr;
 }
 
-int CliApp::internalRun(std::span<char *const> args)
+inline_t int CliApp::internalRun(std::span<char *const> args)
 {
     std::vector<std::string> argVec(args.begin(), args.end());
 
@@ -186,7 +186,7 @@ int CliApp::internalRun(std::span<char *const> args)
     return 0;
 }
 
-bool CliApp::rootShortCircuits(std::vector<std::string> &args,
+inline_t bool CliApp::rootShortCircuits(std::vector<std::string> &args,
                                const cli::commands::Command &cmd) const
 {
     if (args.empty() && !cmd.hasExecutionFunction())
@@ -213,7 +213,7 @@ bool CliApp::rootShortCircuits(std::vector<std::string> &args,
     return false;
 }
 
-bool CliApp::commandShortCircuits(std::vector<std::string> &args,
+inline_t bool CliApp::commandShortCircuits(std::vector<std::string> &args,
                                   const cli::commands::Command *cmd) const
 {
     if (args.size() == 1 && (args.at(0) == "-h" || args.at(0) == "--help"))
@@ -224,7 +224,7 @@ bool CliApp::commandShortCircuits(std::vector<std::string> &args,
     return false;
 }
 
-CliApp &CliApp::withCommand(commands::Command &&subCommand)
+inline_t CliApp &CliApp::withCommand(commands::Command &&subCommand)
 {
     return withCommand(std::make_unique<commands::Command>(std::move(subCommand)));
 }

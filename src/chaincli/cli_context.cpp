@@ -18,25 +18,27 @@
 #include <iostream>
 #endif
 
+#define inline_t
+
 namespace cli
 {
 
-bool CliContext::isOptionArgPresent(const std::string &argName) const
+inline_t bool CliContext::isOptionArgPresent(const std::string &argName) const
 {
     return optionArgs->contains(argName);
 }
 
-bool CliContext::isPositionalArgPresent(const std::string &argName) const
+inline_t bool CliContext::isPositionalArgPresent(const std::string &argName) const
 {
     return positionalArgs->contains(argName);
 }
 
-bool CliContext::isFlagPresent(const std::string &argName) const
+inline_t bool CliContext::isFlagPresent(const std::string &argName) const
 {
     return flagArgs->contains(argName);
 }
 
-bool CliContext::isArgPresent(const std::string &argName) const
+inline_t bool CliContext::isArgPresent(const std::string &argName) const
 {
     return isOptionArgPresent(argName) || isFlagPresent(argName) || isPositionalArgPresent(argName);
 }

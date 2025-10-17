@@ -1,0 +1,6 @@
+For its single_header build this project uses an adapted version of
+heady, a utility by James Boer which is licensed under the MIT License:
+
+- This concerns the files tools/heady/Heady.cpp, tools/heady/Main.cpp
+  and tools/heady/Heady.h originally from https://github.com/JamesBoer/Heady.
+  The associated LICENSE file can be found at tools/heady/LICENSE.txt

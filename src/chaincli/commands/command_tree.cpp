@@ -16,19 +16,21 @@
 
 #include <sstream>
 
+#define inline_t
+
 namespace cli::commands
 {
-CommandTree::CommandTree(std::string_view rootName)
+inline_t CommandTree::CommandTree(std::string_view rootName)
 : root(std::make_unique<Command>(rootName))
 {
 }
 
-std::string_view CommandTree::getPathForCommand(Command *cmd) const
+inline_t std::string_view CommandTree::getPathForCommand(Command *cmd) const
 {
     return commandPathMap.at(cmd);
 }
 
-void CommandTree::buildCommandPathMap(const std::string &separator)
+inline_t void CommandTree::buildCommandPathMap(const std::string &separator)
 {
     std::unordered_map<Command *, std::string> map;
     if (root)
@@ -38,7 +40,7 @@ void CommandTree::buildCommandPathMap(const std::string &separator)
     }
 }
 
-void CommandTree::buildCommandPathMapRecursive(Command *cmd, std::vector<std::string> &path,
+inline_t void CommandTree::buildCommandPathMapRecursive(Command *cmd, std::vector<std::string> &path,
                                                const std::string &separator)
 {
     path.emplace_back(cmd->getIdentifier());
@@ -63,7 +65,7 @@ void CommandTree::buildCommandPathMapRecursive(Command *cmd, std::vector<std::st
     path.pop_back();
 }
 
-std::string CommandNotFoundException::buildMessage(const std::string &id,
+inline_t std::string CommandNotFoundException::buildMessage(const std::string &id,
                                                    const std::vector<std::string> &chain)
 {
     std::ostringstream oss;
@@ -78,7 +80,7 @@ std::string CommandNotFoundException::buildMessage(const std::string &id,
     return oss.str();
 }
 
-std::vector<Command *> CommandTree::getAllCommands() const
+inline_t std::vector<Command *> CommandTree::getAllCommands() const
 {
     std::vector<Command *> commands;
     if (root)
@@ -88,7 +90,7 @@ std::vector<Command *> CommandTree::getAllCommands() const
     return commands;
 }
 
-std::vector<const Command *> CommandTree::getAllCommandsConst() const
+inline_t std::vector<const Command *> CommandTree::getAllCommandsConst() const
 {
     std::vector<const Command *> commands;
     if (root)

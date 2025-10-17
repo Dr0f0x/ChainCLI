@@ -1,6 +1,6 @@
 add_executable(heady
     Heady.cpp
     Heady.h
-    clara.hpp
+    chain_cli.hpp
     Main.cpp
 )

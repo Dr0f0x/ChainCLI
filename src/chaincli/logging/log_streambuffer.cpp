@@ -14,9 +14,11 @@
 
 #include "log_streambuffer.h"
 
+#define inline_t
+
 namespace cli::logging
 {
-int LogStreamBuf::sync()
+inline_t int LogStreamBuf::sync()
 {
     if (lvl < minLevel)
         return 0; // skip

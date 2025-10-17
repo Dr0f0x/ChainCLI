@@ -15,14 +15,16 @@
 #include "option_argument.h"
 #include "docwriting/docwriting.h"
 
+#define inline_t
+
 namespace cli::commands
 {
-std::string OptionArgumentBase::getOptionsDocString(const docwriting::DocWriter &writer) const
+inline_t std::string OptionArgumentBase::getOptionsDocString(const docwriting::DocWriter &writer) const
 {
     return writer.generateOptionsDocString(*this);
 }
 
-std::string OptionArgumentBase::getArgDocString(const docwriting::DocWriter &writer) const
+inline_t std::string OptionArgumentBase::getArgDocString(const docwriting::DocWriter &writer) const
 {
     return writer.generateArgDocString(*this);
 }

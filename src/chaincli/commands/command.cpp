@@ -21,10 +21,12 @@
 #include "docwriting/docs_exception.h"
 #include "docwriting/docwriting.h"
 
+#define inline_t
+
 namespace cli::commands
 {
 
-std::string_view Command::getDocStringShort() const
+inline_t std::string_view Command::getDocStringShort() const
 {
     if (docStringShort.empty())
     {
@@ -34,7 +36,7 @@ std::string_view Command::getDocStringShort() const
     return docStringShort;
 }
 
-std::string_view Command::getDocStringLong() const
+inline_t std::string_view Command::getDocStringLong() const
 {
     if (docStringLong.empty())
     {
@@ -44,7 +46,7 @@ std::string_view Command::getDocStringLong() const
     return docStringLong;
 }
 
-void Command::execute(const CliContext &context) const
+inline_t void Command::execute(const CliContext &context) const
 {
     if (executePtr && *executePtr)
     {
@@ -57,60 +59,60 @@ void Command::execute(const CliContext &context) const
     }
 }
 
-Command &Command::withShortDescription(std::string_view desc)
+inline_t Command &Command::withShortDescription(std::string_view desc)
 {
     shortDescription = desc;
     return *this;
 }
 
-Command &Command::withLongDescription(std::string_view desc)
+inline_t Command &Command::withLongDescription(std::string_view desc)
 {
     longDescription = desc;
     return *this;
 }
 
-Command &Command::withFlagArgument(std::shared_ptr<FlagArgument> arg)
+inline_t Command &Command::withFlagArgument(std::shared_ptr<FlagArgument> arg)
 {
     safeAddToArgGroup(arg);
     flagArguments.push_back(arg);
     return *this;
 }
 
-Command &Command::withFlagArgument(FlagArgument &&arg)
+inline_t Command &Command::withFlagArgument(FlagArgument &&arg)
 {
     return withFlagArgument(std::make_shared<FlagArgument>(std::move(arg)));
 }
 
-Command &Command::withFlagArgument(FlagArgument &arg)
+inline_t Command &Command::withFlagArgument(FlagArgument &arg)
 {
     return withFlagArgument(std::make_shared<FlagArgument>(arg));
 }
 
-Command &Command::withExecutionFunc(
+inline_t Command &Command::withExecutionFunc(
     std::unique_ptr<std::function<void(const CliContext &)>> actionPtr)
 {
     executePtr = std::move(actionPtr);
     return *this;
 }
 
-Command &Command::withExecutionFunc(std::function<void(const CliContext &)> &&action)
+inline_t Command &Command::withExecutionFunc(std::function<void(const CliContext &)> &&action)
 {
     return withExecutionFunc(
         std::make_unique<std::function<void(const CliContext &)>>(std::move(action)));
 }
 
-Command &Command::withSubCommand(std::unique_ptr<Command> subCommandPtr)
+inline_t Command &Command::withSubCommand(std::unique_ptr<Command> subCommandPtr)
 {
     subCommands.try_emplace(subCommandPtr->identifier, std::move(subCommandPtr));
     return *this;
 }
 
-Command &Command::withSubCommand(Command &&subCommand)
+inline_t Command &Command::withSubCommand(Command &&subCommand)
 {
     return withSubCommand(std::make_unique<Command>(std::move(subCommand)));
 }
 
-void Command::safeAddToArgGroup(const std::shared_ptr<ArgumentBase> &arg)
+inline_t void Command::safeAddToArgGroup(const std::shared_ptr<ArgumentBase> &arg)
 {
     if (indexForNewArgGroup >= argumentGroups.size())
     {
@@ -119,7 +121,7 @@ void Command::safeAddToArgGroup(const std::shared_ptr<ArgumentBase> &arg)
     argumentGroups[indexForNewArgGroup]->addArgument(arg);
 }
 
-void Command::addArgGroup(const ArgumentGroup &argGroup)
+inline_t void Command::addArgGroup(const ArgumentGroup &argGroup)
 {
     for (auto &arg : argGroup.getArguments())
     {
@@ -140,19 +142,19 @@ void Command::addArgGroup(const ArgumentGroup &argGroup)
     }
 }
 
-Command *Command::getSubCommand(std::string_view id)
+inline_t Command *Command::getSubCommand(std::string_view id)
 {
     auto it = subCommands.find(id);
     return (it != subCommands.end()) ? it->second.get() : nullptr;
 }
 
-const Command *Command::getSubCommand(std::string_view id) const
+inline_t const Command *Command::getSubCommand(std::string_view id) const
 {
     auto it = subCommands.find(id);
     return (it != subCommands.end()) ? it->second.get() : nullptr;
 }
 
-std::ostream &operator<<(std::ostream &out, const Command &cmd)
+inline_t std::ostream &operator<<(std::ostream &out, const Command &cmd)
 {
     out << "Command - " << cmd.identifier << " ( short Description: " << cmd.shortDescription
         << "; long Description: " << cmd.longDescription << "; arguments: [";
@@ -169,7 +171,7 @@ std::ostream &operator<<(std::ostream &out, const Command &cmd)
     return out;
 }
 
-std::string MalformedCommandException::buildMessage(const Command &cmd, const std::string &msg)
+inline_t std::string MalformedCommandException::buildMessage(const Command &cmd, const std::string &msg)
 {
     std::ostringstream oss;
     oss << "Malformed Command: " << cmd.getIdentifier();

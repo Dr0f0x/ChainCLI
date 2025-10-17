@@ -15,9 +15,11 @@
 #include "context_exception.h"
 #include <sstream>
 
+#define inline_t
+
 namespace cli
 {
-    std::string MissingArgumentException::makeMessage(
+    inline_t std::string MissingArgumentException::makeMessage(
     const std::string &name, const std::unordered_map<std::string, std::any> &args)
 {
     std::ostringstream oss;
@@ -41,7 +43,7 @@ namespace cli
     return oss.str();
 }
 
-std::string InvalidArgumentTypeException::makeMessage(const std::string &name,
+inline_t std::string InvalidArgumentTypeException::makeMessage(const std::string &name,
                                                       const std::type_info &requested,
                                                       const std::type_info &actual)
 {

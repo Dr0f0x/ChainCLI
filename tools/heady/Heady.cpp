@@ -3,6 +3,9 @@ The Heady library is distributed under the MIT License (MIT)
 https://opensource.org/licenses/MIT
 See LICENSE.TXT or Heady.h for license details.
 Copyright (c) 2018 James Boer
+
+Modifications and integration with ChainCLI:
+Copyright (c) 2025 Dominik Czekai
 */
 
 #include "Heady.h"
@@ -26,7 +29,8 @@ namespace Heady
 namespace Detail
 {
 // Forward declaration
-void FindAndProcessLocalIncludes(const std::list<std::filesystem::directory_entry> &dirEntries,
+void FindAndProcessLocalIncludes(const Params &params,
+                                 const std::list<std::filesystem::directory_entry> &dirEntries,
                                  const std::filesystem::directory_entry &dirEntry,
                                  std::set<std::string, std::less<>> &processed,
                                  std::string &outputText, int depth = 0);
@@ -79,6 +83,7 @@ inline_t void FindAndReplaceAll(std::string &str, std::string_view search, std::
 }
 
 inline_t void FindAndProcessLocalIncludes(
+    const Params& params,
     const std::list<std::filesystem::directory_entry> &dirEntries, const std::string &include,
     std::set<std::string, std::less<>> &processed, std::string &outputText, int depth = 0)
 {
@@ -95,11 +100,47 @@ inline_t void FindAndProcessLocalIncludes(
     });
     if (itr != dirEntries.end())
     {
-        FindAndProcessLocalIncludes(dirEntries, *itr, processed, outputText, depth);
+        FindAndProcessLocalIncludes(params, dirEntries, *itr, processed, outputText, depth);
+    }
+}
+
+inline_t std::string CreateGuardName(const std::filesystem::path &filePath)
+{
+    std::string filename = filePath.stem().string(); // Get filename without extension
+    std::transform(filename.begin(), filename.end(), filename.begin(), ::toupper);
+    std::replace(filename.begin(), filename.end(), '-', '_');
+    std::replace(filename.begin(), filename.end(), ' ', '_');
+    return filename + "_H";
+}
+
+inline_t void RemoveIncludeGuards(const Params &params, std::string &fileData, const std::filesystem::path &filePath)
+{
+    // Remove #pragma once lines
+    std::regex pragmaOnceRegex(R"(.*#pragma\s+once.*\n?)");
+    fileData = std::regex_replace(fileData, pragmaOnceRegex, "");
+
+    if(params.useStandardIncludeGuard)
+    {
+        // Remove traditional include guards using actual filename
+        std::string filename = filePath.stem().string(); // Get filename without extension
+        std::transform(filename.begin(), filename.end(), filename.begin(), ::toupper);
+        std::replace(filename.begin(), filename.end(), '-', '_');
+        std::replace(filename.begin(), filename.end(), ' ', '_');
+        std::string guardName = filename + "_H";
+        guardName = CreateGuardName(filePath);
+
+        std::string includeGuardPattern = R"(\s*#\s*ifndef\s+)" + guardName + R"([^\n]*\n\s*#\s*define\s+)" + guardName + R"([^\n]*\n)";
+        std::regex includeGuardRegex(includeGuardPattern);
+        fileData = std::regex_replace(fileData, includeGuardRegex, "");
+
+        // Remove #endif only if it's the very last non-whitespace line
+        std::regex endifRegex(R"(\n\s*#\s*endif\s*(//.*)?(\s*\n)*$)");
+        fileData = std::regex_replace(fileData, endifRegex, "");
     }
 }
 
 inline_t void FindAndProcessLocalIncludes(
+    const Params &params,
     const std::list<std::filesystem::directory_entry> &dirEntries,
     const std::filesystem::directory_entry &dirEntry, std::set<std::string, std::less<>> &processed,
     std::string &outputText, int depth)
@@ -115,20 +156,28 @@ inline_t void FindAndProcessLocalIncludes(
     processed.emplace(fn);
 
     const std::string indent(depth * 3, ' ');
+    std::filesystem::path sourcePath(params.sourceFolder);
+    auto relativePath = std::filesystem::relative(dirEntry.path(), sourcePath);
 
-    std::cout << indent << "[Start processing] " << dirEntry.path().string() << '\n';
+    params.logger.info() << indent << "[Start processing] " << relativePath.string() << '\n';
 
     // Open and read file from dirEntry
     std::ifstream file(dirEntry.path());
     std::stringstream buffer;
     buffer << file.rdbuf();
     std::string fileData = buffer.str();
+    
+    outputText += "\n";
 
     // Mark file beginning
-    outputText += "\n\n// begin --- ";
-    outputText += dirEntry.path().filename().string();
-    outputText += " --- ";
-    outputText += "\n\n";
+    if(params.includeFileHints) {
+        outputText += "\n\n// begin --- ";
+        outputText += dirEntry.path().filename().string();
+        outputText += " --- ";
+        outputText += "\n\n";
+    }
+
+    RemoveIncludeGuards(params, fileData, dirEntry.path());
 
     // Find local includes
     std::regex r(R"regex(\s*#\s*include\s*(["])([^"]+)(["]))regex");
@@ -141,30 +190,54 @@ inline_t void FindAndProcessLocalIncludes(
             outputText += m.prefix().str();
 
         // Insert the include text into the output stream
-        FindAndProcessLocalIncludes(dirEntries, m[2].str(), processed, outputText, depth + 1);
+        FindAndProcessLocalIncludes(params, dirEntries, m[2].str(), processed, outputText, depth + 1);
 
         // Continue processing the rest of the file text
         s = m.suffix().str();
     }
 
     // Copy remaining file text to output
-    std::cout << indent << "[Finish processing] " << dirEntry.path().string() << " - Added "
+    params.logger.info() << indent << "[Finish processing] " << relativePath.string() << " - Added "
               << s.length() << " Characters to output\n";
     outputText += s;
+    outputText += "\n";
 
     // Mark file end
-    outputText += "\n\n// end --- ";
-    outputText += dirEntry.path().filename().string();
-    outputText += " --- ";
-    outputText += "\n\n";
+    if(params.includeFileHints) {
+        outputText += "\n// end --- ";
+        outputText += dirEntry.path().filename().string();
+        outputText += " --- ";
+        outputText += "\n\n";
+    }
 }
 } // namespace Detail
 
-inline_t std::string GetVersionString()
+inline_t void ReplaceInlinePlaceHolder(const Params &params, std::string &outputText)
 {
-    std::stringstream ss;
-    ss << MajorVersion << '.' << MinorVersion << '.' << PatchNumber;
-    return ss.str();
+    // First remove all lines that contain "#define inline_t"
+    std::istringstream iss(outputText);
+    std::string line;
+    std::string newOutputText;
+    
+    while (std::getline(iss, line)) {
+        if (line.find("#define inline_t") == std::string::npos) {
+            newOutputText += line + "\n";
+        }
+    }
+    
+    outputText = newOutputText;
+    
+    // Then replace all instances of inline_t with inline
+    std::string inlineDef = "inline_t ";
+    Detail::FindAndReplaceAll(outputText, inlineDef, "inline ");
+
+    // Replace all instances of a specified macro with 'inline'
+    std::string inlineValue = params.inlined;
+    if (inlineValue.empty())
+        inlineValue = "inline_t ";
+    if (inlineValue[inlineValue.size() - 1] != ' ')
+        inlineValue += " ";
+    Detail::FindAndReplaceAll(outputText, inlineValue, "inline ");
 }
 
 inline_t void GenerateHeader(const Params &params)
@@ -194,12 +267,14 @@ inline_t void GenerateHeader(const Params &params)
         return std::ranges::find(excludedFilenames, entry.path().filename().string()) != excludedFilenames.end();
     });
     
-    std::cout << "Registered files in source folder '" << params.sourceFolder << "':\n";
+    params.logger.info() << "Registered files in source folder '" << params.sourceFolder << "':\n";
+    std::filesystem::path sourcePath(params.sourceFolder);
     for (const auto &entry : dirEntries)
     {
-        std::cout << "  " << entry.path().string() << '\n';
+        auto relativePath = std::filesystem::relative(entry.path(), sourcePath);
+        params.logger.info() << "  " << relativePath.string() << '\n';
     }
-    std::cout << "----------------------------------------\n";
+    params.logger.info() << "----------------------------------------\n" << std::flush;
 
     // No need to do anything if we don't have any files to process
     if (dirEntries.empty())
@@ -224,20 +299,29 @@ inline_t void GenerateHeader(const Params &params)
         outputText += "\n#endif\n";
     }
 
+    auto guardName = Detail::CreateGuardName(std::filesystem::path(params.output));
+    if(params.useStandardIncludeGuard)
+    {
+        outputText += "\n#ifndef " + guardName + "\n#define " + guardName + "\n\n";
+    }
+    else{
+        outputText += "\n#pragma once\n\n";
+    }
+
     // Recursively combine all source and headers into a single output string
     std::set<std::string, std::less<>> processed;
     for (const auto &entry : dirEntries)
     {
-        Detail::FindAndProcessLocalIncludes(dirEntries, entry, processed, outputText);
+        Detail::FindAndProcessLocalIncludes(params, dirEntries, entry, processed, outputText);
     }
 
-    // Replace all instances of a specified macro with 'inline'
-    std::string inlineValue = params.inlined;
-    if (inlineValue.empty())
-        inlineValue = "inline_t ";
-    if (inlineValue[inlineValue.size() - 1] != ' ')
-        inlineValue += " ";
-    Detail::FindAndReplaceAll(outputText, inlineValue, "inline ");
+    // Replace inline_t placeholders with inline
+    ReplaceInlinePlaceHolder(params, outputText);
+
+    if(params.useStandardIncludeGuard)
+    {
+        outputText += "\n#endif // " + guardName + "\n";
+    }
 
     // Check to see if output folder exists.  If not, create it
     auto outFolder = std::filesystem::path(params.output);

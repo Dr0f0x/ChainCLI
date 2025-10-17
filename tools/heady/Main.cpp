@@ -3,6 +3,9 @@ The Heady library is distributed under the MIT License (MIT)
 https://opensource.org/licenses/MIT
 See LICENSE.TXT or Heady.h for license details.
 Copyright (c) 2018 James Boer
+
+Modifications and integration with ChainCLI:
+Copyright (c) 2025 Dominik Czekai
 */
 
 #include <cstring>
@@ -10,71 +13,95 @@ Copyright (c) 2018 James Boer
 #include <thread>
 
 #include "Heady.h"
-#include "clara.hpp"
+#define CHAIN_CLI_VERBOSE
+#include "chain_cli.hpp"
 
-using namespace clara;
+using namespace cli;
 
-int main(int argc, char **argv)
+void mainHandler(const CliContext &ctx)
 {
-    // Handle command-line options
-    std::string source;
-    std::string excluded;
-    std::string inlined = "inline_t";
-    std::string define;
-    std::string output;
-    bool recursive = false;
-    bool showHelp = false;
-    auto parser = Opt(source, "folder")["-s"]["--source"]("folder containing source files") |
-                  Opt(excluded, "files")["-e"]["--excluded"]("exclude specific files") |
-                  Opt(inlined, "name")["-i"]["--inline"]("inline macro substitution") |
-                  Opt(define, "define")["-d"]["--define"]("define for almagamated header") |
-                  Opt(output, "file")["-o"]["--output"]("generated header file") |
-                  Opt(recursive)["-r"]["--recursive"]("recursively scan source folder") |
-                  Help(showHelp);
+    Heady::Params params(ctx.Logger());
+    params.sourceFolder = ctx.getPositionalArg<std::string>("folder");
+    params.output = ctx.getOptionArg<std::string>("--output");
+    params.recursiveScan = ctx.isFlagPresent("--recursive");
+    params.includeFileHints = ctx.isFlagPresent("--include-file-hint");
+    params.useStandardIncludeGuard = ctx.isFlagPresent("--use-standard-include-guard");
 
-    auto result = parser.parse(Args(argc, argv));
-    if (!result)
-    {
-        std::cerr << "Error in command line: " << result.errorMessage() << std::endl;
-        return 1;
-    }
-    else if (showHelp)
-    {
-        std::cout << "Heady version " << Heady::GetVersionString()
-                  << " Copyright (c) James Boer\n\n";
-        parser.writeToStream(std::cout);
-        std::cout << "\nExample usage:"
-                  << "\nHeady --source \"Source\" --exluded \"Main.cpp clara.hpp\" "
-                     "--inline \"inline_t\" --output \"Include/Heady.hpp\"\n";
-        return 0;
-    }
-    else if (source.empty() || output.empty())
-    {
-        std::cerr << "Error: Valid source and output are required.\n\n";
-        parser.writeToStream(std::cerr);
-        std::cerr << "\nExample usage:"
-                  << "\nHeady --source \"Source\" --exluded \"Main.cpp clara.hpp\" "
-                     "--inline \"inline_t\" --output \"Include/Heady.hpp\"\n";
-        return 1;
-    }
+    if (ctx.isOptionArgPresent("--excluded"))
+        params.excluded = ctx.getOptionArg<std::string>("--excluded");
 
-    // Generate a combined header file from all C++ source files
+    if (ctx.isOptionArgPresent("--inline"))
+        params.inlined = ctx.getOptionArg<std::string>("--inline");
+
+    if (ctx.isOptionArgPresent("--define"))
+        params.define = ctx.getOptionArg<std::string>("--define");
+    
+    if (ctx.isOptionArgPresent("--license-header"))
+        params.licenseHeader = ctx.getOptionArg<std::string>("--license-header");
+
     try
     {
-        Heady::Params params;
-        params.sourceFolder = source;
-        params.output = output;
-        params.excluded = excluded;
-        params.inlined = inlined;
-        params.define = define;
-        params.recursiveScan = recursive;
         Heady::GenerateHeader(params);
     }
     catch (const std::exception &e)
     {
         std::cerr << "Error processing source files.  " << e.what() << std::endl;
-        return 1;
     }
+}
 
-    return 0;
+int main(int argc, char **argv)
+{
+    CliConfig config = CliConfig();
+    config.title = "Heady";
+    config.executableName = "heady";
+    config.description =
+        "Heady is a tool to generate single-file amalgamated C++ header files from "
+        "a folder of C++ source files.";
+    config.version = "1.0.0";
+
+    CliApp app = CliApp(std::move(config));
+
+    auto &mainCommand = *(app.getMainCommand());
+    mainCommand
+        .withLongDescription(
+            "Scans a folder of C++ source files (optionally recursive) and generates a single-file "
+            "amalgamated "
+            "header file. It processes #include directives, inlines code marked with a specific "
+            "macro, and allows for excluding certain files. This is useful for creating "
+            "self-contained header-only libraries.")
+        .withPositionalArgument(
+            commands::PositionalArgument<std::string>("folder")
+                .withOptionsComment("The folder containing the C++ source files to process")
+                .withRequired(true))
+        .withOptionArgument(
+            commands::OptionArgument<std::string>("--excluded", "files")
+                .withShortName("-e")
+                .withOptionsComment("A space-separated list of files to exclude from processing"))
+        .withOptionArgument(
+            commands::OptionArgument<std::string>("--inline", "name")
+                .withShortName("-i")
+                .withOptionsComment(
+                    "The macro name that marks code to be inlined into the amalgamated header"))
+        .withOptionArgument(
+            commands::OptionArgument<std::string>("--define", "define")
+                .withShortName("-d")
+                .withOptionsComment("A define to add to the top of the generated header file"))
+        .withOptionArgument(
+            commands::OptionArgument<std::string>("--output", "file")
+                .withShortName("-o")
+                .withOptionsComment("The output path for the generated amalgamated header file")
+                .withRequired(true))
+        .withOptionArgument(
+            commands::OptionArgument<std::string>("--license-header", "-lh", "text")
+                .withOptionsComment("The text license header to prepend to the generated header file and replace in processed files"))
+        .withFlagArgument(
+            commands::FlagArgument("--recursive", "-r")
+                .withOptionsComment("Recursively scan the source folder for C++ files"))
+        .withFlagArgument(commands::FlagArgument("--include-file-hint", "-ifh")
+                              .withOptionsComment("Include a file hints in the generated header"))
+        .withFlagArgument(commands::FlagArgument("--use-standard-include-guard", "-usig")
+                              .withOptionsComment("Use standard include guard in the generated header and not pragma once"))
+        .withExecutionFunc(mainHandler);
+
+    RUN_CLI_APP(app, argc, argv)
 }

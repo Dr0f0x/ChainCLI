@@ -12,13 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <utility>
+
 #include "logger.h"
 
-#include <utility>
+#define inline_t
 
 namespace cli::logging
 {
-Logger::Logger(LogLevel lvl) : minLevel(lvl)
+inline_t Logger::Logger(LogLevel lvl) : minLevel(lvl)
 {
     // Wrap logInternal as a lambda and pass it to LogStreamBuf
     auto logFuncPtr = std::make_shared<std::function<void(LogLevel, const std::string &)>>(
@@ -35,7 +37,7 @@ Logger::Logger(LogLevel lvl) : minLevel(lvl)
     addHandler(std::make_unique<ConsoleHandler>(std::make_shared<MessageOnlyFormatter>(), LogLevel::TRACE));
 }
 
-void Logger::setLevel(LogLevel lvl)
+inline_t void Logger::setLevel(LogLevel lvl)
 {
     minLevel = lvl;
     for (auto const &[level, buffer] : buffers)
@@ -44,12 +46,12 @@ void Logger::setLevel(LogLevel lvl)
     }
 }
 
-void Logger::addHandler(std::unique_ptr<AbstractHandler> handlerPtr)
+inline_t void Logger::addHandler(std::unique_ptr<AbstractHandler> handlerPtr)
 {
     handlers.push_back(std::move(handlerPtr));
 }
 
-void Logger::log(LogLevel lvl, const std::string &msg) const
+inline_t void Logger::log(LogLevel lvl, const std::string &msg) const
 {
     if(lvl < minLevel)
         return; // ignore messages below minimum level
@@ -61,7 +63,7 @@ void Logger::log(LogLevel lvl, const std::string &msg) const
     }
 }
 
-std::ostream &Logger::getStream(LogLevel lvl)
+inline_t std::ostream &Logger::getStream(LogLevel lvl)
 {
     if (auto it = streams.find(lvl); it != streams.end())
     {

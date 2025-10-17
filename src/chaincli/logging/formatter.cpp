@@ -18,10 +18,12 @@
 #include <iomanip>
 #include <sstream>
 
+#define inline_t
+
 namespace cli::logging
 {
 
-std::string BasicFormatter::format(const LogRecord &record) const
+inline_t std::string BasicFormatter::format(const LogRecord &record) const
 {
     auto const time = timezone->to_local(record.timestamp);
 
@@ -31,7 +33,7 @@ std::string BasicFormatter::format(const LogRecord &record) const
     return oss.str();
 }
 
-std::string MessageOnlyFormatter::format(const LogRecord &record) const
+inline_t std::string MessageOnlyFormatter::format(const LogRecord &record) const
 {
     return record.message + "\n";
 }

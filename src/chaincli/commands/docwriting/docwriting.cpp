@@ -24,94 +24,94 @@
 namespace cli::commands::docwriting
 {
 
-void DocWriter::setOptionFormatter(
+inline_t void DocWriter::setOptionFormatter(
     std::unique_ptr<AbstractArgDocFormatter<OptionArgumentBase>> formatter)
 {
     optionFormatterPtr = std::move(formatter);
 }
 
-void DocWriter::setPositionalFormatter(
+inline_t void DocWriter::setPositionalFormatter(
     std::unique_ptr<AbstractArgDocFormatter<PositionalArgumentBase>> formatter)
 {
     positionalFormatterPtr = std::move(formatter);
 }
 
-void DocWriter::setFlagFormatter(std::unique_ptr<AbstractArgDocFormatter<FlagArgument>> formatter)
+inline_t void DocWriter::setFlagFormatter(std::unique_ptr<AbstractArgDocFormatter<FlagArgument>> formatter)
 {
     flagFormatterPtr = std::move(formatter);
 }
 
-void DocWriter::setCommandFormatter(std::unique_ptr<AbstractCommandFormatter> formatter)
+inline_t void DocWriter::setCommandFormatter(std::unique_ptr<AbstractCommandFormatter> formatter)
 {
     commandFormatterPtr = std::move(formatter);
 }
 
-void DocWriter::setDocStrings(Command &command, std::string_view fullCommandPath) const
+inline_t void DocWriter::setDocStrings(Command &command, std::string_view fullCommandPath) const
 {
     command.docStringLong = generateLongDocString(command, fullCommandPath);
     command.docStringShort = generateShortDocString(command, fullCommandPath);
 }
 
-std::string DocWriter::generateShortDocString(const Command &command,
+inline_t std::string DocWriter::generateShortDocString(const Command &command,
                                               std::string_view fullCommandPath) const
 {
     return commandFormatterPtr->generateShortDocString(command, fullCommandPath, *this,
                                                        configuration);
 }
 
-std::string DocWriter::generateLongDocString(const Command &command,
+inline_t std::string DocWriter::generateLongDocString(const Command &command,
                                              std::string_view fullCommandPath) const
 {
     return commandFormatterPtr->generateLongDocString(command, fullCommandPath, *this,
                                                       configuration);
 }
 
-std::string DocWriter::generateOptionsDocString(const FlagArgument &argument) const
+inline_t std::string DocWriter::generateOptionsDocString(const FlagArgument &argument) const
 {
     return flagFormatterPtr->generateOptionsDocString(argument, configuration);
 }
 
-std::string DocWriter::generateArgDocString(const FlagArgument &argument) const
+inline_t std::string DocWriter::generateArgDocString(const FlagArgument &argument) const
 {
     return flagFormatterPtr->generateArgDocString(argument, configuration);
 }
 
-std::string DocWriter::generateOptionsDocString(const OptionArgumentBase &argument) const
+inline_t std::string DocWriter::generateOptionsDocString(const OptionArgumentBase &argument) const
 {
     return optionFormatterPtr->generateOptionsDocString(argument, configuration);
 }
 
-std::string DocWriter::generateArgDocString(const OptionArgumentBase &argument) const
+inline_t std::string DocWriter::generateArgDocString(const OptionArgumentBase &argument) const
 {
     return optionFormatterPtr->generateArgDocString(argument, configuration);
 }
 
-std::string DocWriter::generateOptionsDocString(const PositionalArgumentBase &argument) const
+inline_t std::string DocWriter::generateOptionsDocString(const PositionalArgumentBase &argument) const
 {
     return positionalFormatterPtr->generateOptionsDocString(argument, configuration);
 }
 
-std::string DocWriter::generateArgDocString(const PositionalArgumentBase &argument) const
+inline_t std::string DocWriter::generateArgDocString(const PositionalArgumentBase &argument) const
 {
     return positionalFormatterPtr->generateArgDocString(argument, configuration);
 }
 
-std::string DocWriter::generateAppDocString(const std::vector<const cli::commands::Command*> &commands) const
+inline_t std::string DocWriter::generateAppDocString(const std::vector<const cli::commands::Command*> &commands) const
 {
     return appFormatterPtr->generateAppDocString(configuration, commands);
 }
 
-std::string DocWriter::generateCommandDocString(const Command &command) const
+inline_t std::string DocWriter::generateCommandDocString(const Command &command) const
 {
     return appFormatterPtr->generateCommandDocString(command, configuration);
 }
 
-std::string DocWriter::generateAppVersionString() const
+inline_t std::string DocWriter::generateAppVersionString() const
 {
     return appFormatterPtr->generateAppVersionString(configuration);
 }
 
-void DocWriter::setAppFormatter(std::unique_ptr<AbstractCliAppDocFormatter> formatter)
+inline_t void DocWriter::setAppFormatter(std::unique_ptr<AbstractCliAppDocFormatter> formatter)
 {
     appFormatterPtr = std::move(formatter);
 }

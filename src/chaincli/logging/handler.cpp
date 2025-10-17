@@ -14,15 +14,17 @@
 
 #include "handler.h"
 
+#define inline_t
+
 namespace cli::logging
 {
-BaseHandler::~BaseHandler()
+inline_t BaseHandler::~BaseHandler()
 {
     err.flush();
     out.flush();
 }
 
-void BaseHandler::emit(const LogRecord &record) const
+inline_t void BaseHandler::emit(const LogRecord &record) const
 {
     if (record.level < minLevel)
         return; // ignore messages below minimum level
@@ -48,12 +50,12 @@ void BaseHandler::emit(const LogRecord &record) const
     }
 }
 
-void BaseHandler::setStyleMap(std::shared_ptr<const LogStyleMap> styles)
+inline_t void BaseHandler::setStyleMap(std::shared_ptr<const LogStyleMap> styles)
 {
     styleMapPtr = styles;
 }
 
-FileHandler::FileHandler(const std::string &filename, std::shared_ptr<AbstractFormatter> f,
+inline_t FileHandler::FileHandler(const std::string &filename, std::shared_ptr<AbstractFormatter> f,
                          LogLevel minLevel, std::shared_ptr<const LogStyleMap> styles)
     : BaseHandler(file, file, f, minLevel, std::move(styles)), file(filename, std::ios::app)
 {
@@ -63,7 +65,7 @@ FileHandler::FileHandler(const std::string &filename, std::shared_ptr<AbstractFo
     }
 }
 
-FileHandler::~FileHandler()
+inline_t FileHandler::~FileHandler()
 {
     if (file.is_open())
     {

@@ -18,16 +18,18 @@
 #include <iostream>
 #endif
 
+#define inline_t
+
 namespace cli
 {
-ContextBuilder::ContextBuilder()
+inline_t ContextBuilder::ContextBuilder()
     : positionalArgs(std::make_unique<std::unordered_map<std::string, std::any>>()),
       optionalArgs(std::make_unique<std::unordered_map<std::string, std::any>>()),
       flagArgs(std::make_unique<std::unordered_set<std::string>>())
 {
 }
 
-ContextBuilder &ContextBuilder::addPositionalArgument(const std::string &argName, std::any &val)
+inline_t ContextBuilder &ContextBuilder::addPositionalArgument(const std::string &argName, std::any &val)
 {
 #ifdef CHAIN_CLI_VERBOSE
     std::cout << "Appending positional argument: " << argName << "\n";
@@ -36,12 +38,12 @@ ContextBuilder &ContextBuilder::addPositionalArgument(const std::string &argName
     return *this;
 }
 
-ContextBuilder &ContextBuilder::addPositionalArgument(std::string_view argName, std::any &val)
+inline_t ContextBuilder &ContextBuilder::addPositionalArgument(std::string_view argName, std::any &val)
 {
     return addPositionalArgument(std::string(argName), val);
 }
 
-ContextBuilder &ContextBuilder::addRepeatablePositionalArgument(const std::string &argName, const std::vector<std::any> &values)
+inline_t ContextBuilder &ContextBuilder::addRepeatablePositionalArgument(const std::string &argName, const std::vector<std::any> &values)
 {
 #ifdef CHAIN_CLI_VERBOSE
     std::cout << "Adding repeatable positional argument to context: " << argName << " with " << values.size() << " values\n";
@@ -63,12 +65,12 @@ ContextBuilder &ContextBuilder::addRepeatablePositionalArgument(const std::strin
     return *this;
 }
 
-ContextBuilder &ContextBuilder::addRepeatablePositionalArgument(std::string_view argName, const std::vector<std::any> &values)
+inline_t ContextBuilder &ContextBuilder::addRepeatablePositionalArgument(std::string_view argName, const std::vector<std::any> &values)
 {
     return addRepeatablePositionalArgument(std::string(argName), values);
 }
 
-ContextBuilder &ContextBuilder::addOptionArgument(const std::string &argName, std::any &val)
+inline_t ContextBuilder &ContextBuilder::addOptionArgument(const std::string &argName, std::any &val)
 {
 #ifdef CHAIN_CLI_VERBOSE
     std::cout << "Adding option argument: " << argName << "\n";
@@ -77,12 +79,12 @@ ContextBuilder &ContextBuilder::addOptionArgument(const std::string &argName, st
     return *this;
 }
 
-ContextBuilder &ContextBuilder::addOptionArgument(std::string_view argName, std::any &val)
+inline_t ContextBuilder &ContextBuilder::addOptionArgument(std::string_view argName, std::any &val)
 {
     return addOptionArgument(std::string(argName), val);
 }
 
-ContextBuilder &ContextBuilder::addRepeatableOptionArgument(const std::string &argName, const std::vector<std::any> &values)
+inline_t ContextBuilder &ContextBuilder::addRepeatableOptionArgument(const std::string &argName, const std::vector<std::any> &values)
 {
 #ifdef CHAIN_CLI_VERBOSE
     std::cout << "Adding to repeatable option argument to context: " << argName << " with " << values.size() << " values\n";
@@ -104,12 +106,12 @@ ContextBuilder &ContextBuilder::addRepeatableOptionArgument(const std::string &a
     return *this;
 }
 
-ContextBuilder &ContextBuilder::addRepeatableOptionArgument(std::string_view argName, const std::vector<std::any> &values)
+inline_t ContextBuilder &ContextBuilder::addRepeatableOptionArgument(std::string_view argName, const std::vector<std::any> &values)
 {
     return addRepeatableOptionArgument(std::string(argName), values);
 }
 
-ContextBuilder &ContextBuilder::addFlagArgument(const std::string &argName)
+inline_t ContextBuilder &ContextBuilder::addFlagArgument(const std::string &argName)
 {
 #ifdef CHAIN_CLI_VERBOSE
     std::cout << "Adding flag argument: " << argName << "\n";
@@ -118,19 +120,19 @@ ContextBuilder &ContextBuilder::addFlagArgument(const std::string &argName)
     return *this;
 }
 
-ContextBuilder &ContextBuilder::addFlagArgument(std::string_view argName)
+inline_t ContextBuilder &ContextBuilder::addFlagArgument(std::string_view argName)
 {
     flagArgs->insert(std::string(argName));
     return *this;
 }
 
-bool ContextBuilder::isArgPresent(const std::string &argName) const
+inline_t bool ContextBuilder::isArgPresent(const std::string &argName) const
 {
     return optionalArgs->contains(argName) || flagArgs->contains(argName) ||
            positionalArgs->contains(argName);
 }
 
-std::unique_ptr<CliContext> ContextBuilder::build(cli::logging::AbstractLogger &logger)
+inline_t std::unique_ptr<CliContext> ContextBuilder::build(cli::logging::AbstractLogger &logger)
 {
 #ifdef CHAIN_CLI_VERBOSE
     std::cout << "Building CliContext with " << positionalArgs->size() << " positional, " 

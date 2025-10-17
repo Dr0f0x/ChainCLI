@@ -16,9 +16,11 @@
 
 #include <algorithm>
 
+#define inline_t
+
 namespace cli::commands
 {
-bool ArgumentGroup::isRequired() const
+inline_t bool ArgumentGroup::isRequired() const
 {
     if (exclusive)
     {
