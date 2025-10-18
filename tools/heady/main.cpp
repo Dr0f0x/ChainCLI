@@ -12,7 +12,7 @@ Copyright (c) 2025 Dominik Czekai
 #include <iostream>
 #include <thread>
 
-#include "Heady.h"
+#include "heady.h"
 #define CHAIN_CLI_VERBOSE
 #include "chain_cli.hpp"
 
