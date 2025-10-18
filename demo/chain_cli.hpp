@@ -16,12 +16,29 @@
 
 #pragma once
 
+#include <algorithm>
+#include <any>
+#include <chrono>
+#include <format>
+#include <fstream>
+#include <functional>
+#include <iomanip>
+#include <iostream>
+#include <map>
 #include <memory>
+#include <ostream>
+#include <ranges>
+#include <sstream>
+#include <stdexcept>
 #include <string>
 #include <string_view>
+#include <type_traits>
+#include <typeindex>
+#include <typeinfo>
 #include <unordered_map>
-
-#include <string>
+#include <unordered_set>
+#include <utility>
+#include <vector>
 
 namespace cli
 {
@@ -43,22 +60,6 @@ struct CliConfig
 };
 
 } // namespace cli
-
-#include <iostream>
-#include <memory>
-#include <stdexcept>
-#include <string_view>
-#include <unordered_map>
-
-#include <memory>
-#include <type_traits>
-#include <utility>
-#include <vector>
-
-#include <any>
-#include <string>
-#include <string_view>
-#include <typeindex>
 
 namespace cli::commands
 {
@@ -274,34 +275,9 @@ public:
 };
 } // namespace cli::commands
 
-#include <any>
-#include <functional>
-#include <map>
-#include <memory>
-#include <stdexcept>
-#include <string>
-#include <unordered_set>
-
 #ifdef CHAIN_CLI_VERBOSE
 #include <iostream>
 #endif
-
-#include <functional>
-#include <memory>
-#include <unordered_map>
-#include <vector>
-
-#include <fstream>
-#include <iostream>
-#include <memory>
-
-#include <chrono>
-#include <string>
-
-#include <chrono>
-#include <string>
-
-#include <string_view>
 
 namespace cli::logging
 {
@@ -398,9 +374,6 @@ public:
 };
 
 } // namespace cli::logging
-
-#include <map>
-#include <string>
 
 #if defined(_MSC_VER)
 constexpr const std::string ESC = "\x1B";
@@ -519,11 +492,6 @@ private:
 };
 
 } // namespace cli::logging
-
-#include <memory>
-#include <string>
-#include <sstream>
-#include <functional>
 
 namespace cli::logging
 {
@@ -738,11 +706,6 @@ private:
     std::unordered_map<LogLevel, std::unique_ptr<std::ostream>> streams;
 };
 } // namespace cli::logging
-
-#include <stdexcept>
-#include <string>
-#include <unordered_map>
-#include <any>
 
 namespace cli
 {
@@ -1015,20 +978,6 @@ private:
 
 } // namespace cli
 
-#include <any>
-#include <ostream>
-#include <string>
-#include <typeindex>
-
-#include <iostream>
-#include <sstream>
-#include <string>
-#include <format>
-
-#include <stdexcept>
-#include <typeinfo>
-#include <format>
-
 namespace cli::parsing
 {
 /// @brief Exception thrown when parsing for an argument fails.
@@ -1230,12 +1179,6 @@ public:
 
 } // namespace cli::commands
 
-#include <any>
-#include <ostream>
-#include <string>
-#include <string_view>
-#include <typeindex>
-
 namespace cli::commands
 {
 
@@ -1344,12 +1287,6 @@ inline std::any OptionArgument<T>::parseToValue(const std::string &input) const
 }
 } // namespace cli::commands
 
-#include <any>
-#include <ostream>
-#include <string>
-#include <string_view>
-#include <typeindex>
-
 namespace cli::commands
 {
 // untemplated base class for storing in same STL
@@ -1455,12 +1392,6 @@ PositionalArgument<T> &createPositionalArgument(std::string_view id,
 }
 
 } // namespace cli::commands
-
-#include <functional>
-#include <map>
-#include <memory>
-#include <ostream>
-#include <string_view>
 
 namespace cli::commands
 {
@@ -2021,11 +1952,6 @@ private:
 };
 } // namespace cli::commands
 
-#include <memory>
-
-#include <format>
-#include <sstream>
-
 namespace cli::commands::docwriting
 {
 
@@ -2286,16 +2212,6 @@ private:
 
 } // namespace cli::commands::docwriting
 
-#include <memory>
-#include <string>
-#include <vector>
-
-#include <any>
-#include <memory>
-#include <string>
-#include <string_view>
-#include <unordered_map>
-
 namespace cli
 {
 
@@ -2514,8 +2430,6 @@ private:
     cli::commands::docwriting::DocWriter docWriter;
 };
 } // namespace cli
-
-#include <iostream>
 
 namespace cli
 {
@@ -2754,8 +2668,6 @@ inline bool CliContext::isArgPresent(const std::string &argName) const
 
 } // namespace cli
 
-#include <algorithm>
-
 namespace cli::commands
 {
 inline bool ArgumentGroup::isRequired() const
@@ -2771,13 +2683,6 @@ inline bool ArgumentGroup::isRequired() const
     return false;
 }
 } // namespace cli::commands
-
-#include <format>
-#include <iostream>
-
-#include <stdexcept>
-#include <string>
-#include <format>
 
 namespace cli::commands::docwriting
 {
@@ -2960,8 +2865,6 @@ inline std::string MalformedCommandException::buildMessage(const Command &cmd, c
 }
 
 } // namespace cli::commands
-
-#include <sstream>
 
 namespace cli::commands
 {
@@ -3263,11 +3166,6 @@ inline std::string DefaultCliAppDocFormatter::generateAppVersionString(const cli
 
 } // namespace cli::commands::docwriting
 
-#include <format>
-#include <iomanip>
-#include <sstream>
-#include <string>
-
 namespace cli::commands::docwriting
 {
 
@@ -3532,8 +3430,6 @@ inline std::unique_ptr<CliContext> ContextBuilder::build(cli::logging::AbstractL
 }
 } // namespace cli
 
-#include <sstream>
-
 namespace cli
 {
     inline std::string MissingArgumentException::makeMessage(
@@ -3571,10 +3467,6 @@ inline std::string InvalidArgumentTypeException::makeMessage(const std::string &
     return oss.str();
 }
 } //namespace cli
-
-#include <chrono>
-#include <iomanip>
-#include <sstream>
 
 namespace cli::logging
 {
@@ -3654,8 +3546,6 @@ inline FileHandler::~FileHandler()
 }
 } // namespace cli::logging
 
-#include <utility>
-
 namespace cli::logging
 {
 inline Logger::Logger(LogLevel lvl) : minLevel(lvl)
@@ -3727,11 +3617,6 @@ inline int LogStreamBuf::sync()
     return 0;
 }
 } // namespace cli::logging
-
-#include <algorithm>
-#include <any>
-#include <iostream>
-#include <ranges>
 
 // used by heady
 

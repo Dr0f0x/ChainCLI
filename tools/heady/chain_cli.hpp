@@ -1,62 +1,44 @@
-
-// Amalgamation-specific define
-#ifndef HEADY_HEADER_ONLY
-#define HEADY_HEADER_ONLY
-#endif
+/*
+ * Copyright 2025 Dominik Czekai
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 #pragma once
 
-
-// Copyright 2025 Dominik Czekai
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-/*
- * Copyright 2025 Dominik Czekai
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
+#include <algorithm>
+#include <any>
+#include <chrono>
+#include <format>
+#include <fstream>
+#include <functional>
+#include <iomanip>
+#include <iostream>
+#include <map>
 #include <memory>
+#include <ostream>
+#include <ranges>
+#include <sstream>
+#include <stdexcept>
 #include <string>
 #include <string_view>
+#include <type_traits>
+#include <typeindex>
+#include <typeinfo>
 #include <unordered_map>
-/*
- * Copyright 2025 Dominik Czekai
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-#include <string>
+#include <unordered_set>
+#include <utility>
+#include <vector>
 
 namespace cli
 {
@@ -78,83 +60,6 @@ struct CliConfig
 };
 
 } // namespace cli
-
-/*
- * Copyright 2025 Dominik Czekai
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-#include <iostream>
-#include <memory>
-#include <stdexcept>
-#include <string_view>
-#include <unordered_map>
-/*
- * Copyright 2025 Dominik Czekai
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-/*
- * Copyright 2025 Dominik Czekai
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-#include <memory>
-#include <type_traits>
-#include <utility>
-#include <vector>
-/*
- * Copyright 2025 Dominik Czekai
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-#include <any>
-#include <string>
-#include <string_view>
-#include <typeindex>
 
 namespace cli::commands
 {
@@ -276,7 +181,6 @@ protected:
 
 } // namespace cli::commands
 
-
 namespace cli::commands
 {
 
@@ -371,126 +275,9 @@ public:
 };
 } // namespace cli::commands
 
-
-/*
- * Copyright 2025 Dominik Czekai
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-#include <any>
-#include <functional>
-#include <map>
-#include <memory>
-#include <stdexcept>
-#include <string>
-#include <unordered_set>
-
 #ifdef CHAIN_CLI_VERBOSE
 #include <iostream>
 #endif
-/*
- * Copyright 2025 Dominik Czekai
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-#include <functional>
-#include <memory>
-#include <unordered_map>
-#include <vector>
-/*
- * Copyright 2025 Dominik Czekai
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-#include <fstream>
-#include <iostream>
-#include <memory>
-/*
- * Copyright 2025 Dominik Czekai
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-#include <chrono>
-#include <string>
-/*
- * Copyright 2025 Dominik Czekai
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-#include <chrono>
-#include <string>
-/*
- * Copyright 2025 Dominik Czekai
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-#include <string_view>
 
 namespace cli::logging
 {
@@ -532,7 +319,6 @@ inline std::string_view toString(LogLevel level)
 
 } // namespace cli::logging
 
-
 namespace cli::logging
 {
 
@@ -553,7 +339,6 @@ struct LogRecord
 };
 
 } // namespace cli::logging
-
 
 namespace cli::logging
 {
@@ -590,25 +375,6 @@ public:
 
 } // namespace cli::logging
 
-/*
- * Copyright 2025 Dominik Czekai
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-#include <map>
-#include <string>
-
 #if defined(_MSC_VER)
 constexpr const std::string ESC = "\x1B";
 #else
@@ -636,7 +402,6 @@ inline LogStyleMap defaultStyles()
     };
 }
 } // namespace cli::logging
-
 
 namespace cli::logging
 {
@@ -728,26 +493,6 @@ private:
 
 } // namespace cli::logging
 
-
-// Copyright 2025 Dominik Czekai
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-#include <memory>
-#include <string>
-#include <sstream>
-#include <functional>
-
 namespace cli::logging
 {
 /// @brief Log stream buffer with a minimum LogLevel, that redirects the buffered output to a
@@ -778,8 +523,6 @@ private:
     LogLevel minLevel;
 };
 } // namespace cli::logging
-
-
 
 namespace cli::logging
 {
@@ -964,27 +707,6 @@ private:
 };
 } // namespace cli::logging
 
-/*
- * Copyright 2025 Dominik Czekai
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-#include <stdexcept>
-#include <string>
-#include <unordered_map>
-#include <any>
-
 namespace cli
 {
     /// @brief Thrown when an argument that was requested is missing in the context.
@@ -1017,8 +739,6 @@ private:
                                    const std::type_info &actual);
 };
 } // namespace cli
-
-
 
 namespace cli
 {
@@ -1258,66 +978,6 @@ private:
 
 } // namespace cli
 
-/*
- * Copyright 2025 Dominik Czekai
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-#include <any>
-#include <ostream>
-#include <string>
-#include <typeindex>
-/*
- * Copyright 2025 Dominik Czekai
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-#include <iostream>
-#include <sstream>
-#include <string>
-#include <format>
-/*
- * Copyright 2025 Dominik Czekai
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-#include <stdexcept>
-#include <typeinfo>
-#include <format>
-
 namespace cli::parsing
 {
 /// @brief Exception thrown when parsing for an argument fails.
@@ -1417,7 +1077,6 @@ private:
 
 } // namespace cli::parsing
 
-
 namespace cli::parsing
 {
 /// @brief Helper struct providing static methods for parsing strings into various types.
@@ -1460,7 +1119,6 @@ struct ParseHelper
     }
 };
 } // namespace cli::parsing
-
 
 namespace cli::commands
 {
@@ -1520,28 +1178,6 @@ public:
 };
 
 } // namespace cli::commands
-
-/*
- * Copyright 2025 Dominik Czekai
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-#include <any>
-#include <ostream>
-#include <string>
-#include <string_view>
-#include <typeindex>
 
 namespace cli::commands
 {
@@ -1651,28 +1287,6 @@ inline std::any OptionArgument<T>::parseToValue(const std::string &input) const
 }
 } // namespace cli::commands
 
-/*
- * Copyright 2025 Dominik Czekai
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-#include <any>
-#include <ostream>
-#include <string>
-#include <string_view>
-#include <typeindex>
-
 namespace cli::commands
 {
 // untemplated base class for storing in same STL
@@ -1778,12 +1392,6 @@ PositionalArgument<T> &createPositionalArgument(std::string_view id,
 }
 
 } // namespace cli::commands
-
-#include <functional>
-#include <map>
-#include <memory>
-#include <ostream>
-#include <string_view>
 
 namespace cli::commands
 {
@@ -2141,7 +1749,6 @@ inline Command &Command::withInclusiveGroup(Args &&...args)
 
 } // namespace cli::commands
 
-
 namespace cli::commands
 {
 
@@ -2345,43 +1952,6 @@ private:
 };
 } // namespace cli::commands
 
-
-/*
- * Copyright 2025 Dominik Czekai
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-#include <memory>
-/*
- * Copyright 2025 Dominik Czekai
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-#include <format>
-#include <sstream>
-
 namespace cli::commands::docwriting
 {
 
@@ -2529,7 +2099,6 @@ public:
 
 } // namespace cli::commands::docwriting
 
-
 namespace cli::commands::docwriting
 {
 
@@ -2643,47 +2212,6 @@ private:
 
 } // namespace cli::commands::docwriting
 
-/*
- * Copyright 2025 Dominik Czekai
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-#include <memory>
-#include <string>
-#include <vector>
-/*
- * Copyright 2025 Dominik Czekai
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-#include <any>
-#include <memory>
-#include <string>
-#include <string_view>
-#include <unordered_map>
-
 namespace cli
 {
 
@@ -2706,7 +2234,6 @@ public:
     /// @param val value of the positional argument
     /// @return a reference to this ContextBuilder instance
     ContextBuilder &addPositionalArgument(std::string_view argName, std::any &val);
-
 
     /// @brief Add a repeatable positional argument to the context being built.
     /// @param argName the name of the repeatable positional argument
@@ -2772,7 +2299,6 @@ private:
 
 } // namespace cli
 
-
 namespace cli::parsing
 {
 /// @brief Class used to parse string inputs into typed argument values based on the command
@@ -2817,7 +2343,6 @@ private:
     const CliConfig &configuration;
 };
 } // namespace cli::parsing
-
 
 #define RUN_CLI_APP(cliInstance, argc_, argv_)                                                     \
     try                                                                                            \
@@ -2905,10 +2430,6 @@ private:
     cli::commands::docwriting::DocWriter docWriter;
 };
 } // namespace cli
-
-
-#include <iostream>
-
 
 namespace cli
 {
@@ -3118,24 +2639,9 @@ inline CliApp &CliApp::withCommand(commands::Command &&subCommand)
 
 } // namespace cli
 
-// Copyright 2025 Dominik Czekai
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 #ifdef CHAIN_CLI_VERBOSE
 #include <iostream>
 #endif
-
 
 namespace cli
 {
@@ -3162,23 +2668,6 @@ inline bool CliContext::isArgPresent(const std::string &argName) const
 
 } // namespace cli
 
-// Copyright 2025 Dominik Czekai
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-#include <algorithm>
-
-
 namespace cli::commands
 {
 inline bool ArgumentGroup::isRequired() const
@@ -3194,42 +2683,6 @@ inline bool ArgumentGroup::isRequired() const
     return false;
 }
 } // namespace cli::commands
-
-// Copyright 2025 Dominik Czekai
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-#include <format>
-#include <iostream>
-/*
- * Copyright 2025 Dominik Czekai
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-#include <stdexcept>
-#include <string>
-#include <format>
 
 namespace cli::commands::docwriting
 {
@@ -3253,9 +2706,6 @@ private:
     const Command &command;
 };
 } // namespace cli::commands::docwriting
-
-
-
 
 namespace cli::commands
 {
@@ -3416,24 +2866,6 @@ inline std::string MalformedCommandException::buildMessage(const Command &cmd, c
 
 } // namespace cli::commands
 
-
-// Copyright 2025 Dominik Czekai
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-#include <sstream>
-
-
 namespace cli::commands
 {
 inline CommandTree::CommandTree(std::string_view rootName)
@@ -3516,21 +2948,6 @@ inline std::vector<const Command *> CommandTree::getAllCommandsConst() const
     return commands;
 }
 } // namespace cli::commands
-
-// Copyright 2025 Dominik Czekai
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 
 namespace cli::commands::docwriting
 {
@@ -3749,25 +3166,6 @@ inline std::string DefaultCliAppDocFormatter::generateAppVersionString(const cli
 
 } // namespace cli::commands::docwriting
 
-// Copyright 2025 Dominik Czekai
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-#include <format>
-#include <iomanip>
-#include <sstream>
-#include <string>
-
-
 namespace cli::commands::docwriting
 {
 
@@ -3865,21 +3263,6 @@ inline void DocWriter::setAppFormatter(std::unique_ptr<AbstractCliAppDocFormatte
 
 } // namespace cli::commands::docwriting
 
-// Copyright 2025 Dominik Czekai
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-
 namespace cli::commands
 {
 inline std::string FlagArgument::getOptionsDocString(const docwriting::DocWriter &writer) const
@@ -3894,21 +3277,6 @@ inline std::string FlagArgument::getArgDocString(const docwriting::DocWriter &wr
 
 } // namespace cli::commands
 
-// Copyright 2025 Dominik Czekai
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-
 namespace cli::commands
 {
 inline std::string OptionArgumentBase::getOptionsDocString(const docwriting::DocWriter &writer) const
@@ -3921,21 +3289,6 @@ inline std::string OptionArgumentBase::getArgDocString(const docwriting::DocWrit
     return writer.generateArgDocString(*this);
 }
 } // namespace cli::commands
-
-// Copyright 2025 Dominik Czekai
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 
 namespace cli::commands
 {
@@ -3950,24 +3303,9 @@ inline std::string PositionalArgumentBase::getArgDocString(const docwriting::Doc
 }
 } // namespace cli::commands
 
-// Copyright 2025 Dominik Czekai
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 #ifdef CHAIN_CLI_VERBOSE
 #include <iostream>
 #endif
-
 
 namespace cli
 {
@@ -4092,22 +3430,6 @@ inline std::unique_ptr<CliContext> ContextBuilder::build(cli::logging::AbstractL
 }
 } // namespace cli
 
-// Copyright 2025 Dominik Czekai
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-#include <sstream>
-
-
 namespace cli
 {
     inline std::string MissingArgumentException::makeMessage(
@@ -4146,25 +3468,6 @@ inline std::string InvalidArgumentTypeException::makeMessage(const std::string &
 }
 } //namespace cli
 
-// Copyright 2025 Dominik Czekai
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-#include <chrono>
-#include <iomanip>
-#include <sstream>
-
-
 namespace cli::logging
 {
 
@@ -4184,21 +3487,6 @@ inline std::string MessageOnlyFormatter::format(const LogRecord &record) const
 }
 
 } // namespace cli::logging
-
-// Copyright 2025 Dominik Czekai
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 
 namespace cli::logging
 {
@@ -4258,23 +3546,6 @@ inline FileHandler::~FileHandler()
 }
 } // namespace cli::logging
 
-// Copyright 2025 Dominik Czekai
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-#include <utility>
-
-
 namespace cli::logging
 {
 inline Logger::Logger(LogLevel lvl) : minLevel(lvl)
@@ -4331,21 +3602,6 @@ inline std::ostream &Logger::getStream(LogLevel lvl)
 
 } // namespace cli::logging
 
-// Copyright 2025 Dominik Czekai
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-
 namespace cli::logging
 {
 inline int LogStreamBuf::sync()
@@ -4361,26 +3617,6 @@ inline int LogStreamBuf::sync()
     return 0;
 }
 } // namespace cli::logging
-
-
-// Copyright 2025 Dominik Czekai
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-#include <algorithm>
-#include <any>
-#include <iostream>
-#include <ranges>
 
 // used by heady
 

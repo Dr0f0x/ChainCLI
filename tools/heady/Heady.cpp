@@ -9,8 +9,8 @@ Copyright (c) 2025 Dominik Czekai
 */
 
 #include "heady.h"
-#include "license_headers.h"
 #include "include_guards.h"
+#include "license_headers.h"
 #include "utils.h"
 
 #include <algorithm>
@@ -37,13 +37,55 @@ void FindAndProcessLocalIncludes(const Params &params,
                                  const std::list<std::filesystem::directory_entry> &dirEntries,
                                  const std::filesystem::directory_entry &dirEntry,
                                  std::set<std::string, std::less<>> &processed,
-                                 std::string &outputText, int depth = 0);
+                                 std::set<std::string> &systemIncludes, std::string &outputText,
+                                 int depth = 0);
+
+inline_t void FindSystemIncludes(const Params &params,
+                                         std::set<std::string> &systemIncludes,
+                                         std::string &fileData)
+{
+    std::regex systemIncludeRegex(R"regex(\s*#\s*include\s*<([^>]+)>)regex");
+    std::regex ifdefRegex(R"regex(\s*#\s*if(n?def)?\s+([A-Za-z_][A-Za-z0-9_]*))regex");
+    std::regex endifRegex(R"regex(\s*#\s*endif\s*(//.*)?$)regex");
+    std::smatch systemMatch;
+
+    std::istringstream stream(fileData);
+    std::string line;
+    std::string processedData;
+
+    int ifdefDepth = 0;
+    // Iterate over all lines in the file
+    while (std::getline(stream, line))
+    {
+        if (std::regex_search(line, ifdefRegex))
+        {
+            ifdefDepth += 1;
+        }
+        if(std::regex_search(line, endifRegex))
+        {
+            ifdefDepth = std::max(0, ifdefDepth - 1);
+        }
+
+        if (ifdefDepth == 0 && std::regex_search(line, systemMatch, systemIncludeRegex))
+        {
+            systemIncludes.insert(systemMatch[1].str()); // Add to global set
+            // Skip this line (don't add it to processedData) since we're tracking it separately
+        }
+        else
+        {
+            processedData += line + "\n";
+        }
+    }
+
+    // Update fileData with the processed content (system includes removed)
+    fileData = processedData;
+}
 
 inline_t void FindAndProcessLocalIncludes(
-    const Params& params,
-    const std::vector<std::string> &licenseHeaders,
+    const Params &params, const std::vector<std::string> &licenseHeaders,
     const std::list<std::filesystem::directory_entry> &dirEntries, const std::string &include,
-    std::set<std::string, std::less<>> &processed, std::string &outputText, int depth = 0)
+    std::set<std::string, std::less<>> &processed, std::set<std::string> &systemIncludes,
+    std::string &outputText, int depth = 0)
 {
     // Check to see if we've already processed this file
     if (processed.contains(include))
@@ -58,16 +100,16 @@ inline_t void FindAndProcessLocalIncludes(
     });
     if (itr != dirEntries.end())
     {
-        FindAndProcessLocalIncludes(params, licenseHeaders, dirEntries, *itr, processed, outputText, depth);
+        FindAndProcessLocalIncludes(params, licenseHeaders, dirEntries, *itr, processed,
+                                    systemIncludes, outputText, depth);
     }
 }
 
 inline_t void FindAndProcessLocalIncludes(
-    const Params &params,
-    const std::vector<std::string> &licenseHeaders,
+    const Params &params, const std::vector<std::string> &licenseHeaders,
     const std::list<std::filesystem::directory_entry> &dirEntries,
     const std::filesystem::directory_entry &dirEntry, std::set<std::string, std::less<>> &processed,
-    std::string &outputText, int depth)
+    std::set<std::string> &systemIncludes, std::string &outputText, int depth)
 {
     // Check to see if we've already processed this file
     auto fn = dirEntry.path().filename().string();
@@ -92,7 +134,8 @@ inline_t void FindAndProcessLocalIncludes(
     std::string fileData = buffer.str();
 
     // Mark file beginning
-    if(params.includeFileHints) {
+    if (params.includeFileHints)
+    {
         outputText += "\n\n// begin --- ";
         outputText += dirEntry.path().filename().string();
         outputText += " --- ";
@@ -100,9 +143,10 @@ inline_t void FindAndProcessLocalIncludes(
     }
 
     Detail::RemoveIncludeGuards(params, fileData, dirEntry.path());
+    Detail::FindSystemIncludes(params, systemIncludes, fileData);
     Detail::RemoveCopyrightHeaders(params, licenseHeaders, fileData);
 
-    // Find local includes
+    // Find local includes (quotes) for processing
     std::regex r(R"regex(\s*#\s*include\s*(["])([^"]+)(["]))regex");
     std::smatch m;
     std::string s = fileData;
@@ -113,7 +157,8 @@ inline_t void FindAndProcessLocalIncludes(
             outputText += m.prefix().str();
 
         // Insert the include text into the output stream
-        FindAndProcessLocalIncludes(params, licenseHeaders, dirEntries, m[2].str(), processed, outputText, depth + 1);
+        FindAndProcessLocalIncludes(params, licenseHeaders, dirEntries, m[2].str(), processed,
+                                    systemIncludes, outputText, depth + 1);
 
         // Continue processing the rest of the file text
         s = m.suffix().str();
@@ -121,12 +166,13 @@ inline_t void FindAndProcessLocalIncludes(
 
     // Copy remaining file text to output
     params.logger.info() << indent << "[Finish processing] " << relativePath.string() << " - Added "
-              << s.length() << " Characters to output\n";
+                         << s.length() << " Characters to output\n";
     outputText += s;
     outputText += "\n";
 
     // Mark file end
-    if(params.includeFileHints) {
+    if (params.includeFileHints)
+    {
         outputText += "\n// end --- ";
         outputText += dirEntry.path().filename().string();
         outputText += " --- ";
@@ -138,7 +184,7 @@ inline_t void FindAndProcessLocalIncludes(
 inline_t void ReplaceInlinePlaceHolder(const Params &params, std::string &outputText)
 {
     std::string inlineValue = params.inlined;
-    
+
     // Then remove all instances of #define inline_t
     std::string inlineDef = "#define " + inlineValue;
     Detail::FindAndReplaceAll(outputText, inlineDef, "");
@@ -175,9 +221,10 @@ inline_t void GenerateHeader(const Params &params)
 
     // Remove excluded files from fileEntries
     dirEntries.remove_if([&excludedFilenames](const auto &entry) {
-        return std::ranges::find(excludedFilenames, entry.path().filename().string()) != excludedFilenames.end();
+        return std::ranges::find(excludedFilenames, entry.path().filename().string()) !=
+               excludedFilenames.end();
     });
-    
+
     params.logger.info() << "Registered files in source folder '" << params.sourceFolder << "':\n";
     std::filesystem::path sourcePath(params.sourceFolder);
     for (const auto &entry : dirEntries)
@@ -200,9 +247,9 @@ inline_t void GenerateHeader(const Params &params)
 
     std::string outputText;
     std::vector<std::string> licenseHeaders = Detail::ReadLicenseHeaders(params);
-    if(!licenseHeaders.empty())
+    if (!licenseHeaders.empty())
     {
-            outputText += licenseHeaders[0] + "\n";
+        outputText += licenseHeaders[0] + "\n";
     }
 
     // Amalgamation-specific define for header
@@ -217,26 +264,45 @@ inline_t void GenerateHeader(const Params &params)
     }
 
     auto guardName = Detail::CreateGuardName(std::filesystem::path(params.output));
-    if(params.useStandardIncludeGuard)
+    if (params.useStandardIncludeGuard)
     {
         outputText += "\n#ifndef " + guardName + "\n#define " + guardName + "\n\n";
     }
-    else{
+    else
+    {
         outputText += "\n#pragma once\n\n";
     }
 
     // Recursively combine all source and headers into a single output string
     std::set<std::string, std::less<>> processed;
+    std::set<std::string> allSystemIncludes; // Track all system includes across all files
+
+    std::string accumulatedFiles = "";
+
     for (const auto &entry : dirEntries)
     {
-        Detail::FindAndProcessLocalIncludes(params, licenseHeaders, dirEntries, entry, processed, outputText);
+        Detail::FindAndProcessLocalIncludes(params, licenseHeaders, dirEntries, entry, processed,
+                                            allSystemIncludes, accumulatedFiles);
     }
 
+    // Log all collected system includes
+    if (!allSystemIncludes.empty())
+    {
+        params.logger.info() << "All system includes found: ";
+        for (const auto &inc : allSystemIncludes)
+        {
+            params.logger.info() << inc << " ";
+            outputText += "#include <" + inc + ">\n";
+        }
+        params.logger.info() << "\n";
+    }
+
+    outputText += accumulatedFiles;
     // Replace inline_t placeholders with inline
     ReplaceInlinePlaceHolder(params, outputText);
     Detail::NormalizeNewlines(outputText);
 
-    if(params.useStandardIncludeGuard)
+    if (params.useStandardIncludeGuard)
     {
         outputText += "\n#endif // " + guardName + "\n";
     }
