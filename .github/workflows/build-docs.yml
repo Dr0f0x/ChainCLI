@@ -1,7 +1,7 @@
 name: build-docs
 on:
   push:
-    branches: ["main"] #ingored for now as repo is still private
+    branches: ["master"]
 
 permissions:
   contents: write

@@ -7,7 +7,7 @@ on:
     branches: [ "master" ]
 
 jobs:
-  build:
+  ubuntu_clang_ci:
     runs-on: ubuntu-latest
 
     steps:

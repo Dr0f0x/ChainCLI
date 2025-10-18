@@ -6,8 +6,8 @@
 [![CMake Ubuntu GCC](https://github.com/Dr0f0x/CliLib/actions/workflows/ubuntu-gcc.yml/badge.svg)](https://github.com/Dr0f0x/CliLib/actions/workflows/ubuntu-gcc.yml)
 [![CMake Windows MSVC](https://github.com/Dr0f0x/CliLib/actions/workflows/windows-msvc.yml/badge.svg)](https://github.com/Dr0f0x/CliLib/actions/workflows/windows-msvc.yml)
 [![heady build](https://github.com/Dr0f0x/CliLib/actions/workflows/heady.yml/badge.svg)](https://github.com/Dr0f0x/CliLib/actions/workflows/heady.yml)
-[![codecov](https://codecov.io/gh/Dr0f0x/CliLib/graph/badge.svg?token=Q62QP5D61I)](https://codecov.io/gh/Dr0f0x/CliLib)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/7672ce67e13e4ca184b10fbfb4805a94)](https://app.codacy.com?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+[![codecov](https://codecov.io/gh/Dr0f0x/ChainCLI/graph/badge.svg?token=Q62QP5D61I)](https://codecov.io/gh/Dr0f0x/ChainCLI)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/7672ce67e13e4ca184b10fbfb4805a94)](https://app.codacy.com/gh/Dr0f0x/ChainCLI/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 
 > **Quick Disclaimer at the start:** This is both my first real Cpp project as well as the first project I actually made public and I probably committed numerous mistakes in both cases, so if you notice anything please create an issue about so I can attempt to fix it. Thanks!
 
@@ -23,7 +23,7 @@
 - **Command Hierarchies**: Support for nested subcommands and complex CLI structures
 - **Extensible**: Easy to extend with custom types, formatters, and handlers
 
-For a more detailed overview than this README can give definitely check out the [demo folder](https://github.com/Dr0f0x/ChainCLI/tree/v1.0.0-alpha/demo) or have a look at the API-Reference.
+For a more detailed overview than this README can give definitely check out the [demo folder](https://github.com/Dr0f0x/ChainCLI/tree/v1.0.0-alpha/demo) or have a look at the [API-Reference](https://dr0f0x.github.io/ChainCLI/).
 
 ## Table of Contents
 
@@ -410,4 +410,4 @@ struct CustomType
 ```
 
 
-Thats it! If some things are not fully clear yet, try having a look at the [demo projects](https://github.com/Dr0f0x/ChainCLI/tree/v1.0.0-alpha/demo) or check out the detailed API-Reference.
+Thats it! If some things are not fully clear yet, try having a look at the [demo projects](https://github.com/Dr0f0x/ChainCLI/tree/v1.0.0-alpha/demo) or check out the detailed [API-Reference](https://dr0f0x.github.io/ChainCLI/).
