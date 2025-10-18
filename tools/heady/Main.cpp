@@ -92,8 +92,8 @@ int main(int argc, char **argv)
                 .withOptionsComment("The output path for the generated amalgamated header file")
                 .withRequired(true))
         .withOptionArgument(
-            commands::OptionArgument<std::string>("--license-header", "-lh", "text")
-                .withOptionsComment("The text license header to prepend to the generated header file and replace in processed files"))
+            commands::OptionArgument<std::string>("--license-header", "-lh", "regex")
+                .withOptionsComment("A regex pattern to match and remove copyright/license headers from processed files"))
         .withFlagArgument(
             commands::FlagArgument("--recursive", "-r")
                 .withOptionsComment("Recursively scan the source folder for C++ files"))

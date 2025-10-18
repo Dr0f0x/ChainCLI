@@ -8,7 +8,10 @@ Modifications and integration with ChainCLI:
 Copyright (c) 2025 Dominik Czekai
 */
 
-#include "Heady.h"
+#include "heady.h"
+#include "license_headers.h"
+#include "include_guards.h"
+#include "utils.h"
 
 #include <algorithm>
 #include <array>
@@ -30,60 +33,15 @@ namespace Detail
 {
 // Forward declaration
 void FindAndProcessLocalIncludes(const Params &params,
+                                 const std::vector<std::string> &licenseHeaders,
                                  const std::list<std::filesystem::directory_entry> &dirEntries,
                                  const std::filesystem::directory_entry &dirEntry,
                                  std::set<std::string, std::less<>> &processed,
                                  std::string &outputText, int depth = 0);
 
-inline_t std::vector<std::string> Tokenize(const std::string_view source)
-{
-    if (source.empty())
-        return {};
-
-    std::string temp(source);
-    std::regex r(R"(\s+)");
-    std::sregex_token_iterator first(temp.begin(), temp.end(), r, -1);
-    std::sregex_token_iterator last;
-    return {first, last};
-}
-
-inline_t bool EndsWithPath(std::string_view str, std::string_view suffix)
-{
-    auto normalize = [](std::string_view s) {
-        std::string result(s);
-        std::ranges::replace(result, '\\', '/');
-        return result;
-    };
-
-    std::string normStr = normalize(str);
-    std::string normSuffix = normalize(suffix);
-
-    if (normStr.size() < normSuffix.size())
-        return false;
-
-    // Check if the end matches
-    if (normStr.compare(normStr.size() - normSuffix.size(), normSuffix.size(), normSuffix) != 0)
-        return false;
-
-    // Ensure proper boundary (either start of string or '/')
-    if (size_t pos = normStr.size() - normSuffix.size(); pos == 0 || normStr[pos - 1] == '/')
-        return true;
-
-    return false;
-}
-
-inline_t void FindAndReplaceAll(std::string &str, std::string_view search, std::string_view replace)
-{
-    size_t pos = str.find(search);
-    while (pos != std::string::npos)
-    {
-        str.replace(pos, search.size(), replace);
-        pos = str.find(search, pos + search.size());
-    }
-}
-
 inline_t void FindAndProcessLocalIncludes(
     const Params& params,
+    const std::vector<std::string> &licenseHeaders,
     const std::list<std::filesystem::directory_entry> &dirEntries, const std::string &include,
     std::set<std::string, std::less<>> &processed, std::string &outputText, int depth = 0)
 {
@@ -100,47 +58,13 @@ inline_t void FindAndProcessLocalIncludes(
     });
     if (itr != dirEntries.end())
     {
-        FindAndProcessLocalIncludes(params, dirEntries, *itr, processed, outputText, depth);
-    }
-}
-
-inline_t std::string CreateGuardName(const std::filesystem::path &filePath)
-{
-    std::string filename = filePath.stem().string(); // Get filename without extension
-    std::transform(filename.begin(), filename.end(), filename.begin(), ::toupper);
-    std::replace(filename.begin(), filename.end(), '-', '_');
-    std::replace(filename.begin(), filename.end(), ' ', '_');
-    return filename + "_H";
-}
-
-inline_t void RemoveIncludeGuards(const Params &params, std::string &fileData, const std::filesystem::path &filePath)
-{
-    // Remove #pragma once lines
-    std::regex pragmaOnceRegex(R"(.*#pragma\s+once.*\n?)");
-    fileData = std::regex_replace(fileData, pragmaOnceRegex, "");
-
-    if(params.useStandardIncludeGuard)
-    {
-        // Remove traditional include guards using actual filename
-        std::string filename = filePath.stem().string(); // Get filename without extension
-        std::transform(filename.begin(), filename.end(), filename.begin(), ::toupper);
-        std::replace(filename.begin(), filename.end(), '-', '_');
-        std::replace(filename.begin(), filename.end(), ' ', '_');
-        std::string guardName = filename + "_H";
-        guardName = CreateGuardName(filePath);
-
-        std::string includeGuardPattern = R"(\s*#\s*ifndef\s+)" + guardName + R"([^\n]*\n\s*#\s*define\s+)" + guardName + R"([^\n]*\n)";
-        std::regex includeGuardRegex(includeGuardPattern);
-        fileData = std::regex_replace(fileData, includeGuardRegex, "");
-
-        // Remove #endif only if it's the very last non-whitespace line
-        std::regex endifRegex(R"(\n\s*#\s*endif\s*(//.*)?(\s*\n)*$)");
-        fileData = std::regex_replace(fileData, endifRegex, "");
+        FindAndProcessLocalIncludes(params, licenseHeaders, dirEntries, *itr, processed, outputText, depth);
     }
 }
 
 inline_t void FindAndProcessLocalIncludes(
     const Params &params,
+    const std::vector<std::string> &licenseHeaders,
     const std::list<std::filesystem::directory_entry> &dirEntries,
     const std::filesystem::directory_entry &dirEntry, std::set<std::string, std::less<>> &processed,
     std::string &outputText, int depth)
@@ -166,8 +90,6 @@ inline_t void FindAndProcessLocalIncludes(
     std::stringstream buffer;
     buffer << file.rdbuf();
     std::string fileData = buffer.str();
-    
-    outputText += "\n";
 
     // Mark file beginning
     if(params.includeFileHints) {
@@ -177,7 +99,8 @@ inline_t void FindAndProcessLocalIncludes(
         outputText += "\n\n";
     }
 
-    RemoveIncludeGuards(params, fileData, dirEntry.path());
+    Detail::RemoveIncludeGuards(params, fileData, dirEntry.path());
+    Detail::RemoveCopyrightHeaders(params, licenseHeaders, fileData);
 
     // Find local includes
     std::regex r(R"regex(\s*#\s*include\s*(["])([^"]+)(["]))regex");
@@ -190,7 +113,7 @@ inline_t void FindAndProcessLocalIncludes(
             outputText += m.prefix().str();
 
         // Insert the include text into the output stream
-        FindAndProcessLocalIncludes(params, dirEntries, m[2].str(), processed, outputText, depth + 1);
+        FindAndProcessLocalIncludes(params, licenseHeaders, dirEntries, m[2].str(), processed, outputText, depth + 1);
 
         // Continue processing the rest of the file text
         s = m.suffix().str();
@@ -214,25 +137,13 @@ inline_t void FindAndProcessLocalIncludes(
 
 inline_t void ReplaceInlinePlaceHolder(const Params &params, std::string &outputText)
 {
-    // First remove all lines that contain "#define inline_t"
-    std::istringstream iss(outputText);
-    std::string line;
-    std::string newOutputText;
+    std::string inlineValue = params.inlined;
     
-    while (std::getline(iss, line)) {
-        if (line.find("#define inline_t") == std::string::npos) {
-            newOutputText += line + "\n";
-        }
-    }
-    
-    outputText = newOutputText;
-    
-    // Then replace all instances of inline_t with inline
-    std::string inlineDef = "inline_t ";
-    Detail::FindAndReplaceAll(outputText, inlineDef, "inline ");
+    // Then remove all instances of #define inline_t
+    std::string inlineDef = "#define " + inlineValue;
+    Detail::FindAndReplaceAll(outputText, inlineDef, "");
 
     // Replace all instances of a specified macro with 'inline'
-    std::string inlineValue = params.inlined;
     if (inlineValue.empty())
         inlineValue = "inline_t ";
     if (inlineValue[inlineValue.size() - 1] != ' ')
@@ -287,8 +198,14 @@ inline_t void GenerateHeader(const Params &params)
         return left.path().extension() < right.path().extension();
     });
 
-    // Amalgamation-specific define for header
     std::string outputText;
+    std::vector<std::string> licenseHeaders = Detail::ReadLicenseHeaders(params);
+    if(!licenseHeaders.empty())
+    {
+            outputText += licenseHeaders[0] + "\n";
+    }
+
+    // Amalgamation-specific define for header
     if (!params.define.empty())
     {
         outputText += "\n// Amalgamation-specific define";
@@ -312,11 +229,12 @@ inline_t void GenerateHeader(const Params &params)
     std::set<std::string, std::less<>> processed;
     for (const auto &entry : dirEntries)
     {
-        Detail::FindAndProcessLocalIncludes(params, dirEntries, entry, processed, outputText);
+        Detail::FindAndProcessLocalIncludes(params, licenseHeaders, dirEntries, entry, processed, outputText);
     }
 
     // Replace inline_t placeholders with inline
     ReplaceInlinePlaceHolder(params, outputText);
+    Detail::NormalizeNewlines(outputText);
 
     if(params.useStandardIncludeGuard)
     {
@@ -341,6 +259,7 @@ inline_t void GenerateHeader(const Params &params)
     std::ofstream outFile;
     outFile.open(params.output, std::ios::out);
     outFile << outputText;
+    params.logger.info() << std::flush;
 }
 
 } // namespace Heady

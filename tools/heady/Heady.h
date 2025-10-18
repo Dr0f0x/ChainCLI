@@ -30,41 +30,12 @@ THE SOFTWARE.
 #include <cstdint>
 #include <string>
 
+#include "heady_params.h"
 #include "chain_cli.hpp"
 
 #define inline_t
-
 namespace Heady
 {
-struct Params
-{
-    std::string sourceFolder;
-    std::string output;
-    std::string excluded;
-    std::string inlined;
-    std::string define;
-    std::string licenseHeader;
-    bool recursiveScan;
-    bool includeFileHints;
-    bool useStandardIncludeGuard;
-
-    cli::logging::AbstractLogger &logger;
-
-    // Constructor
-    explicit Params(cli::logging::AbstractLogger &log) 
-        : sourceFolder(""), 
-          output(""), 
-          excluded(""), 
-          inlined("inline_t"), 
-          define(""), 
-          licenseHeader(""),
-          recursiveScan(false), 
-          includeFileHints(true),
-          useStandardIncludeGuard(false),
-          logger(log) 
-    {
-    }
-};
 
 /// Generate combined header from source
 void GenerateHeader(const Params &params);

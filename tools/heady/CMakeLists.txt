@@ -1,6 +1,11 @@
 add_executable(heady
-    Heady.cpp
-    Heady.h
+    heady.cpp
+    heady.h
     chain_cli.hpp
-    Main.cpp
+    main.cpp
+    license_headers.h
+    include_guards.h
+    utils.h
+    license_headers.cpp
+    include_guards.cpp
 )

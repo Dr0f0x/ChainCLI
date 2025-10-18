@@ -6,9 +6,9 @@ if(BUILD_TOOLS)
 
     add_custom_command(
         OUTPUT "${GENERATED_HEADER}"
-        COMMAND "${HEADY_EXE}"     
-            --define "HEADY_HEADER_ONLY"
-            --source "${CMAKE_SOURCE_DIR}/lib"
+        COMMAND "${HEADY_EXE}"
+            "${CMAKE_SOURCE_DIR}/src/chaincli"     
+            --license-header "${CMAKE_SOURCE_DIR}/tools/copyright_headers.txt"
             --output "${GENERATED_HEADER}"
             --recursive
             --excluded "CMakeLists.txt"
@@ -19,8 +19,8 @@ if(BUILD_TOOLS)
 
     add_custom_target(generate_header
         COMMAND "${HEADY_EXE}"
-            "${CMAKE_SOURCE_DIR}/src/chaincli"     
-            --define "HEADY_HEADER_ONLY"
+            "${CMAKE_SOURCE_DIR}/src/chaincli"
+            --license-header "${CMAKE_SOURCE_DIR}/tools/copyright_headers.txt"    
             --output "${GENERATED_HEADER}"
             --recursive
             --excluded "CMakeLists.txt"
