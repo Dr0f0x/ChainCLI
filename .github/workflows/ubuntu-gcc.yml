@@ -67,14 +67,14 @@ jobs:
         path: build/coverage
     
     - name: Run codacy-coverage-reporter
-      if: ${{ vars.UPLOAD_COVERAGE == 'true' }}
+      if: ${{ vars.UPLOAD_COVERAGE == 'true' && github.event_name == 'push' && github.ref == 'refs/heads/master' }}
       uses: codacy/codacy-coverage-reporter-action@v1.3.0
       with:
         project-token: ${{ secrets.CODACY_TOKEN }}
         coverage-reports: build/coverage/coverage.xml
 
     - name: Upload coverage reports to Codecov
-      if: ${{ vars.UPLOAD_COVERAGE == 'true' }}
+      if: ${{ vars.UPLOAD_COVERAGE == 'true' && github.event_name == 'push' && github.ref == 'refs/heads/master' }}
       uses: codecov/codecov-action@v5
       with:
         files: build/coverage/coverage.xml

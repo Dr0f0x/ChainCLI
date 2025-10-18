@@ -1,7 +1,7 @@
 /*
 The Heady library is distributed under the MIT License (MIT)
 https://opensource.org/licenses/MIT
-See LICENSE.TXT or Heady.h for license details.
+See LICENSE.TXT or heady.h for license details.
 Copyright (c) 2018 James Boer
 
 Modifications and integration with ChainCLI:
@@ -9,7 +9,7 @@ Copyright (c) 2025 Dominik Czekai
 */
 
 #include "license_headers.h"
-#include "Heady.h"
+#include "heady.h"
 #include "utils.h"
 
 #include <regex>
