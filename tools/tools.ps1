@@ -67,7 +67,7 @@ function Run-Gcovr {
 }
 
 #-----------------------------
-# Function: Run Gcovr
+# Function: Run addlicense
 #-----------------------------
 function Run-AddLicense {
     [CmdletBinding()]
